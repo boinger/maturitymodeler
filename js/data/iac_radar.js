@@ -14,7 +14,7 @@
  */
 
 /*global define */
-define(function() {
+define(function () {
     "use strict";
 
     var CATEGORY_COUNT,
@@ -65,24 +65,24 @@ define(function() {
 
     EMPTY_DATASET = [
         [{
-            "app": "",
-            "axis": CATEGORIES[0],
+            app: "",
+            axis: CATEGORIES[0],
             value: -2
         }, {
-            "app": "",
-            "axis": CATEGORIES[1],
+            app: "",
+            axis: CATEGORIES[1],
             value: -2
         }, {
-            "app": "",
-            "axis": CATEGORIES[2],
+            app: "",
+            axis: CATEGORIES[2],
             value: -2
         }, {
-            "app": "",
-            "axis": CATEGORIES[3],
+            app: "",
+            axis: CATEGORIES[3],
             value: -2
         }, {
-            "app": "",
-            "axis": CATEGORIES[4],
+            app: "",
+            axis: CATEGORIES[4],
             value: -2
         }]
     ];
@@ -109,130 +109,130 @@ define(function() {
 
     maturityData = [
         [{ //Commercial Lending
-            "app": applications[0],
-            "axis": CATEGORIES[0],
-            "value": -1
+            app: applications[0],
+            axis: CATEGORIES[0],
+            value: -1
         }, {
-            "app": applications[0],
-            "axis": CATEGORIES[1],
-            "value": 1
+            app: applications[0],
+            axis: CATEGORIES[1],
+            value: 1
         }, {
-            "app": applications[0],
-            "axis": CATEGORIES[2],
-            "value": -1
+            app: applications[0],
+            axis: CATEGORIES[2],
+            value: -1
         }, {
-            "app": applications[0],
-            "axis": CATEGORIES[3],
-            "value": 0
+            app: applications[0],
+            axis: CATEGORIES[3],
+            value: 0
         }, {
-            "app": applications[0],
-            "axis": CATEGORIES[4],
-            "value": 2
+            app: applications[0],
+            axis: CATEGORIES[4],
+            value: 2
         }],
         [{ //Core Banking
-            "app": applications[1],
-            "axis": CATEGORIES[0],
-            "value": 3
+            app: applications[1],
+            axis: CATEGORIES[0],
+            value: 3
         }, {
-            "app": applications[1],
-            "axis": CATEGORIES[1],
-            "value": 2
+            app: applications[1],
+            axis: CATEGORIES[1],
+            value: 2
         }, {
-            "app": applications[1],
-            "axis": CATEGORIES[2],
-            "value": -1
+            app: applications[1],
+            axis: CATEGORIES[2],
+            value: -1
         }, {
-            "app": applications[1],
-            "axis": CATEGORIES[3],
-            "value": 1
+            app: applications[1],
+            axis: CATEGORIES[3],
+            value: 1
         }, {
-            "app": applications[1],
-            "axis": CATEGORIES[4],
-            "value": 0
+            app: applications[1],
+            axis: CATEGORIES[4],
+            value: 0
         }],
         [{ //Internet Banking
-            "app": applications[2],
-            "axis": CATEGORIES[0],
-            "value": 1
+            app: applications[2],
+            axis: CATEGORIES[0],
+            value: 1
         }, {
-            "app": applications[2],
-            "axis": CATEGORIES[1],
-            "value": 2
+            app: applications[2],
+            axis: CATEGORIES[1],
+            value: 2
         }, {
-            "app": applications[2],
-            "axis": CATEGORIES[2],
-            "value": -1
+            app: applications[2],
+            axis: CATEGORIES[2],
+            value: -1
         }, {
-            "app": applications[2],
-            "axis": CATEGORIES[3],
-            "value": 0
+            app: applications[2],
+            axis: CATEGORIES[3],
+            value: 0
         }, {
-            "app": applications[2],
-            "axis": CATEGORIES[4],
-            "value": 2
+            app: applications[2],
+            axis: CATEGORIES[4],
+            value: 2
         }],
         [{ //Investment Services
-            "app": applications[3],
-            "axis": CATEGORIES[0],
-            "value": 1
+            app: applications[3],
+            axis: CATEGORIES[0],
+            value: 1
         }, {
-            "app": applications[3],
-            "axis": CATEGORIES[1],
-            "value": 2
+            app: applications[3],
+            axis: CATEGORIES[1],
+            value: 2
         }, {
-            "app": applications[3],
-            "axis": CATEGORIES[2],
-            "value": 1
+            app: applications[3],
+            axis: CATEGORIES[2],
+            value: 1
         }, {
-            "app": applications[3],
-            "axis": CATEGORIES[3],
-            "value": 2
+            app: applications[3],
+            axis: CATEGORIES[3],
+            value: 2
         }, {
-            "app": applications[3],
-            "axis": CATEGORIES[4],
-            "value": -1
+            app: applications[3],
+            axis: CATEGORIES[4],
+            value: -1
         }],
         [{ //Mobile Banking
-            "app": applications[4],
-            "axis": CATEGORIES[0],
-            "value": 0
+            app: applications[4],
+            axis: CATEGORIES[0],
+            value: 0
         }, {
-            "app": applications[4],
-            "axis": CATEGORIES[1],
-            "value": 2
+            app: applications[4],
+            axis: CATEGORIES[1],
+            value: 2
         }, {
-            "app": applications[4],
-            "axis": CATEGORIES[2],
-            "value": 1
+            app: applications[4],
+            axis: CATEGORIES[2],
+            value: 1
         }, {
-            "app": applications[4],
-            "axis": CATEGORIES[3],
-            "value": -1
+            app: applications[4],
+            axis: CATEGORIES[3],
+            value: -1
         }, {
-            "app": applications[4],
-            "axis": CATEGORIES[4],
-            "value": 0
+            app: applications[4],
+            axis: CATEGORIES[4],
+            value: 0
         }],
         [{ //Risk Management
-            "app": applications[5],
-            "axis": CATEGORIES[0],
-            "value": 1
+            app: applications[5],
+            axis: CATEGORIES[0],
+            value: 1
         }, {
-            "app": applications[5],
-            "axis": CATEGORIES[1],
-            "value": 1
+            app: applications[5],
+            axis: CATEGORIES[1],
+            value: 1
         }, {
-            "app": applications[5],
-            "axis": CATEGORIES[2],
-            "value": -1
+            app: applications[5],
+            axis: CATEGORIES[2],
+            value: -1
         }, {
-            "app": applications[5],
-            "axis": CATEGORIES[3],
-            "value": 0
+            app: applications[5],
+            axis: CATEGORIES[3],
+            value: 0
         }, {
-            "app": applications[5],
-            "axis": CATEGORIES[4],
-            "value": 2
+            app: applications[5],
+            axis: CATEGORIES[4],
+            value: 2
         }]
     ];
 
