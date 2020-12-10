@@ -99,9 +99,9 @@ define(function() {
     legendTitle = "Banking Platforms";
     averageTitle = "Average Maturity - All Systems";
     referenceLink1 = "https://github.com/boinger/maturitymodeler";
-    referenceLinkTitle1 = "CD Maturity Model";
+    referenceLinkTitle1 = "Maturity Modeler";
     referenceLink2 = "https://github.com/boinger/maturitymodeler";
-    referenceLinkTitle2 = "Gary A. Stafford - 2017";
+    referenceLinkTitle2 = "Jeff Vier - 2020";
 
     applications = [
         "Core Banking Application",
