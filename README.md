@@ -38,7 +38,7 @@ Module-based project uses [Terser](https://github.com/terser/terser). After maki
 
 ## Build Script
 
-Running `./build.sh` will confirm/install requirejs, create a dist directory, copy appropriate files into place, unify the javascript and css using RequireJS, then minify it using Terser.  If you're *sure* you already have requirejs installed and the dist directory created, you can run `build.sh fast` to skip those steps.
+Running `./build.sh` will confirm/install RequireJS and Terser (via npm), create a dist directory if needed, copy appropriate files into place, unify the javascript and css using RequireJS, then minify it using Terser.  If you're *sure* you already have RequireJS and Terser installed and the dist directory created (as in, you've successfully run `./build.sh` before), you can run `build.sh fast` to skip those steps.
 
 [![Optimizing Project](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing.png?raw=true)
 
