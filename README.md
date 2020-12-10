@@ -35,10 +35,10 @@ Module-based project uses [RequireJS](http://requirejs.org/). After making any j
 ```bash
 npm install -g requirejs
 mkdir dist/ || echo 'dist/ folder already exists...'
-cp -f js/require_2_3_5/require.min.js dist/
+cp -f js/require_2_3_6/require.min.js dist/
 cp -f favicon.png dist/
-node build/r_2_3_5/r.js -o build/build.js
-node build/r_2_3_5/r.js -o cssIn=css/radar.css out=dist/main-built.css
+node build/r_2_3_6/r.js -o build/build.js
+node build/r_2_3_6/r.js -o cssIn=css/radar.css out=dist/main-built.css
 ```
 
 [![Optimizing Project](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing.png?raw=true)
@@ -117,10 +117,10 @@ To quickly rebuild and re-containerize the application, during development, run 
 
 ```bash
 rm -rf dist/* \
-  && cp -f js/require_2_3_5/require.min.js dist/ \
+  && cp -f js/require_2_3_6/require.min.js dist/ \
   && cp -f favicon.png dist/ \
-  && node build/r_2_3_5/r.js -o build/build.js \
-  && node build/r_2_3_5/r.js -o cssIn=css/radar.css out=dist/main-built.css \
+  && node build/r_2_3_6/r.js -o build/build.js \
+  && node build/r_2_3_6/r.js -o cssIn=css/radar.css out=dist/main-built.css \
   && docker rm -f maturitymodeler \
   && docker build -t apache2 . \
   && docker run -d --name maturitymodeler -p 8082:80 apache2
