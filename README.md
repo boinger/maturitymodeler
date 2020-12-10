@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/garystafford/cd-maturity-model.svg?branch=requirejs)](https://travis-ci.org/garystafford/cd-maturity-model)
+[![Build Status](https://travis-ci.org/boinger/maturitymodeler.svg?branch=requirejs)](https://travis-ci.org/boinger/maturitymodeler)
 
-# CD Maturity Model - Gap Analysis Visualization Tool
+# Maturity Modeler - Gap Analysis Visualization Tool
 
 A gap analysis visualization tool for the '[Continuous Delivery Maturity Model](https://secure.surveymonkey.com/_resources/28183/23008183/bf361750-7418-458f-85a6-6c07333e4986.png)'. Based on model from the book, '**Continuous Delivery:** _Reliable Software Releases through Build, Test, and Deployment Automation_', by Jez Humble and David Farley, available on [Amazon](http://www.amazon.com/dp/0321601912).
 
@@ -8,18 +8,18 @@ This JavaScript-based application displays a visual comparison, based on a radar
 
 The Maturity Model Gap Analysis Tool is applicable to many discipline, not only Continuous Delivery. The application is built to be fully configurable and easily adaptable, by modifying the data file (`js/data/data_radar.js`). The default data file contains a sample data set, based on a fictions financial institution's gap analysis.
 
-[![CD Maturity Model - Gap Analysis Visualization Tool](https://github.com/garystafford/cd-maturity-model/blob/requirejs/images/CD_Maturity_Model_Video.jpg)](http://www.youtube.com/watch?v=YWGNw6VvKBc "CD Maturity Model - Gap Analysis Visualization Tool")
+[![CD Maturity Model - Gap Analysis Visualization Tool](https://github.com/boinger/maturitymodeler/blob/requirejs/images/CD_Maturity_Model_Video.jpg)](http://www.youtube.com/watch?v=YWGNw6VvKBc "CD Maturity Model - Gap Analysis Visualization Tool")
 
-<!-- [![CD Gap Analysis](https://github.com/garystafford/cd-maturity-model/blob/requirejs/images/CD_example_thumbnail.png?raw=true)](https://github.com/garystafford/cd-maturity-model/blob/requirejs/images/CD_example.png?raw=true) -->
+<!-- [![CD Gap Analysis](https://github.com/boinger/maturitymodeler/blob/requirejs/images/CD_example_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/CD_example.png?raw=true) -->
 
  ## Quick Start
 
-To install this project locally, `git clone` the `requirejs` branch from [GitHub](https://github.com/garystafford/cd-maturity-model/tree/requirejs):
+To install this project locally, `git clone` the `requirejs` branch from [GitHub](https://github.com/boinger/maturitymodeler/tree/requirejs):
 
 ```bash
 git clone --branch requirejs --single-branch --depth 1 \
-  https://github.com/garystafford/cd-maturity-model.git
-cd cd-maturity-model
+  https://github.com/boinger/maturitymodeler.git
+cd maturitymodeler
 ```
 
 ## D3.js Data-Driven Documents
@@ -39,7 +39,7 @@ node build/r_2_3_5/r.js -o build/build.js
 node build/r_2_3_5/r.js -o cssIn=css/radar.css out=dist/main-built.css
 ```
 
-[![Optimizing Project](https://github.com/garystafford/cd-maturity-model/blob/requirejs/images/optimizing_thumbnail.png?raw=true)](https://github.com/garystafford/cd-maturity-model/blob/requirejs/images/optimizing.png?raw=true)
+[![Optimizing Project](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing.png?raw=true)
 
 ## Data-Driven Visualization
 
@@ -104,7 +104,7 @@ This project includes a `Dockerfile` for local development and hosting of the ap
 
 ```bash
 docker build -t apache2 .
-docker run -d --name cd-maturity-model -p 8082:80 apache2
+docker run -d --name maturitymodeler -p 8082:80 apache2
 ```
 
 Point your browser to `http://localhost:8082/`
@@ -119,20 +119,20 @@ rm -rf dist/* \
   && cp -f favicon.png dist/ \
   && node build/r_2_3_5/r.js -o build/build.js \
   && node build/r_2_3_5/r.js -o cssIn=css/radar.css out=dist/main-built.css \
-  && docker rm -f cd-maturity-model \
+  && docker rm -f maturitymodeler \
   && docker build -t apache2 . \
-  && docker run -d --name cd-maturity-model -p 8082:80 apache2
+  && docker run -d --name maturitymodeler -p 8082:80 apache2
 ```
 
 ## Infrastructure as Code Maturity Model
 
 This project now includes a second data file (`js/data/iac_radar.js`), based on the IaC Maturity Model. To use IaC sample data, rename the file to `data_radar.js`; it will be automatically included in the build. Alternately, change the name of data file that gets included, by modifying the `build/build.js` and `js/radar/common.js` files. The data file contains a sample data set, based on a fictions financial institution's gap analysis.
 
-[![IaC Gap Analysis](https://github.com/garystafford/cd-maturity-model/blob/requirejs/images/IaC_example_thumbnail.png?raw=true)](https://github.com/garystafford/cd-maturity-model/blob/requirejs/images/IaC_example.png?raw=true)
+[![IaC Gap Analysis](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_example_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_example.png?raw=true)
 
 The CD Maturity Model can be easily adapted to the evolving [Infrastructure as Code (IaC) Maturity Model](https://programmaticponderings.com/2016/11/25/infrastructure-as-code-maturity-model/).
 
-[![IaC Maturity Model](https://github.com/garystafford/cd-maturity-model/blob/requirejs/images/IaC_Maturity_Model%20v2_1.png?raw=true)](https://github.com/garystafford/cd-maturity-model/blob/requirejs/images/IaC_Maturity_Model%20v2_1.pdf)
+[![IaC Maturity Model](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_Maturity_Model%20v2_1.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_Maturity_Model%20v2_1.pdf)
 
 ## Helpful Links
 

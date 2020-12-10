@@ -1,6 +1,7 @@
 /**
  * Created by Gary A. Stafford on 1/29/15
- * https://github.com/garystafford/cd-maturity-model
+ * Modified by Jeff Vier beginning 7 Dec 2020
+ * https://github.com/boinger/maturitymodeler
  *
  * Transforms CD maturity scale of -2 to 3 to 0 to 100
  * -2 = 0, -1 = 20, 0 = 40, 1 = 60, 2 = 80, 3 = 100

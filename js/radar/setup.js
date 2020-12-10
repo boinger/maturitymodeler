@@ -1,6 +1,7 @@
 /**
  * Created by Gary A. Stafford on 1/29/15
- * https://github.com/garystafford/cd-maturity-model
+ * Modified by Jeff Vier beginning 7 Dec 2020
+ * https://github.com/boinger/maturitymodeler
  *
  * Source code based project by Nadieh Bremer:
  * http://www.visualcinnamon.com/2013/09/making-d3-radar-chart-look-bit-better.html

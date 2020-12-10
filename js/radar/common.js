@@ -1,6 +1,7 @@
 /**
  * Created by Gary A. Stafford on 2/8/15
- * https://github.com/garystafford/cd-maturity-model
+ * Modified by Jeff Vier beginning 7 Dec 2020
+ * https://github.com/boinger/maturitymodeler
  */
 
 /*properties

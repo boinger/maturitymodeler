@@ -1,8 +1,8 @@
 FROM httpd:2.4
 
-LABEL maintainer "Gary A. Stafford <garystafford@rochester.rr.com>"
+LABEL maintainer "Jeff Vier <jeff@jeffvier.com>"
 
-ENV REFRESHED_AT 2017-10-05
+ENV REFRESHED_AT 2020-12-09
 
 COPY dist /usr/local/apache2/htdocs/dist
 COPY favicon.png /usr/local/apache2/htdocs/dist/

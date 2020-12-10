@@ -2,7 +2,8 @@
  * Infrastructure as Code Maturity Gap Analysis
  * Financial Institution Sample Data
  * Created by Gary A. Stafford on 1/28/17
- * https://github.com/garystafford/cd-maturity-model
+ * Modified by Jeff Vier beginning 7 Dec 2020
+ * https://github.com/boinger/maturitymodeler
  */
 
 /*properties
@@ -92,9 +93,9 @@ define(function() {
     pageTitle = "IaC Maturity Gap Analysis: First Federated Bank";
     legendTitle = "Banking Platforms";
     averageTitle = "Average Maturity - All Systems";
-    referenceLink1 = "https://github.com/garystafford/cd-maturity-model";
+    referenceLink1 = "https://github.com/boinger/maturitymodeler";
     referenceLinkTitle1 = "CD Maturity Model";
-    referenceLink2 = "https://github.com/garystafford/cd-maturity-model";
+    referenceLink2 = "https://github.com/boinger/maturitymodeler";
     referenceLinkTitle2 = "Gary A. Stafford - 2017";
 
     applications = [

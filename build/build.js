@@ -3,7 +3,7 @@
  *
  * http://requirejs.org/docs/optimization.html
  * npm install -g requirejs
- * cd ~/WebstormProjects/cd-maturity-model
+ * cd ~/WebstormProjects/maturitymodeler
  * node build/r.js -o build/build.js
  * node build/r.js -o cssIn=css/radar.css out=dist/main-built.css
  */
