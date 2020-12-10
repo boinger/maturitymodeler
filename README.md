@@ -26,6 +26,8 @@ cd maturitymodeler
 
 The application is a browser-based tool, which uses the [D3.js](http://d3js.org/) JavaScript library. Visualizations are rendered using JavaScript and [SVG](http://en.wikipedia.org/wiki/Scalable_Vector_Graphics).
 
+Update to the latest D3 by extracting the latest ZIP file (found at https://github.com/d3/d3/releases/latest) into the `js/d3` directory
+
 ## RequireJS Optimization
 
 Module-based project uses [RequireJS](http://requirejs.org/). After making any javascript or css changes, optimize the project using [RequireJS Optimizer](http://requirejs.org/docs/optimization.html). Optimizer combines related scripts together into build layers and minifies them via [UglifyJS](https://github.com/mishoo/UglifyJS) (the default). This project requires [Node.js](http://nodejs.org).
