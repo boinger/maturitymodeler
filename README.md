@@ -32,14 +32,9 @@ Update to the latest D3 by extracting the latest ZIP file (found at https://gith
 
 Module-based project uses [RequireJS](http://requirejs.org/). After making any javascript or css changes, optimize the project using [RequireJS Optimizer](http://requirejs.org/docs/optimization.html). Optimizer combines related scripts together into build layers and minifies them via [UglifyJS](https://github.com/mishoo/UglifyJS) (the default). This project requires [Node.js](http://nodejs.org).
 
-```bash
-npm install -g requirejs
-mkdir dist/ || echo 'dist/ folder already exists...'
-cp -f js/require_2_3_6/require.min.js dist/
-cp -f favicon.png dist/
-node build/r_2_3_6/r.js -o build/build.js
-node build/r_2_3_6/r.js -o cssIn=css/radar.css out=dist/main-built.css
-```
+## Build the Tool
+
+Running `./build.sh` will confirm/install requirejs, create a dist directory, copy appropriate files into place, then build the tool using nodejs.  If you're *sure* you already have requirejs installed and the dist directory created, you can run `build.sh fast` to skip those steps.
 
 [![Optimizing Project](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing.png?raw=true)
 
