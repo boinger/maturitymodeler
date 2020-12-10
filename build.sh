@@ -3,7 +3,7 @@
 # * Created by Jeff Vier on 7 Dec 2020
 # * https://github.com/boinger/maturitymodeler
 
-if [ $1 != "fast" ]; then
+if [ "$1" != "fast" ]; then
   npm list -g requirejs || npm install -g requirejs
   mkdir dist/ || echo 'dist/ folder already exists...'
 fi
