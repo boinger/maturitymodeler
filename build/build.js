@@ -24,5 +24,6 @@
     name                  : "app",
     out                   : "./../dist/main-built.js",
     enforceDefine         : true,
-    findNestedDependencies: true
+    findNestedDependencies: true,
+    optimize              : "none"
 })

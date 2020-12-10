@@ -4,11 +4,11 @@
 
 A gap analysis visualization tool for the '[Continuous Delivery Maturity Model](https://secure.surveymonkey.com/_resources/28183/23008183/bf361750-7418-458f-85a6-6c07333e4986.png)'. Based on model from the book, '**Continuous Delivery:** _Reliable Software Releases through Build, Test, and Deployment Automation_', by Jez Humble and David Farley, available on [Amazon](http://www.amazon.com/dp/0321601912).
 
-This JavaScript-based application displays a visual comparison, based on a radar graph, also known as a spider graph, of the six areas of practice of the CD Maturity Model, across multiple applications platforms, business units, or functional divisions within your SDLC.
+This JavaScript-based application displays a visual comparison, based on a radar graph, also known as a spider graph, of the six areas of practice of a Maturity Model, across multiple applications platforms, business units, or functional divisions within your SDLC.
 
-The Maturity Model Gap Analysis Tool is applicable to many discipline, not only Continuous Delivery. The application is built to be fully configurable and easily adaptable, by modifying the data file (`js/data/data_radar.js`). The default data file contains a sample data set, based on a fictions financial institution's gap analysis.
+The Maturity Model Gap Analysis Tool is applicable to many discipline, not only Continuous Delivery (the initial maturity model this tool was developed around). The application is built to be fully configurable and easily adaptable, by modifying the data file (`js/data/data_radar.js`). The default data file contains a sample data set, based on a fictions financial institution's gap analysis.
 
-[![CD Maturity Model - Gap Analysis Visualization Tool](https://github.com/boinger/maturitymodeler/blob/requirejs/images/CD_Maturity_Model_Video.jpg)](http://www.youtube.com/watch?v=YWGNw6VvKBc "CD Maturity Model - Gap Analysis Visualization Tool")
+[![Maturity Modeler - Gap Analysis Visualization Tool](https://github.com/boinger/maturitymodeler/blob/requirejs/images/CD_Maturity_Model_Video.jpg)](http://www.youtube.com/watch?v=YWGNw6VvKBc "Maturity Modeler - Gap Analysis Visualization Tool")
 
 <!-- [![CD Gap Analysis](https://github.com/boinger/maturitymodeler/blob/requirejs/images/CD_example_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/CD_example.png?raw=true) -->
 
@@ -28,19 +28,23 @@ The application is a browser-based tool, which uses the [D3.js](http://d3js.org/
 
 Update to the latest D3 by extracting the latest ZIP file (found at https://github.com/d3/d3/releases/latest) into the `js/d3` directory
 
-## RequireJS Optimization
+## RequireJS Unification
 
-Module-based project uses [RequireJS](http://requirejs.org/). After making any javascript or css changes, optimize the project using [RequireJS Optimizer](http://requirejs.org/docs/optimization.html). Optimizer combines related scripts together into build layers and minifies them via [UglifyJS](https://github.com/mishoo/UglifyJS) (the default). This project requires [Node.js](http://nodejs.org).
+Module-based project uses [RequireJS](http://requirejs.org/). After making any javascript or css changes, unify the project using [RequireJS Optimizer](http://requirejs.org/docs/optimization.html). Optimizer combines related scripts together into build layers. This project requires [Node.js](http://nodejs.org).
 
-## Build the Tool
+## Terser Optimization
 
-Running `./build.sh` will confirm/install requirejs, create a dist directory, copy appropriate files into place, then build the tool using nodejs.  If you're *sure* you already have requirejs installed and the dist directory created, you can run `build.sh fast` to skip those steps.
+Module-based project uses [Terser](https://github.com/terser/terser). After making any javascript changes, minify the project using Terser. Terser defaults to quick minification (which, for a project of this size, is probably fine) but you can be more aggressive/fancy by adjusting the `TERSER_OPTS` variable at the top of the build.sh script. This project requires [Node.js](http://nodejs.org).
+
+## Build Script
+
+Running `./build.sh` will confirm/install requirejs, create a dist directory, copy appropriate files into place, unify the javascript and css using RequireJS, then minify it using Terser.  If you're *sure* you already have requirejs installed and the dist directory created, you can run `build.sh fast` to skip those steps.
 
 [![Optimizing Project](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing.png?raw=true)
 
 ## Data-Driven Visualization
 
-Currently, the CD Maturity Model data is stored in the `js/data/data_radar.js` file, as an array of JavaScript object literals. It would be very easy to convert the project to use a data source, such as a static JSON or YAML file, or MongoDB database.
+Currently, the Maturity Modeler data is stored in the `js/data/data_radar.js` file, as an array of JavaScript object literals. It would be very easy to convert the project to use a data source, such as a static JSON or YAML file, or MongoDB database.
 
 ```javascript
 CATEGORIES = [
@@ -115,6 +119,9 @@ rm -rf dist/* \
   && cp -f js/require_2_3_6/require.min.js dist/ \
   && cp -f favicon.png dist/ \
   && node build/r_2_3_6/r.js -o build/build.js \
+  && node build/r_2_3_6/r.js -o build/build.js \
+  && terser dist/main-built.js ${TERSER_OPTS} > dist/main-built.min.js \
+  && mv dist/main-built.min.js dist/main-built.js \
   && node build/r_2_3_6/r.js -o cssIn=css/radar.css out=dist/main-built.css \
   && docker rm -f maturitymodeler \
   && docker build -t apache2 . \
@@ -127,7 +134,7 @@ This project now includes a second data file (`js/data/iac_radar.js`), based on 
 
 [![IaC Gap Analysis](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_example_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_example.png?raw=true)
 
-The CD Maturity Model can be easily adapted to the evolving [Infrastructure as Code (IaC) Maturity Model](https://programmaticponderings.com/2016/11/25/infrastructure-as-code-maturity-model/).
+The Maturity Modeler can be easily adapted to the evolving [Infrastructure as Code (IaC) Maturity Model](https://programmaticponderings.com/2016/11/25/infrastructure-as-code-maturity-model/).
 
 [![IaC Maturity Model](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_Maturity_Model%20v2_1.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_Maturity_Model%20v2_1.pdf)
 
