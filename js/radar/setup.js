@@ -53,6 +53,24 @@ define(["dataRadar", "d3", "./transform", "./radar"],
 
         //Tracks checkboxes
         checkboxes = [];
+        
+        // Update color indicators based on selected checkboxes
+        function updateColorIndicators() {
+            var allCheckboxes = document.getElementsByClassName("appCheckbox");
+            for (var i = 0; i < allCheckboxes.length; i++) {
+                var checkbox = allCheckboxes[i];
+                var colorIndicator = document.getElementById("color-" + checkbox.data);
+                if (colorIndicator) {
+                    if (checkbox.checked) {
+                        var seriesIndex = checkboxes.indexOf(checkbox.data);
+                        colorIndicator.style.backgroundColor = colorScale(seriesIndex);
+                        colorIndicator.style.visibility = "visible";
+                    } else {
+                        colorIndicator.style.visibility = "hidden";
+                    }
+                }
+            }
+        }
 
         //Options for the Radar chart, other than default
         config = {
@@ -63,110 +81,6 @@ define(["dataRadar", "d3", "./transform", "./radar"],
             ExtraWidthX: 650
         };
 
-        //Initiate legend
-        drawLegend = function() {
-            var legendOptions,
-                svg,
-                text,
-                legend;
-
-            legendOptions = transform.getLegendNames(checkboxes);
-
-            if (legendOptions === undefined || legendOptions.length === 0) {
-                // Remove legend SVG if no options
-                d3.select("#body").select(".legend-svg").remove();
-                return 0;
-            }
-
-            // Create or update separate SVG for legend, positioned inline
-            svg = d3.select("#body").selectAll(".legend-svg")
-                .data([null]);
-            
-            var svgEnter = svg.enter().append("svg")
-                .attr("class", "legend-svg")
-                .style("position", "absolute")
-                .style("left", (280 + config.w) + "px")  // Position to the right of chart
-                .style("top", "60px");
-                
-            svg = svg.merge(svgEnter)
-                .attr("width", 300)
-                .attr("height", config.h);
-
-            // Update or create title
-            var titleText = svg.selectAll(".title")
-                .data([dataRadar.legendTitle]);
-            
-            titleText.enter()
-                .append("text")
-                .attr("class", "title")
-                .attr("transform", "translate(90,0)")
-                .attr("x", config.w + 175 - 70)
-                .attr("y", 10)
-                .attr("font-size", "12px")
-                .attr("fill", "#404040")
-              .merge(titleText)
-                .text(function(d) { return d; });
-
-            // Update or create legend group
-            legend = svg.selectAll(".legend")
-                .data([null]);
-            
-            var legendEnter = legend.enter()
-                .append("g")
-                .attr("class", "legend");
-                
-            legend = legend.merge(legendEnter)
-                .attr("height", 100)
-                .attr("width", 200)
-                .attr("transform", "translate(90,20)");
-
-            // Update colour squares with proper enter/update/exit
-            // We need to match the colors to the series indices used in the chart
-            var legendData = legendOptions.map(function(name, i) {
-                // Find the actual index of this item in the checkboxes array
-                return {
-                    name: name,
-                    colorIndex: i  // This matches the series index in the chart
-                };
-            });
-            
-            var rects = legend.selectAll("rect")
-                .data(legendData);
-            
-            rects.exit().remove();
-            
-            rects.enter()
-                .append("rect")
-              .merge(rects)
-                .attr("x", config.w + 175 - 65)
-                .attr("y", function(d, i) {
-                    return i * 25;
-                })
-                .attr("width", 10)
-                .attr("height", 10)
-                .style("fill", function(d) {
-                    return colorScale(d.colorIndex);
-                });
-
-            // Update text next to squares with proper enter/update/exit
-            var texts = legend.selectAll("text")
-                .data(legendData);
-            
-            texts.exit().remove();
-            
-            texts.enter()
-                .append("text")
-              .merge(texts)
-                .attr("x", config.w + 175 - 52)
-                .attr("y", function(d, i) {
-                    return i * 25 + 9;
-                })
-                .attr("font-size", "11px")
-                .attr("fill", "#737373")
-                .text(function(d) {
-                    return d.name;
-                });
-        };
 
         createCheckbox = function(app, i) {
             var newCheckbox = document.createElement("input");
@@ -186,7 +100,6 @@ define(["dataRadar", "d3", "./transform", "./radar"],
                     }
                 }
                 radar.draw("#chart", transform.getSelectedData(checkboxes), config);
-                drawLegend();
             };
             return newCheckbox;
         };
@@ -194,20 +107,46 @@ define(["dataRadar", "d3", "./transform", "./radar"],
         createLabel = function(app, i) {
             var newLabel = document.createElement("label");
             newLabel.htmlFor = "app" + i;
+            newLabel.style.display = "inline-block";
+            newLabel.style.marginLeft = "5px";
             newLabel.appendChild(document.createTextNode(app));
             return newLabel;
         };
 
         createAppDiv = function(app, i) {
             var newDiv,
-                tempDataSet;
+                tempDataSet,
+                colorIndicator,
+                checkbox;
 
             newDiv = document.createElement("div");
             tempDataSet = transform.getSingleDataSet(app);
             if (tempDataSet === undefined) { // No data available
                 return newDiv;
             }
-            newDiv.appendChild(createCheckbox(app, i));
+            
+            // Create color indicator
+            colorIndicator = document.createElement("span");
+            colorIndicator.style.display = "inline-block";
+            colorIndicator.style.width = "12px";
+            colorIndicator.style.height = "12px";
+            colorIndicator.style.backgroundColor = colorScale(checkboxes.indexOf(i));
+            colorIndicator.style.marginRight = "5px";
+            colorIndicator.style.border = "1px solid #999";
+            colorIndicator.style.visibility = "hidden"; // Initially hidden
+            colorIndicator.id = "color-" + i;
+            
+            checkbox = createCheckbox(app, i);
+            
+            // Update checkbox onclick to show/hide color
+            var originalOnclick = checkbox.onclick;
+            checkbox.onclick = function(event) {
+                originalOnclick(event);
+                updateColorIndicators();
+            };
+            
+            newDiv.appendChild(colorIndicator);
+            newDiv.appendChild(checkbox);
             newDiv.appendChild(createLabel(app, i));
             newDiv.style.cursor = "pointer";
             newDiv.className = "appDiv";
@@ -217,7 +156,9 @@ define(["dataRadar", "d3", "./transform", "./radar"],
         createCatAvgsDiv = function() {
             var newDiv,
                 tempDataSet,
-                app;
+                app,
+                colorIndicator,
+                checkbox;
 
             newDiv = document.createElement("div");
             tempDataSet = transform.getCategoryAvgs();
@@ -225,7 +166,29 @@ define(["dataRadar", "d3", "./transform", "./radar"],
                 return newDiv;
             }
             app = tempDataSet[0][0].app;
-            newDiv.appendChild(createCheckbox(app, dataRadar.idAverageCategories));
+            
+            // Create color indicator for average
+            colorIndicator = document.createElement("span");
+            colorIndicator.style.display = "inline-block";
+            colorIndicator.style.width = "12px";
+            colorIndicator.style.height = "12px";
+            colorIndicator.style.backgroundColor = colorScale(0);
+            colorIndicator.style.marginRight = "5px";
+            colorIndicator.style.border = "1px solid #999";
+            colorIndicator.style.visibility = "hidden";
+            colorIndicator.id = "color-" + dataRadar.idAverageCategories;
+            
+            checkbox = createCheckbox(app, dataRadar.idAverageCategories);
+            
+            // Update checkbox onclick to show/hide color
+            var originalOnclick = checkbox.onclick;
+            checkbox.onclick = function(event) {
+                originalOnclick(event);
+                updateColorIndicators();
+            };
+            
+            newDiv.appendChild(colorIndicator);
+            newDiv.appendChild(checkbox);
             newDiv.appendChild(createLabel(app, dataRadar.idAverageCategories));
             newDiv.style.cursor = "pointer";
             newDiv.className = "appDiv";
@@ -262,7 +225,6 @@ define(["dataRadar", "d3", "./transform", "./radar"],
                 checkboxes = [];
                 checkAll();
                 radar.draw("#chart", transform.getSelectedData(checkboxes), config);
-                drawLegend();
             });
             return newDiv;
         };
@@ -275,7 +237,6 @@ define(["dataRadar", "d3", "./transform", "./radar"],
                 checkboxes = [];
                 checkNone();
                 radar.draw("#chart", transform.getSelectedData(checkboxes), config);
-                drawLegend();
             });
             return newDiv;
         };
@@ -352,7 +313,7 @@ define(["dataRadar", "d3", "./transform", "./radar"],
             attachDivs();
             document.getElementById("app100").checked = true;
             checkboxes.push(dataRadar.idAverageCategories);
-            drawLegend();
+            updateColorIndicators(); // Show initial color
             createModelPopup();
             createModelImg();
             createRefLink();
