@@ -157,7 +157,7 @@ import radar from './radar.js';
             return newDiv;
         };
 
-        createCatAvgsDiv = function() {
+        createCatAvgsDiv = function(dataRadar) {
             var newDiv,
                 tempDataSet,
                 app,
@@ -176,13 +176,13 @@ import radar from './radar.js';
             colorIndicator.style.display = "inline-block";
             colorIndicator.style.width = "12px";
             colorIndicator.style.height = "12px";
-            colorIndicator.style.backgroundColor = colorScale(dataRadar.idAverageCategories);
+            colorIndicator.style.backgroundColor = colorScale(dataRadar?.idAverageCategories || 100);
             colorIndicator.style.marginRight = "5px";
             colorIndicator.style.border = "1px solid #999";
             colorIndicator.style.visibility = "hidden";
-            colorIndicator.id = "color-" + dataRadar.idAverageCategories;
+            colorIndicator.id = "color-" + (dataRadar?.idAverageCategories || 100);
             
-            checkbox = createCheckbox(app, dataRadar.idAverageCategories);
+            checkbox = createCheckbox(app, dataRadar?.idAverageCategories || 100);
             
             // Update checkbox onclick to show/hide color
             var originalOnclick = checkbox.onclick;
@@ -193,7 +193,7 @@ import radar from './radar.js';
             
             newDiv.appendChild(colorIndicator);
             newDiv.appendChild(checkbox);
-            newDiv.appendChild(createLabel(app, dataRadar.idAverageCategories));
+            newDiv.appendChild(createLabel(app, dataRadar?.idAverageCategories || 100));
             newDiv.style.cursor = "pointer";
             newDiv.className = "appDiv";
             return newDiv;
@@ -247,14 +247,14 @@ import radar from './radar.js';
             return newDiv;
         };
 
-        createTitleDiv = function() {
+        createTitleDiv = function(dataRadar) {
             var newDiv = document.createElement("div");
-            newDiv.innerHTML = dataRadar.legendTitle;
+            newDiv.innerHTML = dataRadar?.legendTitle || 'Application Platforms';
             newDiv.className = "titleDiv";
             return newDiv;
         };
 
-        attachDivs = function() {
+        attachDivs = function(dataRadar) {
             var appNames,
                 arrayLength,
                 i;
@@ -262,13 +262,13 @@ import radar from './radar.js';
             appNames = transform.getAppNames();
             arrayLength = appNames.length;
             document.getElementById("apps")
-                .appendChild(createTitleDiv());
+                .appendChild(createTitleDiv(dataRadar));
             for (i = 0; i < arrayLength; i++) {
                 document.getElementById("apps")
                     .appendChild(createAppDiv(appNames[i], i));
             }
             document.getElementById("apps")
-                .appendChild(createCatAvgsDiv());
+                .appendChild(createCatAvgsDiv(dataRadar));
             document.getElementById("apps")
                 .appendChild(createAllAppsDiv());
             document.getElementById("apps")
@@ -327,7 +327,7 @@ import radar from './radar.js';
                 // Initialize the page with loaded data
                 document.getElementById("title").innerHTML = dataRadar.pageTitle;
                 radar.draw("#chart", transform.getCategoryAvgs(), config);
-                attachDivs();
+                attachDivs(dataRadar);
                 document.getElementById("app100").checked = true;
                 checkboxes.push(dataRadar.idAverageCategories);
                 updateColorIndicators(); // Show initial color
