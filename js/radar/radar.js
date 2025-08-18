@@ -23,6 +23,10 @@
 define(["dataRadar", "d3", "./transform"],
     function(dataRadar, d3, transform) {
         "use strict";
+        
+        // Shared color scale instance for consistency across modules
+        var sharedColorScale = d3.scaleOrdinal(d3.schemeCategory10);
+        
         var draw = function(id, d, options) {
             var cfg,
                 series,
@@ -403,9 +407,6 @@ define(["dataRadar", "d3", "./transform"],
                 });
             }
         }
-
-        // Shared color scale instance for consistency across modules
-        var sharedColorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
         return {
             draw: function(id, d, options) {

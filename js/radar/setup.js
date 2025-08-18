@@ -43,7 +43,13 @@ define(["dataRadar", "d3", "./transform", "./radar"],
             createRefLink,
             initializePage;
 
-        colorScale = radar.getColorScale();
+        // Get color scale from radar module or create fallback
+        try {
+            colorScale = radar.getColorScale();
+        } catch (e) {
+            console.error("Failed to get color scale from radar module:", e);
+            colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+        }
 
         //Tracks checkboxes
         checkboxes = [];
