@@ -167,52 +167,90 @@ define(["dataRadar", "d3", "./transform"],
             total = allAxis.length;
             radius = cfg.factor * Math.min(cfg.w / 2, cfg.h / 2);
             format = d3.format("d"); // format axis labels as numbers not '%'
-            d3.select(id).select("svg").remove();
-
-            g = d3.select(id)
-                .append("svg")
+            
+            // Implement proper enter/update/exit pattern for SVG
+            var svg = d3.select(id).selectAll("svg")
+                .data([null]); // Use single element array for SVG
+            
+            var svgEnter = svg.enter().append("svg");
+            svg = svg.merge(svgEnter)
                 .attr("width", cfg.w + cfg.ExtraWidthX)
-                .attr("height", cfg.h + cfg.ExtraWidthY)
-                .append("g")
+                .attr("height", cfg.h + cfg.ExtraWidthY);
+
+            var gEnter = svgEnter.append("g");
+            g = svg.select("g").merge(gEnter)
                 .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
 
-            //Circular segments
+            //Circular segments - create grid data
+            var gridData = [];
             for (j = 0; j < cfg.levels; j++) {
                 levelFactor = cfg.factor * radius * ((j + 1) / cfg.levels);
-                g.selectAll(".grid-lines")
-                    .data(allAxis)
-                    .enter()
-                    .append("line")
-                    .attr("x1", calcX1)
-                    .attr("y1", calcY1)
-                    .attr("x2", calcX2)
-                    .attr("y2", calcY2)
-                    .attr("class", "grid-line")
-                    .style("stroke", "#999999")
-                    .style("stroke-opacity", "0.75")
-                    .style("stroke-width", ".5px")
-                    .attr("transform", "translate(" + (cfg.w / 2 - levelFactor) + ", " +
-                        (cfg.h / 2 - levelFactor) + ")");
+                for (var k = 0; k < allAxis.length; k++) {
+                    gridData.push({
+                        level: j,
+                        axis: k,
+                        levelFactor: levelFactor,
+                        x1: levelFactor * (1 - cfg.factor * Math.sin(k * cfg.radians / total)),
+                        y1: levelFactor * (1 - cfg.factor * Math.cos(k * cfg.radians / total)),
+                        x2: levelFactor * (1 - cfg.factor * Math.sin((k + 1) * cfg.radians / total)),
+                        y2: levelFactor * (1 - cfg.factor * Math.cos((k + 1) * cfg.radians / total))
+                    });
+                }
             }
 
+            // Proper enter/update/exit for grid lines
+            var gridLines = g.selectAll(".grid-line")
+                .data(gridData);
+            
+            gridLines.exit().remove();
+            
+            var gridLinesEnter = gridLines.enter().append("line")
+                .attr("class", "grid-line");
+                
+            gridLines = gridLines.merge(gridLinesEnter)
+                .attr("x1", function(d) { return d.x1; })
+                .attr("y1", function(d) { return d.y1; })
+                .attr("x2", function(d) { return d.x2; })
+                .attr("y2", function(d) { return d.y2; })
+                .style("stroke", "#999999")
+                .style("stroke-opacity", "0.75")
+                .style("stroke-width", ".5px")
+                .attr("transform", function(d) {
+                    return "translate(" + (cfg.w / 2 - d.levelFactor) + ", " + (cfg.h / 2 - d.levelFactor) + ")";
+                });
+
             if (d[0].length > 0) { //Check if data was supplied
-                //Text indicating at what # or % each level is
+                //Text indicating at what # or % each level is - create level label data
+                var levelLabelData = [];
                 for (j = 0; j < cfg.levels; j++) {
                     levelFactor = cfg.factor * radius * ((j + 1) / cfg.levels);
-                    g.selectAll(".level-labels")
-                        .data([1])
-                        .enter()
-                        .append("text")
-                        .attr("x", calcX)
-                        .attr("y", calcY)
-                        .attr("class", "level-label")
-                        .style("font-family", "sans-serif")
-                        .style("font-size", "11px")
-                        .attr("transform", "translate(" + (cfg.w / 2 - levelFactor + cfg.ToRight) + ", " +
-                            (cfg.h / 2 - levelFactor) + ")")
-                        .attr("fill", "#999999")
-                        .text(format(transform.transformScaleReverse(((j + 1) * cfg.maxValue / cfg.levels))));
+                    levelLabelData.push({
+                        level: j,
+                        levelFactor: levelFactor,
+                        x: levelFactor * (1 - cfg.factor * Math.sin(0)),
+                        y: levelFactor * (1 - cfg.factor * Math.cos(0)),
+                        transform: "translate(" + (cfg.w / 2 - levelFactor + cfg.ToRight) + ", " + (cfg.h / 2 - levelFactor) + ")",
+                        text: format(transform.transformScaleReverse(((j + 1) * cfg.maxValue / cfg.levels)))
+                    });
                 }
+
+                // Proper enter/update/exit for level labels
+                var levelLabels = g.selectAll(".level-label")
+                    .data(levelLabelData);
+                
+                levelLabels.exit().remove();
+                
+                var levelLabelsEnter = levelLabels.enter().append("text")
+                    .attr("class", "level-label");
+                    
+                levelLabels = levelLabels.merge(levelLabelsEnter)
+                    .attr("x", function(d) { return d.x; })
+                    .attr("y", function(d) { return d.y; })
+                    .style("font-family", "sans-serif")
+                    .style("font-size", "11px")
+                    .attr("transform", function(d) { return d.transform; })
+                    .attr("fill", "#999999")
+                    .text(function(d) { return d.text; });
 
                 series = 0;
 
