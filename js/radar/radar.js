@@ -311,6 +311,7 @@ define(["dataRadar", "d3", "./transform"],
                 d.forEach(function(y, x) {
                     var polygonCoordinates = getPolygonCoordinates(y);
                     g.append("polygon")
+                        .datum(polygonCoordinates)
                         .attr("class", "radar-chart-series" + series)
                         .style("stroke-width", "2px")
                         .style("stroke", cfg.color(series))
@@ -321,7 +322,6 @@ define(["dataRadar", "d3", "./transform"],
                             }
                             return str;
                         })
-                        .datum(polygonCoordinates)
                         .style("fill", cfg.color(series))
                         .style("fill-opacity", cfg.opacityArea)
                         .on("mouseover", function(event, d) {
