@@ -49,3 +49,8 @@ crashlytics-build.properties
 
 js/data/data_actual.js
 **.DS_Store
+# Claude Code project files
+CLAUDE.md
+
+# Aider project files
+.aider*
