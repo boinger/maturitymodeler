@@ -300,13 +300,13 @@ define(["dataRadar", "d3", "./transform"],
                     .style("font-family", "sans-serif")
                     .style("font-size", "13px");
 
+                // Remove all existing polygons first
+                g.selectAll("polygon").remove();
+                
                 //Draws polygons
                 d.forEach(function(y, x) {
                     var polygonCoordinates = getPolygonCoordinates(y);
-                    g.selectAll(".radar-area")
-                        .data([polygonCoordinates])
-                        .enter()
-                        .append("polygon")
+                    g.append("polygon")
                         .attr("class", "radar-chart-series" + series)
                         .style("stroke-width", "2px")
                         .style("stroke", cfg.color(series))
@@ -317,9 +317,8 @@ define(["dataRadar", "d3", "./transform"],
                             }
                             return str;
                         })
-                        .style("fill", function(d, i) {
-                            return cfg.color(series);
-                        })
+                        .datum(polygonCoordinates)
+                        .style("fill", cfg.color(series))
                         .style("fill-opacity", cfg.opacityArea)
                         .on("mouseover", function(event, d) {
                             z = "polygon." + d3.select(this).attr("class");
@@ -341,10 +340,14 @@ define(["dataRadar", "d3", "./transform"],
                     series++;
                 });
                 series = 0;
+                // Remove all existing circles first
+                g.selectAll("circle").remove();
+                
                 //Draws circles at each of the polygon's vertex (vertices)
                 d.forEach(function(y, x) {
-                    g.selectAll(".data-points")
-                        .data(y).enter()
+                    g.selectAll(".data-points-" + series)
+                        .data(y)
+                        .enter()
                         .append("circle")
                         .attr("class", "radar-chart-series" + series)
                         .attr("r", cfg.radius)

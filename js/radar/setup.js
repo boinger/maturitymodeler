@@ -67,20 +67,21 @@ define(["dataRadar", "d3", "./transform", "./radar"],
             legendOptions = transform.getLegendNames(checkboxes);
 
             if (legendOptions === undefined || legendOptions.length === 0) {
-                // Remove legend if no options
-                d3.select("#body").selectAll("svg").each(function() {
-                    d3.select(this).select(".legend").remove();
-                    d3.select(this).select(".title").remove();
-                });
+                // Remove legend SVG if no options
+                d3.select("#body").select(".legend-svg").remove();
                 return 0;
             }
 
-            // Get the first SVG (the radar chart SVG)
-            svg = d3.select("#body").select("svg");
+            // Create or update separate SVG for legend
+            svg = d3.select("#body").selectAll(".legend-svg")
+                .data([null]);
             
-            if (svg.empty()) {
-                return 0; // No SVG to attach legend to
-            }
+            var svgEnter = svg.enter().append("svg")
+                .attr("class", "legend-svg");
+                
+            svg = svg.merge(svgEnter)
+                .attr("width", config.w + 500)
+                .attr("height", config.h);
 
             // Update or create title
             var titleText = svg.selectAll(".title")
