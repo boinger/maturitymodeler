@@ -146,7 +146,7 @@ define(["dataRadar", "d3", "./transform"],
                 g.selectAll(".levels")
                     .data(allAxis)
                     .enter()
-                    .append("svg:line")
+                    .append("line")
                     .attr("x1", calcX1)
                     .attr("y1", calcY1)
                     .attr("x2", calcX2)
@@ -166,7 +166,7 @@ define(["dataRadar", "d3", "./transform"],
                     g.selectAll(".levels")
                         .data([1])
                         .enter()
-                        .append("svg:text")
+                        .append("text")
                         .attr("x", calcX)
                         .attr("y", calcY)
                         .attr("class", "legend")
@@ -271,7 +271,7 @@ define(["dataRadar", "d3", "./transform"],
                 d.forEach(function(y, x) {
                     g.selectAll(".nodes")
                         .data(y).enter()
-                        .append("svg:circle")
+                        .append("circle")
                         .attr("class", "radar-chart-series" + series)
                         .attr("r", cfg.radius)
                         .attr("alt", function(j) {
