@@ -42,6 +42,24 @@ define(["dataRadar", "d3", "./transform"],
                 newX,
                 newY;
 
+            // Input validation
+            if (!id || !d) {
+                console.error("D3 Radar Chart: Missing required parameters (id, data)");
+                return;
+            }
+
+            if (!Array.isArray(d) || d.length === 0) {
+                console.warn("D3 Radar Chart: Data must be a non-empty array");
+                return;
+            }
+
+            // Validate container exists
+            var container = d3.select(id);
+            if (container.empty()) {
+                console.error("D3 Radar Chart: Container element not found:", id);
+                return;
+            }
+
             // Values can be overridden from setup.config object passed to draw.options param
             cfg = {
                 radius: 5,
@@ -88,8 +106,16 @@ define(["dataRadar", "d3", "./transform"],
 
             // Calculate coordinates for data points
             function calculateDataCoordinates(dataPoint, index) {
+                if (!dataPoint || typeof dataPoint.value === 'undefined') {
+                    console.warn("D3 Radar Chart: Invalid data point, using 0");
+                    return [cfg.w / 2, cfg.h / 2];
+                }
                 var value = Math.max(dataPoint.value, 0);
                 var normalizedValue = parseFloat(value) / cfg.maxValue;
+                if (isNaN(normalizedValue)) {
+                    console.warn("D3 Radar Chart: Invalid numeric value, using 0");
+                    normalizedValue = 0;
+                }
                 return [
                     cfg.w / 2 * (1 - normalizedValue * cfg.factor * Math.sin(index * cfg.radians / total)),
                     cfg.h / 2 * (1 - normalizedValue * cfg.factor * Math.cos(index * cfg.radians / total))
@@ -124,7 +150,17 @@ define(["dataRadar", "d3", "./transform"],
                 return dataRadar.categories[0];
             }
 
+            // Validate data structure
+            if (!d[0] || !Array.isArray(d[0])) {
+                console.error("D3 Radar Chart: Invalid data structure - expected array of arrays");
+                return;
+            }
+
             allAxis = (d[0].map(function(i, j) {
+                if (!i || typeof i.axis === 'undefined') {
+                    console.warn("D3 Radar Chart: Missing axis property in data point", j);
+                    return "Unknown Axis " + j;
+                }
                 return i.axis;
             }));
 
