@@ -86,6 +86,23 @@ define(["dataRadar", "d3", "./transform"],
                 return levelFactor * (1 - cfg.factor * Math.cos((i + 1) * cfg.radians / total));
             }
 
+            // Calculate coordinates for data points
+            function calculateDataCoordinates(dataPoint, index) {
+                var value = Math.max(dataPoint.value, 0);
+                var normalizedValue = parseFloat(value) / cfg.maxValue;
+                return [
+                    cfg.w / 2 * (1 - normalizedValue * cfg.factor * Math.sin(index * cfg.radians / total)),
+                    cfg.h / 2 * (1 - normalizedValue * cfg.factor * Math.cos(index * cfg.radians / total))
+                ];
+            }
+
+            // Convert data series to polygon coordinates
+            function getPolygonCoordinates(dataSeries) {
+                var coordinates = dataSeries.map(calculateDataCoordinates);
+                coordinates.push(coordinates[0]); // Close the polygon
+                return coordinates;
+            }
+
             // Override values from radar.cfg by setup.config object, passed to draw.options param
             if (options !== "undefined") {
                 for (i in options) {
@@ -211,19 +228,9 @@ define(["dataRadar", "d3", "./transform"],
 
                 //Draws polygons
                 d.forEach(function(y, x) {
-                    dataValues = [];
-                    g.selectAll(".nodes")
-                        .data(y, function(j, i) {
-                            dataValues.push([
-                                cfg.w / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) *
-                                    cfg.factor * Math.sin(i * cfg.radians / total)),
-                                cfg.h / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) *
-                                    cfg.factor * Math.cos(i * cfg.radians / total))
-                            ]);
-                        });
-                    dataValues.push(dataValues[0]);
+                    var polygonCoordinates = getPolygonCoordinates(y);
                     g.selectAll(".area")
-                        .data([dataValues])
+                        .data([polygonCoordinates])
                         .enter()
                         .append("polygon")
                         .attr("class", "radar-chart-series" + series)
@@ -271,18 +278,12 @@ define(["dataRadar", "d3", "./transform"],
                             return Math.max(j.value, 0);
                         })
                         .attr("cx", function(j, i) {
-                            dataValues.push([
-                                cfg.w / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) *
-                                    cfg.factor * Math.sin(i * cfg.radians / total)),
-                                cfg.h / 2 * (1 - (parseFloat(Math.max(j.value, 0)) / cfg.maxValue) *
-                                    cfg.factor * Math.cos(i * cfg.radians / total))
-                            ]);
-                            return cfg.w / 2 * (1 - (Math.max(j.value, 0) / cfg.maxValue) * cfg.factor *
-                                Math.sin(i * cfg.radians / total));
+                            var coords = calculateDataCoordinates(j, i);
+                            return coords[0];
                         })
                         .attr("cy", function(j, i) {
-                            return cfg.h / 2 * (1 - (Math.max(j.value, 0) / cfg.maxValue) * cfg.factor *
-                                Math.cos(i * cfg.radians / total));
+                            var coords = calculateDataCoordinates(j, i);
+                            return coords[1];
                         })
                         .attr("data-id", function(j) {
                             return j.axis;
