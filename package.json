@@ -1,0 +1,36 @@
+{
+  "name": "maturity-modeler",
+  "version": "1.0.0",
+  "description": "JavaScript-based gap analysis visualization tool for maturity models",
+  "main": "app.js",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "build": "./build.sh",
+    "dev": "./build.sh fast"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "@jest/globals": "^29.7.0",
+    "d3": "^7.9.0"
+  },
+  "type": "module",
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "js/**/*.js",
+      "!js/d3/**",
+      "!js/require_2_3_6/**",
+      "!dist/**"
+    ]
+  },
+  "keywords": ["d3", "visualization", "maturity-model", "radar-chart"],
+  "author": "Jeff Vier",
+  "license": "MIT"
+}
