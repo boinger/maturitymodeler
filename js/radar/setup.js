@@ -111,8 +111,17 @@ define(["dataRadar", "d3", "./transform", "./radar"],
                 .attr("transform", "translate(90,20)");
 
             // Update colour squares with proper enter/update/exit
+            // We need to match the colors to the series indices used in the chart
+            var legendData = legendOptions.map(function(name, i) {
+                // Find the actual index of this item in the checkboxes array
+                return {
+                    name: name,
+                    colorIndex: i  // This matches the series index in the chart
+                };
+            });
+            
             var rects = legend.selectAll("rect")
-                .data(legendOptions);
+                .data(legendData);
             
             rects.exit().remove();
             
@@ -125,13 +134,13 @@ define(["dataRadar", "d3", "./transform", "./radar"],
                 })
                 .attr("width", 10)
                 .attr("height", 10)
-                .style("fill", function(d, i) {
-                    return colorScale(i);
+                .style("fill", function(d) {
+                    return colorScale(d.colorIndex);
                 });
 
             // Update text next to squares with proper enter/update/exit
             var texts = legend.selectAll("text")
-                .data(legendOptions);
+                .data(legendData);
             
             texts.exit().remove();
             
@@ -145,7 +154,7 @@ define(["dataRadar", "d3", "./transform", "./radar"],
                 .attr("font-size", "11px")
                 .attr("fill", "#737373")
                 .text(function(d) {
-                    return d;
+                    return d.name;
                 });
         };
 

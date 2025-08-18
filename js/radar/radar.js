@@ -321,7 +321,7 @@ define(["dataRadar", "d3", "./transform"],
                             return cfg.color(series);
                         })
                         .style("fill-opacity", cfg.opacityArea)
-                        .on("mouseover", function(d) {
+                        .on("mouseover", function(event, d) {
                             z = "polygon." + d3.select(this).attr("class");
                             g.selectAll("polygon")
                                 .transition()
@@ -363,7 +363,7 @@ define(["dataRadar", "d3", "./transform"],
                             return j.axis;
                         })
                         .style("fill", cfg.color(series)).style("fill-opacity", 0.9)
-                        .on("mouseover", function(d) {
+                        .on("mouseover", function(event, d) {
                             newX = parseFloat(d3.select(this).attr("cx")) - 10;
                             newY = parseFloat(d3.select(this).attr("cy")) - 5;
 
