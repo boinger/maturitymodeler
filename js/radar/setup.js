@@ -344,15 +344,31 @@ define(["dataRadar", "d3", "./transform", "./radar"],
         };
 
         initializePage = function() {
-            document.getElementById("title").innerHTML = dataRadar.pageTitle;
-            radar.draw("#chart", transform.getCategoryAvgs(), config);
-            attachDivs();
-            document.getElementById("app100").checked = true;
-            checkboxes.push(dataRadar.idAverageCategories);
-            drawLegend();
-            createModelPopup();
-            createModelImg();
-            createRefLink();
+            try {
+                console.log("Starting initializePage");
+                document.getElementById("title").innerHTML = dataRadar.pageTitle;
+                console.log("Title set");
+                radar.draw("#chart", transform.getCategoryAvgs(), config);
+                console.log("Radar drawn");
+                attachDivs();
+                console.log("Divs attached");
+                document.getElementById("app100").checked = true;
+                checkboxes.push(dataRadar.idAverageCategories);
+                drawLegend();
+                console.log("Legend drawn");
+                createModelPopup();
+                createModelImg();
+                createRefLink();
+                console.log("Initialization complete");
+            } catch (e) {
+                console.error("Error during initialization:", e);
+                // Try to at least create the menu even if radar fails
+                try {
+                    attachDivs();
+                } catch (e2) {
+                    console.error("Failed to attach divs:", e2);
+                }
+            }
         };
 
         initializePage();
