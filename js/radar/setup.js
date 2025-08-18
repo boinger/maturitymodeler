@@ -78,15 +78,18 @@ define(["dataRadar", "d3", "./transform", "./radar"],
                 return 0;
             }
 
-            // Create or update separate SVG for legend
+            // Create or update separate SVG for legend, positioned inline
             svg = d3.select("#body").selectAll(".legend-svg")
                 .data([null]);
             
             var svgEnter = svg.enter().append("svg")
-                .attr("class", "legend-svg");
+                .attr("class", "legend-svg")
+                .style("position", "absolute")
+                .style("left", (280 + config.w) + "px")  // Position to the right of chart
+                .style("top", "60px");
                 
             svg = svg.merge(svgEnter)
-                .attr("width", config.w + 500)
+                .attr("width", 300)
                 .attr("height", config.h);
 
             // Update or create title
@@ -344,31 +347,15 @@ define(["dataRadar", "d3", "./transform", "./radar"],
         };
 
         initializePage = function() {
-            try {
-                console.log("Starting initializePage");
-                document.getElementById("title").innerHTML = dataRadar.pageTitle;
-                console.log("Title set");
-                radar.draw("#chart", transform.getCategoryAvgs(), config);
-                console.log("Radar drawn");
-                attachDivs();
-                console.log("Divs attached");
-                document.getElementById("app100").checked = true;
-                checkboxes.push(dataRadar.idAverageCategories);
-                drawLegend();
-                console.log("Legend drawn");
-                createModelPopup();
-                createModelImg();
-                createRefLink();
-                console.log("Initialization complete");
-            } catch (e) {
-                console.error("Error during initialization:", e);
-                // Try to at least create the menu even if radar fails
-                try {
-                    attachDivs();
-                } catch (e2) {
-                    console.error("Failed to attach divs:", e2);
-                }
-            }
+            document.getElementById("title").innerHTML = dataRadar.pageTitle;
+            radar.draw("#chart", transform.getCategoryAvgs(), config);
+            attachDivs();
+            document.getElementById("app100").checked = true;
+            checkboxes.push(dataRadar.idAverageCategories);
+            drawLegend();
+            createModelPopup();
+            createModelImg();
+            createRefLink();
         };
 
         initializePage();
