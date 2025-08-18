@@ -23,7 +23,7 @@
 
 /*global document, d3 */
 /*jslint browser: true, plusplus: true, unparam: true */
-import dataRadar from '../data/data_radar.js';
+import dataLoader from '../utils/dataLoader.js';
 // D3 library needs to be loaded as UMD, import will be resolved by bundler
 import '../d3/d3.js';
 import transform from './transform.js';
@@ -277,7 +277,7 @@ import radar from './radar.js';
 
         createModelPopup = function() {
             var newPara = document.createElement("p");
-            newPara.innerHTML = dataRadar.referenceLinkTitle1;
+            newPara.innerHTML = window.currentDataRadar?.referenceLinkTitle1 || 'Model Info';
             newPara.className = "footerLinks";
             newPara.addEventListener("click", function() {
                 if (document.getElementById("model").className === "showModel") {
@@ -307,25 +307,50 @@ import radar from './radar.js';
         createRefLink = function() {
             var newLink = document.createElement("a");
             newLink.className = "footerLinks";
-            newLink.setAttribute("href", dataRadar.referenceLink2);
-            newLink.innerHTML = dataRadar.referenceLinkTitle2;
+            newLink.setAttribute("href", window.currentDataRadar?.referenceLink2 || '#');
+            newLink.innerHTML = window.currentDataRadar?.referenceLinkTitle2 || 'Reference';
             document.getElementById("footer")
                 .appendChild(newLink);
         };
 
-        initializePage = function() {
-            document.getElementById("title").innerHTML = dataRadar.pageTitle;
-            radar.draw("#chart", transform.getCategoryAvgs(), config);
-            attachDivs();
-            document.getElementById("app100").checked = true;
-            checkboxes.push(dataRadar.idAverageCategories);
-            updateColorIndicators(); // Show initial color
-            createModelPopup();
-            createModelImg();
-            createRefLink();
+        initializePage = async function() {
+            try {
+                // Load data with error handling and fallbacks
+                const dataRadar = await dataLoader.loadDataWithFallback();
+                
+                // Store globally for reference functions
+                window.currentDataRadar = dataRadar;
+                
+                // Update transform module with loaded data
+                transform.setDataSource(dataRadar);
+                
+                // Initialize the page with loaded data
+                document.getElementById("title").innerHTML = dataRadar.pageTitle;
+                radar.draw("#chart", transform.getCategoryAvgs(), config);
+                attachDivs();
+                document.getElementById("app100").checked = true;
+                checkboxes.push(dataRadar.idAverageCategories);
+                updateColorIndicators(); // Show initial color
+                createModelPopup();
+                createModelImg();
+                createRefLink();
+                
+                // Show warning if using fallback data
+                const loadingState = dataLoader.getLoadingState();
+                if (loadingState.usingFallback) {
+                    console.warn('Application loaded with demo data due to loading errors');
+                }
+                
+            } catch (error) {
+                console.error('Critical initialization error:', error);
+                // Error UI is already shown by dataLoader
+            }
         };
 
-        initializePage();
+        // Initialize asynchronously
+        initializePage().catch(error => {
+            console.error('Failed to initialize application:', error);
+        });
 
 // ES Module exports (setup module initializes on import)
 export default { initializePage };

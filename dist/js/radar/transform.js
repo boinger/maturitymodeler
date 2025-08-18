@@ -23,6 +23,9 @@ import dataRadar from '../data/data_radar.js';
 
 "use strict";
 
+    // Current data source - will be set dynamically
+    var currentDataRadar = dataRadar;
+
     var maturityData,
         sortAppData,
         sortMaturityData,
@@ -38,7 +41,20 @@ import dataRadar from '../data/data_radar.js';
         getSingleDataSet;
 
 
-    maturityData = JSON.parse(JSON.stringify(dataRadar.maturityData));
+    maturityData = JSON.parse(JSON.stringify(currentDataRadar.maturityData));
+    
+    // Function to set new data source
+    var setDataSource = function(newDataRadar) {
+        try {
+            currentDataRadar = newDataRadar;
+            maturityData = JSON.parse(JSON.stringify(newDataRadar.maturityData));
+            console.log('Transform module updated with new data source');
+            return true;
+        } catch (error) {
+            console.error('Failed to set data source:', error);
+            return false;
+        }
+    };
 
     getAppNames = function() {
         var applications = [],
@@ -81,10 +97,10 @@ import dataRadar from '../data/data_radar.js';
             return a.toLowerCase().localeCompare(b.toLowerCase());
         });
 
-        index = data.indexOf(dataRadar.averageTitle);
+        index = data.indexOf(currentDataRadar ? currentDataRadar.averageTitle : 'Average');
         if (index > -1 && data.length > 1) {
             data.splice(index, 1);
-            data.push(dataRadar.averageTitle);
+            data.push(currentDataRadar ? currentDataRadar.averageTitle : 'Average');
         }
 
         return data;
@@ -114,8 +130,8 @@ import dataRadar from '../data/data_radar.js';
             return applications;
         }
         for (i = 0; i < currentSelections.length; i++) {
-            if (currentSelections[i] === dataRadar.idAverageCategories) { // Average selected
-                applications.push(dataRadar.averageTitle);
+            if (currentSelections[i] === currentDataRadar.idAverageCategories) { // Average selected
+                applications.push(currentDataRadar.averageTitle);
             } else {
                 applications.push(dataTransformed[currentSelections[i]][0].app);
             }
@@ -145,16 +161,16 @@ import dataRadar from '../data/data_radar.js';
             i;
 
         if (currentSelections.length === 0) { // No data available
-            return dataRadar.emptyDataSet;
+            return currentDataRadar.emptyDataSet;
         }
         currentSelections = sortNumbers(currentSelections);
         for (i = 0; i < currentSelections.length; i++) {
             var dataSet;
-            if (currentSelections[i] === dataRadar.idAverageCategories) {
+            if (currentSelections[i] === currentDataRadar.idAverageCategories) {
                 dataSet = getCategoryAvgs()[0];
                 // Add original index to the data for color consistency
                 dataSet = dataSet.map(function(item) {
-                    return Object.assign({}, item, {originalIndex: dataRadar.idAverageCategories});
+                    return Object.assign({}, item, {originalIndex: currentDataRadar.idAverageCategories});
                 });
             } else {
                 dataSet = dataTransformed[currentSelections[i]];
@@ -193,6 +209,11 @@ import dataRadar from '../data/data_radar.js';
     // Create array of categories (aka axis) objects containing average score,
     // as a percentage, across all applications
     getCategoryAvgs = function() {
+        if (!currentDataRadar || !maturityData || !maturityData[0]) {
+            console.warn('Data not available for getCategoryAvgs, returning empty result');
+            return [[]];
+        }
+        
         var dataAverage = [],
             appAverage = {},
             x = 0,
@@ -203,8 +224,8 @@ import dataRadar from '../data/data_radar.js';
             for (i = 0; i < maturityData.length; i++) {
                 x = x + transformScale(maturityData[i][j].value);
             }
-            appAverage.app = dataRadar.averageTitle;
-            appAverage.axis = dataRadar.categories[j];
+            appAverage.app = currentDataRadar.averageTitle || 'Average';
+            appAverage.axis = currentDataRadar.categories ? currentDataRadar.categories[j] : `Category ${j + 1}`;
             appAverage.value = Math.round(x / maturityData.length);
             dataAverage.push(appAverage);
             x = 0;
@@ -232,7 +253,8 @@ export {
     transformScaleReverse,
     getLegendNames,
     getSelectedData,
-    getSingleDataSet
+    getSingleDataSet,
+    setDataSource
 };
 
 // Default export for compatibility
@@ -253,5 +275,8 @@ export default {
     },
     getSingleDataSet: function(appName) {
         return getSingleDataSet(appName);
+    },
+    setDataSource: function(newDataRadar) {
+        return setDataSource(newDataRadar);
     }
 };
