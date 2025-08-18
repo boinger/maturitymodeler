@@ -76,7 +76,7 @@ define(["dataRadar", "d3", "./transform"],
                 TranslateY: 30,
                 ExtraWidthX: 100,
                 ExtraWidthY: 100,
-                color: d3.scaleOrdinal(d3.schemeCategory10)
+                color: sharedColorScale
             };
 
             // Functions used by this method
@@ -363,9 +363,15 @@ define(["dataRadar", "d3", "./transform"],
             }
         }
 
+        // Shared color scale instance for consistency across modules
+        var sharedColorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
         return {
             draw: function(id, d, options) {
                 return draw(id, d, options);
+            },
+            getColorScale: function() {
+                return sharedColorScale;
             }
         };
     });

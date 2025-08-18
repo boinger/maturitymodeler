@@ -43,7 +43,7 @@ define(["dataRadar", "d3", "./transform", "./radar"],
             createRefLink,
             initializePage;
 
-        colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+        colorScale = radar.getColorScale();
 
         //Tracks checkboxes
         checkboxes = [];
