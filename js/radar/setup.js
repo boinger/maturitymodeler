@@ -66,38 +66,59 @@ define(["dataRadar", "d3", "./transform", "./radar"],
 
             legendOptions = transform.getLegendNames(checkboxes);
 
-            if (legendOptions === undefined) {
+            if (legendOptions === undefined || legendOptions.length === 0) {
+                // Remove legend if no options
+                d3.select("#body").selectAll("svg").each(function() {
+                    d3.select(this).select(".legend").remove();
+                    d3.select(this).select(".title").remove();
+                });
                 return 0;
             }
 
-            svg = d3.select("#body")
-                .selectAll("svg")
-                .append("svg")
-                .attr("width", config.w + 500)
-                .attr("height", config.h);
+            // Get the first SVG (the radar chart SVG)
+            svg = d3.select("#body").select("svg");
+            
+            if (svg.empty()) {
+                return 0; // No SVG to attach legend to
+            }
 
-            //Create the title for the legend
-            text = svg.append("text")
+            // Update or create title
+            var titleText = svg.selectAll(".title")
+                .data([dataRadar.legendTitle]);
+            
+            titleText.enter()
+                .append("text")
                 .attr("class", "title")
                 .attr("transform", "translate(90,0)")
                 .attr("x", config.w + 175 - 70)
                 .attr("y", 10)
                 .attr("font-size", "12px")
                 .attr("fill", "#404040")
-                .text(dataRadar.legendTitle);
+              .merge(titleText)
+                .text(function(d) { return d; });
 
-            //Initiate Legend
-            legend = svg.append("g")
-                .attr("class", "legend")
+            // Update or create legend group
+            legend = svg.selectAll(".legend")
+                .data([null]);
+            
+            var legendEnter = legend.enter()
+                .append("g")
+                .attr("class", "legend");
+                
+            legend = legend.merge(legendEnter)
                 .attr("height", 100)
                 .attr("width", 200)
                 .attr("transform", "translate(90,20)");
 
-            //Create colour squares
-            legend.selectAll("rect")
-                .data(legendOptions)
-                .enter()
+            // Update colour squares with proper enter/update/exit
+            var rects = legend.selectAll("rect")
+                .data(legendOptions);
+            
+            rects.exit().remove();
+            
+            rects.enter()
                 .append("rect")
+              .merge(rects)
                 .attr("x", config.w + 175 - 65)
                 .attr("y", function(d, i) {
                     return i * 25;
@@ -108,11 +129,15 @@ define(["dataRadar", "d3", "./transform", "./radar"],
                     return colorScale(i);
                 });
 
-            //Create text next to squares
-            legend.selectAll("text")
-                .data(legendOptions)
-                .enter()
+            // Update text next to squares with proper enter/update/exit
+            var texts = legend.selectAll("text")
+                .data(legendOptions);
+            
+            texts.exit().remove();
+            
+            texts.enter()
                 .append("text")
+              .merge(texts)
                 .attr("x", config.w + 175 - 52)
                 .attr("y", function(d, i) {
                     return i * 25 + 9;
