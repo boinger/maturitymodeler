@@ -62,8 +62,8 @@ define(["dataRadar", "d3", "./transform", "./radar"],
                 var colorIndicator = document.getElementById("color-" + checkbox.data);
                 if (colorIndicator) {
                     if (checkbox.checked) {
-                        var seriesIndex = checkboxes.indexOf(checkbox.data);
-                        colorIndicator.style.backgroundColor = colorScale(seriesIndex);
+                        // Use the item's original index for consistent color assignment
+                        colorIndicator.style.backgroundColor = colorScale(checkbox.data);
                         colorIndicator.style.visibility = "visible";
                     } else {
                         colorIndicator.style.visibility = "hidden";
@@ -130,7 +130,7 @@ define(["dataRadar", "d3", "./transform", "./radar"],
             colorIndicator.style.display = "inline-block";
             colorIndicator.style.width = "12px";
             colorIndicator.style.height = "12px";
-            colorIndicator.style.backgroundColor = colorScale(checkboxes.indexOf(i));
+            colorIndicator.style.backgroundColor = colorScale(i);
             colorIndicator.style.marginRight = "5px";
             colorIndicator.style.border = "1px solid #999";
             colorIndicator.style.visibility = "hidden"; // Initially hidden
@@ -172,7 +172,7 @@ define(["dataRadar", "d3", "./transform", "./radar"],
             colorIndicator.style.display = "inline-block";
             colorIndicator.style.width = "12px";
             colorIndicator.style.height = "12px";
-            colorIndicator.style.backgroundColor = colorScale(0);
+            colorIndicator.style.backgroundColor = colorScale(dataRadar.idAverageCategories);
             colorIndicator.style.marginRight = "5px";
             colorIndicator.style.border = "1px solid #999";
             colorIndicator.style.visibility = "hidden";
@@ -204,6 +204,7 @@ define(["dataRadar", "d3", "./transform", "./radar"],
                 cbs[i].checked = true;
                 checkboxes.push(cbs[i].data);
             }
+            updateColorIndicators();
         }
 
         function checkNone() {
@@ -214,6 +215,7 @@ define(["dataRadar", "d3", "./transform", "./radar"],
             for (i = 0; i < cbs.length; i++) {
                 cbs[i].checked = false;
             }
+            updateColorIndicators();
         }
 
         createAllAppsDiv = function() {
