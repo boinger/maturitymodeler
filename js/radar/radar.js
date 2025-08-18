@@ -143,7 +143,7 @@ define(["dataRadar", "d3", "./transform"],
             //Circular segments
             for (j = 0; j < cfg.levels; j++) {
                 levelFactor = cfg.factor * radius * ((j + 1) / cfg.levels);
-                g.selectAll(".levels")
+                g.selectAll(".grid-lines")
                     .data(allAxis)
                     .enter()
                     .append("line")
@@ -151,7 +151,7 @@ define(["dataRadar", "d3", "./transform"],
                     .attr("y1", calcY1)
                     .attr("x2", calcX2)
                     .attr("y2", calcY2)
-                    .attr("class", "line")
+                    .attr("class", "grid-line")
                     .style("stroke", "#999999")
                     .style("stroke-opacity", "0.75")
                     .style("stroke-width", ".5px")
@@ -163,13 +163,13 @@ define(["dataRadar", "d3", "./transform"],
                 //Text indicating at what # or % each level is
                 for (j = 0; j < cfg.levels; j++) {
                     levelFactor = cfg.factor * radius * ((j + 1) / cfg.levels);
-                    g.selectAll(".levels")
+                    g.selectAll(".level-labels")
                         .data([1])
                         .enter()
                         .append("text")
                         .attr("x", calcX)
                         .attr("y", calcY)
-                        .attr("class", "legend")
+                        .attr("class", "level-label")
                         .style("font-family", "sans-serif")
                         .style("font-size", "11px")
                         .attr("transform", "translate(" + (cfg.w / 2 - levelFactor + cfg.ToRight) + ", " +
@@ -229,7 +229,7 @@ define(["dataRadar", "d3", "./transform"],
                 //Draws polygons
                 d.forEach(function(y, x) {
                     var polygonCoordinates = getPolygonCoordinates(y);
-                    g.selectAll(".area")
+                    g.selectAll(".radar-area")
                         .data([polygonCoordinates])
                         .enter()
                         .append("polygon")
@@ -269,7 +269,7 @@ define(["dataRadar", "d3", "./transform"],
                 series = 0;
                 //Draws circles at each of the polygon's vertex (vertices)
                 d.forEach(function(y, x) {
-                    g.selectAll(".nodes")
+                    g.selectAll(".data-points")
                         .data(y).enter()
                         .append("circle")
                         .attr("class", "radar-chart-series" + series)
