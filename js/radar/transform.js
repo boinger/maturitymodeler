@@ -148,11 +148,21 @@ define(["dataRadar"], function(dataRadar) {
         }
         currentSelections = sortNumbers(currentSelections);
         for (i = 0; i < currentSelections.length; i++) {
+            var dataSet;
             if (currentSelections[i] === dataRadar.idAverageCategories) {
-                selectedData.push(getCategoryAvgs()[0]);
+                dataSet = getCategoryAvgs()[0];
+                // Add original index to the data for color consistency
+                dataSet = dataSet.map(function(item) {
+                    return Object.assign({}, item, {originalIndex: dataRadar.idAverageCategories});
+                });
             } else {
-                selectedData.push(dataTransformed[currentSelections[i]]);
+                dataSet = dataTransformed[currentSelections[i]];
+                // Add original index to the data for color consistency
+                dataSet = dataSet.map(function(item) {
+                    return Object.assign({}, item, {originalIndex: currentSelections[i]});
+                });
             }
+            selectedData.push(dataSet);
         }
         return selectedData;
     };

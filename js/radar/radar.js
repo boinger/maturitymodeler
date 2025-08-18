@@ -310,11 +310,12 @@ define(["dataRadar", "d3", "./transform"],
                 //Draws polygons
                 d.forEach(function(y, x) {
                     var polygonCoordinates = getPolygonCoordinates(y);
+                    var originalIndex = y[0] && y[0].originalIndex !== undefined ? y[0].originalIndex : series;
                     g.append("polygon")
                         .datum(polygonCoordinates)
                         .attr("class", "radar-chart-series" + series)
                         .style("stroke-width", "2px")
-                        .style("stroke", cfg.color(series))
+                        .style("stroke", cfg.color(originalIndex))
                         .attr("points", function(d) {
                             var str = "";
                             for (pti = 0; pti < d.length; pti++) {
@@ -322,7 +323,7 @@ define(["dataRadar", "d3", "./transform"],
                             }
                             return str;
                         })
-                        .style("fill", cfg.color(series))
+                        .style("fill", cfg.color(originalIndex))
                         .style("fill-opacity", cfg.opacityArea)
                         .on("mouseover", function(event, d) {
                             z = "polygon." + d3.select(this).attr("class");
@@ -349,6 +350,7 @@ define(["dataRadar", "d3", "./transform"],
                 
                 //Draws circles at each of the polygon's vertex (vertices)
                 d.forEach(function(y, x) {
+                    var originalIndex = y[0] && y[0].originalIndex !== undefined ? y[0].originalIndex : series;
                     g.selectAll(".data-points-" + series)
                         .data(y)
                         .enter()
@@ -369,7 +371,7 @@ define(["dataRadar", "d3", "./transform"],
                         .attr("data-id", function(j) {
                             return j.axis;
                         })
-                        .style("fill", cfg.color(series)).style("fill-opacity", 0.9)
+                        .style("fill", cfg.color(originalIndex)).style("fill-opacity", 0.9)
                         .on("mouseover", function(event, d) {
                             newX = parseFloat(d3.select(this).attr("cx")) - 10;
                             newY = parseFloat(d3.select(this).attr("cy")) - 5;
