@@ -203,6 +203,12 @@ define(["dataRadar", "d3", "./transform"],
                             20 * Math.cos(i * cfg.radians / total);
                     });
 
+                //Creates tooltips at vertices
+                tooltip = g.append("text")
+                    .style("opacity", 0)
+                    .style("font-family", "sans-serif")
+                    .style("font-size", "13px");
+
                 //Draws polygons
                 d.forEach(function(y, x) {
                     dataValues = [];
@@ -237,15 +243,18 @@ define(["dataRadar", "d3", "./transform"],
                         .on("mouseover", function(d) {
                             z = "polygon." + d3.select(this).attr("class");
                             g.selectAll("polygon")
-                                .transition(200)
+                                .transition()
+                                .duration(200)
                                 .style("fill-opacity", 0.1);
                             g.selectAll(z)
-                                .transition(200)
+                                .transition()
+                                .duration(200)
                                 .style("fill-opacity", 0.7);
                         })
                         .on("mouseout", function() {
                             g.selectAll("polygon")
-                                .transition(200)
+                                .transition()
+                                .duration(200)
                                 .style("fill-opacity", cfg.opacityArea);
                         });
                     series++;
@@ -287,34 +296,33 @@ define(["dataRadar", "d3", "./transform"],
                                 .attr("x", newX)
                                 .attr("y", newY)
                                 .text(transform.transformScaleReverse(d.value))
-                                .transition(200)
+                                .transition()
+                                .duration(200)
                                 .style("opacity", 1);
 
                             z = "polygon." + d3.select(this).attr("class");
                             g.selectAll("polygon")
-                                .transition(200)
+                                .transition()
+                                .duration(200)
                                 .style("fill-opacity", 0.1);
                             g.selectAll(z)
-                                .transition(200)
+                                .transition()
+                                .duration(200)
                                 .style("fill-opacity", 0.7);
                         })
                         .on("mouseout", function() {
                             tooltip
-                                .transition(200)
+                                .transition()
+                                .duration(200)
                                 .style("opacity", 0);
                             g.selectAll("polygon")
-                                .transition(200)
+                                .transition()
+                                .duration(200)
                                 .style("fill-opacity", cfg.opacityArea);
                         });
 
                     series++;
                 });
-
-                //Creates tooltips at vertices
-                tooltip = g.append("text")
-                    .style("opacity", 0)
-                    .style("font-family", "sans-serif")
-                    .style("font-size", "13px");
             }
         }
 

@@ -469,6 +469,7 @@ define(function () {
         referenceLink2: referenceLink2,
         referenceLinkTitle2: referenceLinkTitle2,
         maturityLevels: MATURITY_LEVELS,
+        categoryCount: CATEGORY_COUNT,
         categories: CATEGORIES,
         emptyDataSet: EMPTY_DATASET,
         applications: applications,
