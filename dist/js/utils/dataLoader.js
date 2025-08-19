@@ -5,9 +5,6 @@
 
 "use strict";
 
-// Import data modules statically to avoid webpack chunking
-import dataRadarModule from '../data/data_radar.js';
-
 // Fallback data for when main data fails to load
 const FALLBACK_DATA = {
     pageTitle: "Maturity Model Visualization (Demo Mode)",
@@ -184,8 +181,9 @@ async function loadDataWithFallback() {
     showLoadingIndicator();
     
     try {
-        // Use statically imported primary data
-        const data = dataRadarModule;
+        // Try to load the primary data module
+        const dataModule = await import('../data/data_radar.js');
+        const data = dataModule.default;
         
         // Validate the loaded data
         validateDataStructure(data);
@@ -197,29 +195,44 @@ async function loadDataWithFallback() {
     } catch (primaryError) {
         console.warn('Primary data loading failed:', primaryError);
         
-        // Use fallback data as last resort
         try {
-            validateDataStructure(FALLBACK_DATA);
+            // Try to load alternative data (iac_radar)
+            const altDataModule = await import('../data/iac_radar.js');
+            const altData = altDataModule.default;
             
-            loadingState.usingFallback = true;
-            loadingState.hasError = true;
-            loadingState.errorMessage = `Data loading failed: ${primaryError.message}`;
+            validateDataStructure(altData);
             
-            showErrorMessage(primaryError, true);
-            
-            console.log('Using fallback demo data');
+            console.log('Successfully loaded alternative data');
             loadingState.isLoading = false;
-            return FALLBACK_DATA;
+            return altData;
             
-        } catch (fallbackError) {
-            // Critical failure - even fallback data is broken
-            loadingState.hasError = true;
-            loadingState.errorMessage = 'Critical error: All data sources failed';
+        } catch (altError) {
+            console.warn('Alternative data loading failed:', altError);
             
-            showErrorMessage(new Error('All data sources failed including fallback'), false);
-            
-            loadingState.isLoading = false;
-            throw new Error('Critical data loading failure');
+            // Use fallback data as last resort
+            try {
+                validateDataStructure(FALLBACK_DATA);
+                
+                loadingState.usingFallback = true;
+                loadingState.hasError = true;
+                loadingState.errorMessage = `Data loading failed: ${primaryError.message}`;
+                
+                showErrorMessage(primaryError, true);
+                
+                console.log('Using fallback demo data');
+                loadingState.isLoading = false;
+                return FALLBACK_DATA;
+                
+            } catch (fallbackError) {
+                // Critical failure - even fallback data is broken
+                loadingState.hasError = true;
+                loadingState.errorMessage = 'Critical error: All data sources failed';
+                
+                showErrorMessage(new Error('All data sources failed including fallback'), false);
+                
+                loadingState.isLoading = false;
+                throw new Error('Critical data loading failure');
+            }
         }
     }
 }

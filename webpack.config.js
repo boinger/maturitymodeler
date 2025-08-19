@@ -8,14 +8,14 @@ const __dirname = path.dirname(__filename);
 export default {
   entry: './js/radar/setup-webpack.js',
   output: {
-    filename: '[name].bundle.js',
+    filename: 'main.bundle.js',
     path: path.resolve(__dirname, 'dist'),
     library: {
       type: 'umd',
       name: 'MaturityModeler'
     },
     globalObject: 'this',
-    clean: true
+    clean: false  // Don't clean to preserve CSS and other files
   },
   module: {
     rules: [
@@ -34,7 +34,9 @@ export default {
   target: ['web', 'es5'],
   mode: 'production',
   optimization: {
-    splitChunks: false  // Disable code splitting for simpler deployment
+    splitChunks: false,  // Disable code splitting for simpler deployment
+    runtimeChunk: false,  // Include runtime in main bundle
+    minimize: true
   },
   plugins: [
     ...(process.env.ANALYZE ? [new BundleAnalyzerPlugin()] : [])
