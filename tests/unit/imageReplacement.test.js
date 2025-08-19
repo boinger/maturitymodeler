@@ -34,7 +34,7 @@ describe('Image Replacement', () => {
     test('should create image with correct attributes', () => {
       // Test image creation with expected attributes
       const newImg = document.createElement('img');
-      newImg.setAttribute('src', '../images/maturity-model-placeholder.svg');
+      newImg.setAttribute('src', 'images/maturity-model-placeholder.svg');
       newImg.setAttribute('alt', 'Continuous Delivery Maturity Model Diagram');
       newImg.style.cursor = 'pointer';
       newImg.style.width = '921';
@@ -42,7 +42,7 @@ describe('Image Replacement', () => {
       newImg.style.maxWidth = '100%';
       newImg.style.height = 'auto';
       
-      expect(newImg.getAttribute('src')).toBe('../images/maturity-model-placeholder.svg');
+      expect(newImg.getAttribute('src')).toBe('images/maturity-model-placeholder.svg');
       expect(newImg.getAttribute('alt')).toBe('Continuous Delivery Maturity Model Diagram');
       expect(newImg.style.cursor).toBe('pointer');
       expect(newImg.style.maxWidth).toBe('100%');
@@ -56,7 +56,7 @@ describe('Image Replacement', () => {
       expect(brokenUrl).toContain('surveymonkey.com');
       
       // New image should use local SVG
-      const newImageSrc = '../images/maturity-model-placeholder.svg';
+      const newImageSrc = 'images/maturity-model-placeholder.svg';
       expect(newImageSrc).not.toContain('surveymonkey.com');
       expect(newImageSrc).toContain('maturity-model-placeholder.svg');
     });
@@ -115,7 +115,7 @@ describe('Image Replacement', () => {
   
   describe('File Structure', () => {
     test('should have image in correct directory structure', () => {
-      const imagePath = '../images/maturity-model-placeholder.svg';
+      const imagePath = 'images/maturity-model-placeholder.svg';
       const distImagePath = 'dist/images/maturity-model-placeholder.svg';
       
       // Test path structure

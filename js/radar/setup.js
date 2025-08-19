@@ -327,7 +327,7 @@ import radar from './radar.js';
 
         createModelImg = function() {
             var newImg = document.createElement("img");
-            newImg.setAttribute("src", "../images/maturity-model-placeholder.svg");
+            newImg.setAttribute("src", "images/maturity-model-placeholder.svg");
             newImg.setAttribute("alt", "Continuous Delivery Maturity Model Diagram");
             newImg.style.cursor = "pointer";
             newImg.style.width = 921;
