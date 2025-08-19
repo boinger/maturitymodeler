@@ -11,6 +11,10 @@ if [ "$1" != "fast" ]; then
   mkdir dist/ || echo 'dist/ folder already exists...'
 fi
 
+# Create transpiled version for older browser support
+echo "Creating transpiled bundle for browser compatibility..."
+npx webpack --mode=production
+
 # Copy favicon
 cp -f favicon.png dist/
 

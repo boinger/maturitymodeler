@@ -25,6 +25,7 @@
 /*jslint browser: true, plusplus: true, unparam: true */
 import dataLoader from '../utils/dataLoader.js';
 import memoryManager from '../utils/memoryManager.js';
+import browserCompat from '../utils/browserCompat.js';
 // D3 library needs to be loaded as UMD, import will be resolved by bundler
 import '../d3/d3.js';
 import transform from './transform.js';
@@ -376,6 +377,9 @@ import radar from './radar.js';
 
         initializePage = async function() {
             try {
+                // Check browser compatibility and show warning if needed
+                browserCompat.checkBrowserCompatibility();
+                
                 // Load data with error handling and fallbacks
                 const dataRadar = await dataLoader.loadDataWithFallback();
                 
