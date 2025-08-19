@@ -115,7 +115,7 @@ class SpiderChart {
      */
     validateData(data) {
         if (!Array.isArray(data) || data.length === 0) {
-            console.error("RadarChart: Data must be a non-empty array");
+            console.error("SpiderChart: Data must be a non-empty array");
             return false;
         }
 

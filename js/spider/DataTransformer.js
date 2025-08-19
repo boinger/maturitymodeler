@@ -227,11 +227,11 @@ class DataTransformer {
         }
 
         const allData = this.getTransformedSortedData();
-        const averageId = this.currentData?.idAverageCategories || 100;
+        const averageId = this.currentData?.idAverageCategories ?? 100;
         
         return selectedIndices.map(index => {
-            // Check if this is the special average ID
-            if (index === averageId) {
+            // Check if this is the special average ID (handle both number and string)
+            if (index === averageId || index === String(averageId) || String(index) === String(averageId)) {
                 const avgData = this.getCategoryAvgs();
                 return avgData[0] || [];
             }
@@ -241,7 +241,8 @@ class DataTransformer {
                 return allData[index];
             }
             
-            console.warn(`DataTransformer: Index ${index} out of bounds`);
+            // Out of bounds - might be another special ID
+            console.warn(`DataTransformer: Index ${index} out of bounds (average ID is ${averageId})`);
             return [];
         }).filter(data => data.length > 0);
     }
