@@ -921,8 +921,7 @@ body::before {
 }
 
 /* Dark mode triggered by toggle (not just system preference) */
-.dark-mode :root,
-:root:has(.dark-mode) {
+html.dark-mode {
     --primary-bg: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     --primary-bg-solid: #1e293b;
     --primary-text: #f8fafc;
@@ -943,40 +942,46 @@ body::before {
     --glass-blur: blur(20px);
 }
 
-.dark-mode body {
+html.dark-mode body {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
-.dark-mode #apps {
+html.dark-mode body::before {
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+}
+
+html.dark-mode #apps {
     background-color: rgba(15, 23, 42, 0.8);
 }
 
-.dark-mode #chart {
+html.dark-mode #chart {
     background: rgba(15, 23, 42, 0.6);
 }
 
-.dark-mode .appDiv {
+html.dark-mode .appDiv {
     background: rgba(30, 41, 59, 0.6);
     border-color: rgba(255, 255, 255, 0.05);
 }
 
-.dark-mode .appDiv:hover {
+html.dark-mode .appDiv:hover {
     background: rgba(30, 41, 59, 0.8);
 }
 
-.dark-mode .showModel {
+html.dark-mode .showModel {
     background: rgba(15, 23, 42, 0.95);
     color: var(--secondary-text);
     border-color: var(--border-color);
 }
 
-.dark-mode #footer {
+html.dark-mode #footer {
     background: rgba(15, 23, 42, 0.3);
     border-color: rgba(255, 255, 255, 0.05);
 }
 
 /* Dark mode SVG text enhancement */
-.dark-mode #chart svg text {
+html.dark-mode #chart svg text {
     fill: var(--secondary-text) !important;
     stroke: rgba(15, 23, 42, 0.8);
     stroke-width: 0.5px;
