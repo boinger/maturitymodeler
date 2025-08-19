@@ -292,7 +292,7 @@ class SpiderChart {
                 .style('fill-opacity', this.config.opacityArea);
             
             // Add hover effects
-            this.addPolygonInteractions(polygon, seriesIndex);
+            this.addPolygonInteractions(polygon, seriesIndex, originalIndex);
         });
     }
 
@@ -301,8 +301,9 @@ class SpiderChart {
      * @private
      * @param {Object} polygon - D3 polygon selection
      * @param {number} seriesIndex - Series index
+     * @param {number} originalIndex - Original data index for cross-highlighting
      */
-    addPolygonInteractions(polygon, seriesIndex) {
+    addPolygonInteractions(polygon, seriesIndex, originalIndex) {
         polygon
             .on('mouseover', () => {
                 // Dim other polygons
@@ -316,6 +317,9 @@ class SpiderChart {
                     .transition()
                     .duration(200)
                     .style('fill-opacity', 0.7);
+                
+                // Cross-highlight corresponding menu item
+                this.highlightMenuItem(originalIndex);
             })
             .on('mouseout', () => {
                 // Restore all polygons
@@ -323,7 +327,44 @@ class SpiderChart {
                     .transition()
                     .duration(200)
                     .style('fill-opacity', this.config.opacityArea);
+                
+                // Clear menu highlighting
+                this.clearMenuHighlight();
             });
+    }
+
+    /**
+     * Highlight the corresponding menu item
+     * @private
+     * @param {number} originalIndex - Original data index
+     */
+    highlightMenuItem(originalIndex) {
+        // Find all app divs (menu items)
+        const appDivs = document.querySelectorAll('.appDiv');
+        
+        appDivs.forEach(div => {
+            const checkbox = div.querySelector('input[type="checkbox"]');
+            if (checkbox && parseInt(checkbox.data) === originalIndex) {
+                // Highlight this menu item
+                div.classList.add('chart-highlight');
+                div.classList.remove('chart-dimmed');
+            } else {
+                // Dim other menu items
+                div.classList.add('chart-dimmed');
+                div.classList.remove('chart-highlight');
+            }
+        });
+    }
+
+    /**
+     * Clear all menu highlighting
+     * @private
+     */
+    clearMenuHighlight() {
+        const appDivs = document.querySelectorAll('.appDiv');
+        appDivs.forEach(div => {
+            div.classList.remove('chart-highlight', 'chart-dimmed');
+        });
     }
 
     /**

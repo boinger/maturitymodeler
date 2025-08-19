@@ -63,6 +63,46 @@ import spider from './spider.js';
         //Tracks checkboxes
         checkboxes = [];
         
+        // Cross-highlighting functions for chart-menu interaction
+        function highlightChartElement(originalIndex) {
+            // Find all polygons in the chart
+            const chartContainer = document.querySelector('#chart');
+            if (chartContainer) {
+                const svg = chartContainer.querySelector('svg');
+                if (svg) {
+                    const polygons = svg.querySelectorAll('polygon');
+                    
+                    polygons.forEach(polygon => {
+                        // Get the data series to find the originalIndex
+                        const seriesData = polygon.__data__;
+                        if (seriesData && seriesData[0] && seriesData[0].originalIndex === originalIndex) {
+                            // Highlight this polygon
+                            polygon.style.fillOpacity = '0.7';
+                            polygon.style.strokeWidth = '3px';
+                        } else {
+                            // Dim other polygons
+                            polygon.style.fillOpacity = '0.1';
+                        }
+                    });
+                }
+            }
+        }
+        
+        function clearChartHighlight() {
+            // Restore all polygons to default state
+            const chartContainer = document.querySelector('#chart');
+            if (chartContainer) {
+                const svg = chartContainer.querySelector('svg');
+                if (svg) {
+                    const polygons = svg.querySelectorAll('polygon');
+                    polygons.forEach(polygon => {
+                        polygon.style.fillOpacity = config.opacityArea || '0.5';
+                        polygon.style.strokeWidth = '2px';
+                    });
+                }
+            }
+        }
+
         // Update color indicators based on selected checkboxes
         function updateColorIndicators() {
             var allCheckboxes = document.getElementsByClassName("appCheckbox");
@@ -200,6 +240,15 @@ import spider from './spider.js';
             newDiv.appendChild(createLabel(app, i));
             newDiv.style.cursor = "pointer";
             newDiv.className = "appDiv";
+            
+            // Add cross-highlighting interaction for chart-menu connection
+            newDiv.addEventListener('mouseenter', function() {
+                highlightChartElement(i);
+            });
+            newDiv.addEventListener('mouseleave', function() {
+                clearChartHighlight();
+            });
+            
             return newDiv;
         };
 
@@ -242,6 +291,16 @@ import spider from './spider.js';
             newDiv.appendChild(createLabel(app, dataRadar?.idAverageCategories || 100));
             newDiv.style.cursor = "pointer";
             newDiv.className = "appDiv";
+            
+            // Add cross-highlighting interaction for chart-menu connection
+            var averageId = dataRadar?.idAverageCategories || 100;
+            newDiv.addEventListener('mouseenter', function() {
+                highlightChartElement(averageId);
+            });
+            newDiv.addEventListener('mouseleave', function() {
+                clearChartHighlight();
+            });
+            
             return newDiv;
         };
 

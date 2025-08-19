@@ -57,7 +57,6 @@ const draw = (id, data, options = {}) => {
         currentChart = new SpiderChart(id, config);
         currentChart.render(data);
         
-        console.log('Chart rendered successfully with modern SpiderChart implementation');
         return currentChart;
         
     } catch (error) {

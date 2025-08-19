@@ -266,6 +266,24 @@ body {
     transition: all var(--transition-duration);
 }
 
+/* Cross-highlighting styles for chart-menu interaction */
+.appDiv.chart-highlight {
+    background-color: rgba(44, 61, 228, 0.15);
+    transform: translateX(3px);
+    font-weight: 500;
+}
+
+.appDiv.chart-dimmed {
+    opacity: 0.4;
+    transform: translateX(-1px);
+}
+
+.appDiv.chart-highlight .color-indicator {
+    transform: scale(1.2);
+    border-width: 2px;
+    box-shadow: 0 0 4px rgba(44, 61, 228, 0.3);
+}
+
 .titleDiv {
     color: var(--secondary-text);
     font-size: var(--font-size-medium);
