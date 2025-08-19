@@ -394,6 +394,87 @@ import spider from './spider.js';
             resizeTimeout = memoryManager.addManagedTimeout(handleResize, 250);
         }
 
+        // Dark mode toggle functionality
+        function createDarkModeToggle() {
+            // Check for saved preference or default to system preference
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
+            
+            // Create toggle container
+            const toggleContainer = document.createElement('div');
+            toggleContainer.id = 'dark-mode-toggle';
+            toggleContainer.setAttribute('role', 'button');
+            toggleContainer.setAttribute('aria-label', 'Toggle dark mode');
+            toggleContainer.setAttribute('tabindex', '0');
+            toggleContainer.innerHTML = `
+                <span class="toggle-icon sun-icon">☀️</span>
+                <span class="toggle-icon moon-icon">🌙</span>
+                <div class="toggle-slider"></div>
+            `;
+            
+            // Add to title bar
+            const titleElement = document.getElementById('title');
+            titleElement.style.position = 'relative';
+            titleElement.appendChild(toggleContainer);
+            
+            // Apply initial theme
+            if (isDark) {
+                document.documentElement.classList.add('dark-mode');
+                document.documentElement.classList.remove('light-mode');
+                toggleContainer.classList.add('dark');
+            } else {
+                // If user has no preference but system is dark, we need to override with light-mode
+                if (prefersDark && !savedTheme) {
+                    document.documentElement.classList.add('light-mode');
+                } else {
+                    document.documentElement.classList.remove('dark-mode');
+                }
+            }
+            
+            // Toggle handler
+            function toggleDarkMode() {
+                const htmlElement = document.documentElement;
+                const isDarkMode = htmlElement.classList.contains('dark-mode');
+                
+                if (isDarkMode) {
+                    // Switching to light mode
+                    htmlElement.classList.remove('dark-mode');
+                    htmlElement.classList.add('light-mode');
+                    toggleContainer.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    // Switching to dark mode
+                    htmlElement.classList.remove('light-mode');
+                    htmlElement.classList.add('dark-mode');
+                    toggleContainer.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+                
+                const finalIsDark = htmlElement.classList.contains('dark-mode');
+                
+                // Debug logging
+                console.log('Theme toggled to:', finalIsDark ? 'dark' : 'light');
+                console.log('HTML element classes:', htmlElement.className);
+                console.log('CSS primary-bg:', getComputedStyle(htmlElement).getPropertyValue('--primary-bg'));
+                console.log('Body background:', getComputedStyle(document.body).background);
+                
+                // Trigger any chart redraws if needed for better dark mode support
+                if (window.currentChart) {
+                    // Chart will automatically use CSS variables for colors
+                }
+            }
+            
+            // Event listeners
+            toggleContainer.addEventListener('click', toggleDarkMode);
+            toggleContainer.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleDarkMode();
+                }
+            });
+        }
+
         initializePage = async function() {
             try {
                 // Start performance monitoring
@@ -420,6 +501,9 @@ import spider from './spider.js';
                 
                 // Initialize the page with loaded data
                 document.getElementById("title").innerHTML = dataRadar.pageTitle;
+                
+                // Add dark mode toggle
+                createDarkModeToggle();
                 
                 // Track chart rendering performance
                 const chartRenderStart = performance.now();
