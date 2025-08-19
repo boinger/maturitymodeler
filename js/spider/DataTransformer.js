@@ -226,6 +226,10 @@ class DataTransformer {
             return [];
         }
 
+        if (selectedIndices.length === 0) {
+            return [];
+        }
+
         const allData = this.getTransformedSortedData();
         const averageId = this.currentData?.idAverageCategories ?? 100;
         
