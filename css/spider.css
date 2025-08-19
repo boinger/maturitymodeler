@@ -91,6 +91,8 @@ body {
         radial-gradient(circle at 40% 80%, rgba(120, 198, 121, 0.3) 0%, transparent 50%),
         linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     background-attachment: fixed;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     position: relative;
@@ -102,11 +104,14 @@ body::before {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background-image: 
         radial-gradient(circle at 25% 25%, rgba(79, 70, 229, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     animation: float 20s ease-in-out infinite;
     pointer-events: none;
     z-index: -1;
@@ -849,6 +854,9 @@ body::before {
     
     body {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
     }
     
     #apps {
@@ -912,6 +920,9 @@ html.dark-mode:root {
 
 html.dark-mode body {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
 }
 
 html.dark-mode body::before {
@@ -985,6 +996,9 @@ html.light-mode body {
         radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
         radial-gradient(circle at 40% 80%, rgba(120, 198, 121, 0.3) 0%, transparent 50%),
         linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
 }
 
 html.light-mode body::before {
