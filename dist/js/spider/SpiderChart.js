@@ -282,6 +282,8 @@ class SpiderChart {
             const originalIndex = series[0]?.originalIndex ?? seriesIndex;
             const polygonPath = this.generatePolygonPath(series);
             
+            // Chart polygon color assignment using originalIndex
+            
             const polygon = this.g.append('polygon')
                 .datum(series)
                 .attr('class', `spider-series spider-series-${seriesIndex}`)
@@ -344,14 +346,17 @@ class SpiderChart {
         
         appDivs.forEach(div => {
             const checkbox = div.querySelector('input[type="checkbox"]');
-            if (checkbox && parseInt(checkbox.data) === originalIndex) {
-                // Highlight this menu item
+            if (checkbox && parseInt(checkbox.data) === originalIndex && checkbox.checked) {
+                // Highlight this menu item (only if it's checked)
                 div.classList.add('chart-highlight');
                 div.classList.remove('chart-dimmed');
-            } else {
-                // Dim other menu items
+            } else if (checkbox && checkbox.checked) {
+                // Dim other checked menu items
                 div.classList.add('chart-dimmed');
                 div.classList.remove('chart-highlight');
+            } else {
+                // Don't affect unchecked items
+                div.classList.remove('chart-highlight', 'chart-dimmed');
             }
         });
     }

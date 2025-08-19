@@ -64,42 +64,38 @@ import spider from './spider.js';
         checkboxes = [];
         
         // Cross-highlighting functions for chart-menu interaction
-        function highlightChartElement(originalIndex) {
-            // Find all polygons in the chart
+        function highlightChartElement(targetOriginalIndex) {
+            // Use D3 to properly highlight/dim polygons based on originalIndex
             const chartContainer = document.querySelector('#chart');
             if (chartContainer) {
-                const svg = chartContainer.querySelector('svg');
-                if (svg) {
-                    const polygons = svg.querySelectorAll('polygon');
-                    
-                    polygons.forEach(polygon => {
-                        // Get the data series to find the originalIndex
-                        const seriesData = polygon.__data__;
-                        if (seriesData && seriesData[0] && seriesData[0].originalIndex === originalIndex) {
-                            // Highlight this polygon
-                            polygon.style.fillOpacity = '0.7';
-                            polygon.style.strokeWidth = '3px';
-                        } else {
-                            // Dim other polygons
-                            polygon.style.fillOpacity = '0.1';
-                        }
-                    });
-                }
+                const svg = d3.select(chartContainer).select('svg');
+                const polygons = svg.selectAll('polygon');
+                
+                // Dim all polygons first
+                polygons.transition()
+                    .duration(200)
+                    .style('fill-opacity', 0.1);
+                
+                // Highlight the matching polygon
+                polygons.filter(function(d) {
+                    return d && d[0] && d[0].originalIndex === targetOriginalIndex;
+                })
+                .transition()
+                .duration(200)
+                .style('fill-opacity', 0.7);
             }
         }
         
         function clearChartHighlight() {
-            // Restore all polygons to default state
+            // Use D3 to restore all polygons to default state
             const chartContainer = document.querySelector('#chart');
             if (chartContainer) {
-                const svg = chartContainer.querySelector('svg');
-                if (svg) {
-                    const polygons = svg.querySelectorAll('polygon');
-                    polygons.forEach(polygon => {
-                        polygon.style.fillOpacity = config.opacityArea || '0.5';
-                        polygon.style.strokeWidth = '2px';
-                    });
-                }
+                const svg = d3.select(chartContainer).select('svg');
+                const polygons = svg.selectAll('polygon');
+                
+                polygons.transition()
+                    .duration(200)
+                    .style('fill-opacity', config.opacityArea || 0.5);
             }
         }
 
@@ -111,8 +107,8 @@ import spider from './spider.js';
                 var colorIndicator = document.getElementById("color-" + checkbox.data);
                 if (colorIndicator) {
                     if (checkbox.checked) {
-                        // Use the item's original index for consistent color assignment
-                        colorIndicator.style.backgroundColor = colorScale(checkbox.data);
+                        // Don't change the color - it was set correctly during menu creation
+                        // colorIndicator.style.backgroundColor = colorScale(checkbox.data); // REMOVED - this was the bug!
                         colorIndicator.style.visibility = "visible";
                     } else {
                         colorIndicator.style.visibility = "hidden";
@@ -188,6 +184,23 @@ import spider from './spider.js';
                 config = getResponsiveConfig();
                 spider.draw("#chart", transform.getSelectedData(checkboxes), config);
                 
+                // If a checkbox was just checked, highlight the newly added polygon
+                if (event.currentTarget.checked) {
+                    // Get the originalIndex for highlighting
+                    var tempDataSet = transform.getSingleDataSet(app);
+                    var originalIndex = tempDataSet && tempDataSet[0] ? tempDataSet[0].originalIndex : event.currentTarget.data;
+                    
+                    // Highlight the newly added polygon briefly
+                    setTimeout(function() {
+                        highlightChartElement(originalIndex);
+                        
+                        // Clear the highlight after 2 seconds
+                        setTimeout(function() {
+                            clearChartHighlight();
+                        }, 2000);
+                    }, 50); // Small delay to ensure chart is rendered
+                }
+                
                 // Track chart re-render performance
                 performanceMonitor.trackChartRender('interaction-chart', startTime);
             };
@@ -215,13 +228,19 @@ import spider from './spider.js';
                 return newDiv;
             }
             
-            // Create color indicator
+            // Create color indicator - need to get the originalIndex from the actual data
             colorIndicator = document.createElement("span");
             colorIndicator.className = "color-indicator";
             colorIndicator.style.display = "inline-block";
             colorIndicator.style.width = "12px";
             colorIndicator.style.height = "12px";
-            colorIndicator.style.backgroundColor = colorScale(i);
+            
+            // Get the originalIndex from the actual data point to match chart colors
+            var actualOriginalIndex = tempDataSet && tempDataSet[0] ? tempDataSet[0].originalIndex : i;
+            
+            // Color assignment using originalIndex for consistency with chart
+            
+            colorIndicator.style.backgroundColor = colorScale(actualOriginalIndex);
             colorIndicator.style.border = "1px solid #999";
             colorIndicator.style.visibility = "hidden"; // Initially hidden
             colorIndicator.id = "color-" + i;
@@ -241,13 +260,21 @@ import spider from './spider.js';
             newDiv.style.cursor = "pointer";
             newDiv.className = "appDiv";
             
-            // Add cross-highlighting interaction for chart-menu connection
-            newDiv.addEventListener('mouseenter', function() {
-                highlightChartElement(i);
-            });
-            newDiv.addEventListener('mouseleave', function() {
-                clearChartHighlight();
-            });
+            // Add cross-highlighting interaction for chart-menu connection  
+            (function(originalIndex) {
+                newDiv.addEventListener('mouseenter', function() {
+                    // Only highlight if this checkbox is checked
+                    if (checkbox.checked) {
+                        highlightChartElement(originalIndex);
+                    }
+                });
+                newDiv.addEventListener('mouseleave', function() {
+                    // Only clear highlight if this checkbox is checked
+                    if (checkbox.checked) {
+                        clearChartHighlight();
+                    }
+                });
+            })(actualOriginalIndex);
             
             return newDiv;
         };
@@ -295,10 +322,16 @@ import spider from './spider.js';
             // Add cross-highlighting interaction for chart-menu connection
             var averageId = dataRadar?.idAverageCategories || 100;
             newDiv.addEventListener('mouseenter', function() {
-                highlightChartElement(averageId);
+                // Only highlight if this checkbox is checked
+                if (checkbox.checked) {
+                    highlightChartElement(averageId);
+                }
             });
             newDiv.addEventListener('mouseleave', function() {
-                clearChartHighlight();
+                // Only clear highlight if this checkbox is checked
+                if (checkbox.checked) {
+                    clearChartHighlight();
+                }
             });
             
             return newDiv;
