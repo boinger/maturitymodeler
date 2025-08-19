@@ -21,7 +21,6 @@ function markTiming(name, type = 'mark') {
     if (performance && performance.mark) {
         const markName = `${name}-${type}`;
         performance.mark(markName);
-        console.log(`Performance mark: ${markName}`);
         return markName;
     }
     return null;
@@ -35,7 +34,6 @@ function measureTiming(name, startMark, endMark) {
         try {
             performance.measure(name, startMark, endMark);
             const measure = performance.getEntriesByName(name, 'measure')[0];
-            console.log(`Performance measure: ${name} = ${measure.duration.toFixed(2)}ms`);
             return measure.duration;
         } catch (error) {
             console.warn('Performance measurement failed:', error);

@@ -62,8 +62,6 @@ class DataTransformer {
         this.currentData = this.deepClone(dataSource);
         this.transformedData = this.transformMaturityData(this.currentData.maturityData);
         this.clearCache();
-        
-        console.log('DataTransformer: Data source updated');
     }
 
     /**
