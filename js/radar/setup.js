@@ -327,11 +327,13 @@ import radar from './radar.js';
 
         createModelImg = function() {
             var newImg = document.createElement("img");
-            newImg.setAttribute("src",
-                "https://secure.surveymonkey.com/_resources/28183/23008183/bf361750-7418-458f-85a6-6c07333e4986.png");
+            newImg.setAttribute("src", "../images/maturity-model-placeholder.svg");
+            newImg.setAttribute("alt", "Continuous Delivery Maturity Model Diagram");
             newImg.style.cursor = "pointer";
             newImg.style.width = 921;
             newImg.style.height = 466;
+            newImg.style.maxWidth = "100%";
+            newImg.style.height = "auto";
             memoryManager.addManagedEventListener(newImg, "click", function() {
                 document.getElementById("model").className = "hideModel";
             });
