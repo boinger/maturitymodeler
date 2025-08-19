@@ -173,7 +173,7 @@ describe('Data Loading Error Handling', () => {
     });
 
     test('should handle transform module integration', async () => {
-      const transformModule = await import('../../js/radar/transform.js');
+      const transformModule = await import('../../js/spider/transform.js');
       
       expect(transformModule.default.setDataSource).toBeDefined();
       expect(typeof transformModule.default.setDataSource).toBe('function');

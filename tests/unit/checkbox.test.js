@@ -233,7 +233,7 @@ describe('Checkbox and Menu Interactions', () => {
   });
 
   describe('Data Integration', () => {
-    test('should provide correct data for radar chart rendering', () => {
+    test('should provide correct data for spider chart rendering', () => {
       const getSelectedData = () => {
         const selectedIndices = Array.from(mockCheckboxes)
           .filter(cb => cb.checked)

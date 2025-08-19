@@ -3,7 +3,7 @@
  */
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import DataTransformer from '../../js/radar/DataTransformer.js';
+import DataTransformer from '../../js/spider/DataTransformer.js';
 
 describe('DataTransformer', () => {
     let transformer;

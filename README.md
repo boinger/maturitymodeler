@@ -130,7 +130,7 @@ rm -rf dist/* \
 
 ## Infrastructure as Code Maturity Model
 
-This project now includes a second data file (`js/data/iac_radar.js`), based on the IaC Maturity Model. To use IaC sample data, rename the file to `data_radar.js`; it will be automatically included in the build. Alternately, change the name of data file that gets included, by modifying the `build/build.js` and `js/radar/common.js` files. The data file contains a sample data set, based on a fictions financial institution's gap analysis.
+This project now includes a second data file (`js/data/iac_radar.js`), based on the IaC Maturity Model. To use IaC sample data, rename the file to `data_radar.js`; it will be automatically included in the build. Alternately, change the name of data file that gets included, by modifying the `build/build.js` and configuration files. The data file contains a sample data set, based on a fictions financial institution's gap analysis.
 
 [![IaC Gap Analysis](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_example_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_example.png?raw=true)
 
@@ -140,7 +140,7 @@ The Maturity Modeler can be easily adapted to the evolving [Infrastructure as Co
 
 ## Helpful Links
 
-- d3 and Radar Charts
+- d3 and Spider Charts
 
   - <http://www.visualcinnamon.com/2013/09/making-d3-radar-chart-look-bit-better.html>
   - <https://gist.github.com/nbremer>

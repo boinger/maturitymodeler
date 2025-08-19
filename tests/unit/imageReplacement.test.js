@@ -17,7 +17,7 @@ describe('Image Replacement', () => {
   describe('Maturity Model Image', () => {
     test('should use local SVG instead of broken SurveyMonkey URL', async () => {
       // Import setup module to test createModelImg function
-      const setupModule = await import('../../js/radar/setup.js');
+      const setupModule = await import('../../js/spider/setup-ui.js');
       
       // Mock window.currentDataRadar for the setup
       window.currentDataRadar = {

@@ -3,7 +3,7 @@
  */
 
 import { describe, test, expect } from '@jest/globals';
-import SpiderChart, { createSpiderChart } from '../../js/radar/SpiderChart.js';
+import SpiderChart, { createSpiderChart } from '../../js/spider/SpiderChart.js';
 
 describe('SpiderChart', () => {
     describe('Constructor and Configuration', () => {

@@ -19,7 +19,7 @@ describe('ES Module Integration', () => {
   });
 
   test('should be able to import transform module', async () => {
-    const transformModule = await import('../../js/radar/transform.js');
+    const transformModule = await import('../../js/spider/transform.js');
     
     expect(transformModule.default).toBeDefined();
     expect(typeof transformModule.default.transformScale).toBe('function');
@@ -28,7 +28,7 @@ describe('ES Module Integration', () => {
   });
 
   test('should be able to import radar module', async () => {
-    const radarModule = await import('../../js/radar/radar.js');
+    const radarModule = await import('../../js/spider/spider.js');
     
     expect(radarModule.default).toBeDefined();
     expect(typeof radarModule.default.draw).toBe('function');
@@ -42,7 +42,7 @@ describe('ES Module Integration', () => {
 
   test('transform functions should work with imported data', async () => {
     const dataModule = await import('../../js/data/data_radar.js');
-    const transformModule = await import('../../js/radar/transform.js');
+    const transformModule = await import('../../js/spider/transform.js');
     
     // Test that transform functions work with real data
     const appNames = transformModule.default.getAppNames();
@@ -55,7 +55,7 @@ describe('ES Module Integration', () => {
   });
 
   test('color scale should be accessible from radar module', async () => {
-    const radarModule = await import('../../js/radar/radar.js');
+    const radarModule = await import('../../js/spider/spider.js');
     
     const colorScale = radarModule.default.getColorScale();
     expect(colorScale).toBeDefined();
@@ -79,13 +79,13 @@ describe('ES Module Integration', () => {
     expect(dataModule.default).toBeDefined();
     
     // Test transform module exports  
-    const transformModule = await import('../../js/radar/transform.js');
+    const transformModule = await import('../../js/spider/transform.js');
     expect(transformModule.transformScale).toBeDefined();
     expect(transformModule.getAppNames).toBeDefined();
     expect(transformModule.default).toBeDefined();
     
     // Test radar module exports (note: radar uses fallback mode in tests)
-    const radarModule = await import('../../js/radar/radar.js');
+    const radarModule = await import('../../js/spider/spider.js');
     expect(radarModule.draw).toBeDefined();
     expect(radarModule.getColorScale).toBeDefined();
     expect(radarModule.default).toBeDefined();
@@ -98,8 +98,8 @@ describe('ES Module Integration', () => {
     // We can't fully test setup.js in Jest because it manipulates DOM on import,
     // but we can test that the dependencies it needs are all importable
     const dataModule = await import('../../js/data/data_radar.js');
-    const transformModule = await import('../../js/radar/transform.js');
-    const radarModule = await import('../../js/radar/radar.js');
+    const transformModule = await import('../../js/spider/transform.js');
+    const radarModule = await import('../../js/spider/spider.js');
     
     // Verify that each module exports what the others need
     expect(dataModule.default.maturityData).toBeDefined();

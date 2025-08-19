@@ -9,6 +9,6 @@
 "use strict";
 
 // Import the setup module which initializes the application
-import './js/radar/setup.js';
+import './js/spider/setup-ui.js';
 
-console.log('Maturity Modeler initialized using ES modules');
+console.log('Maturity Modeler (Spider Chart) initialized using ES modules');

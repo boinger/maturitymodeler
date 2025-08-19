@@ -187,9 +187,8 @@ function setupNetworkStatusListeners() {
  */
 function preloadCriticalResources() {
     const criticalResources = [
-        'dist/main.bundle.js',
-        'dist/902.bundle.js',
-        'dist/main-built.css'
+        'main.bundle.js',
+        'main-built.css'
     ];
     
     criticalResources.forEach(resource => {

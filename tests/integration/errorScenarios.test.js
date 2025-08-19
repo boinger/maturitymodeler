@@ -85,7 +85,7 @@ describe('Error Handling Scenarios', () => {
 
   describe('Transform Module Error Handling', () => {
     test('should handle setDataSource with invalid data', async () => {
-      const transformModule = await import('../../js/radar/transform.js');
+      const transformModule = await import('../../js/spider/transform.js');
       
       // Test with null data
       const result1 = transformModule.default.setDataSource(null);
@@ -113,7 +113,7 @@ describe('Error Handling Scenarios', () => {
     });
 
     test('should return safe defaults when data not loaded', async () => {
-      const transformModule = await import('../../js/radar/transform.js');
+      const transformModule = await import('../../js/spider/transform.js');
       
       // Reset to invalid state
       transformModule.default.setDataSource(null);
@@ -220,7 +220,7 @@ describe('Error Handling Scenarios', () => {
       // Test that modules can be imported dynamically
       const modules = [
         '../../js/utils/dataLoader.js',
-        '../../js/radar/transform.js',
+        '../../js/spider/transform.js',
         '../../js/data/data_radar.js'
       ];
       
