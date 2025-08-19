@@ -185,11 +185,11 @@ function initializeImageOptimization() {
     // Setup lazy loading
     const observer = setupLazyLoading();
     
-    // Preload favicon and critical images
-    preloadCriticalImages([
-        'favicon.png',
-        'images/maturity-model-placeholder.svg'
-    ]);
+    // Preload critical images (commented out until images exist)
+    // preloadCriticalImages([
+    //     'favicon.png',
+    //     'images/maturity-model-placeholder.svg'
+    // ]);
     
     console.log('Image optimization initialized');
     
