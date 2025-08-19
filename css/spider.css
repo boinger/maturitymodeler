@@ -817,7 +817,173 @@ body::before {
     }
 }
 
-/* Dark mode support */
+/* Dark mode toggle switch */
+#dark-mode-toggle {
+    position: absolute;
+    right: var(--spacing-6);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+    transition: all var(--transition-normal);
+    backdrop-filter: blur(10px);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#dark-mode-toggle:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+.toggle-icon {
+    font-size: 16px;
+    transition: all var(--transition-normal);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.sun-icon {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+.moon-icon {
+    opacity: 0.3;
+    transform: scale(0.8) rotate(-180deg);
+}
+
+.toggle-slider {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    background: white;
+    border-radius: 50%;
+    left: 2px;
+    transition: all var(--transition-bounce);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode active state */
+#dark-mode-toggle.dark {
+    background: rgba(99, 102, 241, 0.3);
+    border-color: rgba(139, 92, 246, 0.5);
+}
+
+#dark-mode-toggle.dark .toggle-slider {
+    left: 32px;
+    background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+}
+
+#dark-mode-toggle.dark .sun-icon {
+    opacity: 0.3;
+    transform: scale(0.8) rotate(180deg);
+}
+
+#dark-mode-toggle.dark .moon-icon {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+}
+
+/* Mobile responsiveness for toggle */
+@media screen and (max-width: 767px) {
+    #dark-mode-toggle {
+        right: var(--spacing-4);
+        width: 50px;
+        height: 26px;
+    }
+    
+    .toggle-slider {
+        width: 22px;
+        height: 22px;
+    }
+    
+    #dark-mode-toggle.dark .toggle-slider {
+        left: 26px;
+    }
+    
+    .toggle-icon {
+        font-size: 14px;
+    }
+}
+
+/* Dark mode triggered by toggle (not just system preference) */
+.dark-mode :root,
+:root:has(.dark-mode) {
+    --primary-bg: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    --primary-bg-solid: #1e293b;
+    --primary-text: #f8fafc;
+    --secondary-bg: #0f172a;
+    --secondary-text: #e2e8f0;
+    --accent-color: #6366f1;
+    --accent-hover: #7c3aed;
+    --border-color: #334155;
+    --border-light: #475569;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    
+    /* Dark mode glass morphism */
+    --glass-bg: rgba(15, 23, 42, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-blur: blur(20px);
+}
+
+.dark-mode body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.dark-mode #apps {
+    background-color: rgba(15, 23, 42, 0.8);
+}
+
+.dark-mode #chart {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+.dark-mode .appDiv {
+    background: rgba(30, 41, 59, 0.6);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode .appDiv:hover {
+    background: rgba(30, 41, 59, 0.8);
+}
+
+.dark-mode .showModel {
+    background: rgba(15, 23, 42, 0.95);
+    color: var(--secondary-text);
+    border-color: var(--border-color);
+}
+
+.dark-mode #footer {
+    background: rgba(15, 23, 42, 0.3);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Dark mode SVG text enhancement */
+.dark-mode #chart svg text {
+    fill: var(--secondary-text) !important;
+    stroke: rgba(15, 23, 42, 0.8);
+    stroke-width: 0.5px;
+    paint-order: stroke fill;
+}
+
+/* System preference dark mode */
 @media (prefers-color-scheme: dark) {
     :root {
         --primary-bg: linear-gradient(135deg, #1e293b 0%, #334155 100%);
