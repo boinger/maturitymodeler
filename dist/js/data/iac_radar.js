@@ -96,7 +96,7 @@ define(function () {
     referenceLink1 = "https://github.com/boinger/maturitymodeler";
     referenceLinkTitle1 = "Maturity Modeler";
     referenceLink2 = "https://github.com/boinger/maturitymodeler";
-    referenceLinkTitle2 = "Jeff Vier - 2020";
+    referenceLinkTitle2 = "Jeff Vier - 2020-2025";
 
     applications = [
         "Commercial Lending",

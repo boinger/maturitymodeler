@@ -513,14 +513,43 @@ import spider from './spider.js';
             // Apply initial theme
             if (isDark) {
                 document.documentElement.classList.add('dark-mode');
+                document.documentElement.classList.remove('light-mode');
                 toggleContainer.classList.add('dark');
+            } else {
+                // If user has no preference but system is dark, we need to override with light-mode
+                if (prefersDark && !savedTheme) {
+                    document.documentElement.classList.add('light-mode');
+                } else {
+                    document.documentElement.classList.remove('dark-mode');
+                }
             }
             
             // Toggle handler
             function toggleDarkMode() {
-                const isDarkMode = document.documentElement.classList.toggle('dark-mode');
-                toggleContainer.classList.toggle('dark');
-                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+                const htmlElement = document.documentElement;
+                const isDarkMode = htmlElement.classList.contains('dark-mode');
+                
+                if (isDarkMode) {
+                    // Switching to light mode
+                    htmlElement.classList.remove('dark-mode');
+                    htmlElement.classList.add('light-mode');
+                    toggleContainer.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    // Switching to dark mode
+                    htmlElement.classList.remove('light-mode');
+                    htmlElement.classList.add('dark-mode');
+                    toggleContainer.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+                
+                const finalIsDark = htmlElement.classList.contains('dark-mode');
+                
+                // Debug logging
+                console.log('Theme toggled to:', finalIsDark ? 'dark' : 'light');
+                console.log('HTML element classes:', htmlElement.className);
+                console.log('CSS primary-bg:', getComputedStyle(htmlElement).getPropertyValue('--primary-bg'));
+                console.log('Body background:', getComputedStyle(document.body).background);
                 
                 // Trigger any chart redraws if needed for better dark mode support
                 if (window.currentChart) {
