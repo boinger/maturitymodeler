@@ -21,8 +21,8 @@
 /*global Math, parseFloat, d3 */
 /*jslint plusplus: true, unparam: true */
 import dataRadar from '../data/data_radar.js';
-// D3 library needs to be loaded as UMD, import will be resolved by bundler
-import '../d3/d3.js';
+// Use minimal D3 for better performance
+import d3 from '../utils/d3-minimal.js';
 import transform from './transform.js';
 import memoryManager from '../utils/memoryManager.js';
 

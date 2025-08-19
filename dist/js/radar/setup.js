@@ -26,8 +26,11 @@
 import dataLoader from '../utils/dataLoader.js';
 import memoryManager from '../utils/memoryManager.js';
 import browserCompat from '../utils/browserCompat.js';
-// D3 library needs to be loaded as UMD, import will be resolved by bundler
-import '../d3/d3.js';
+import imageOptimizer from '../utils/imageOptimizer.js';
+import serviceWorker from '../utils/serviceWorker.js';
+import performanceMonitor from '../utils/performanceMonitor.js';
+// Use minimal D3 for better performance
+import d3 from '../utils/d3-minimal.js';
 import transform from './transform.js';
 import radar from './radar.js';
 
@@ -125,6 +128,14 @@ import radar from './radar.js';
             newCheckbox.data = i;
             newCheckbox.className = "appCheckbox";
             newCheckbox.onclick = function(event) {
+                const startTime = performance.now();
+                
+                // Track user interaction
+                performanceMonitor.trackUserInteraction('checkbox-toggle', event.currentTarget.id, {
+                    checked: event.currentTarget.checked,
+                    app: app
+                });
+                
                 if (event.currentTarget.checked) {
                     checkboxes.push(event.currentTarget.data);
                 } else {
@@ -136,6 +147,9 @@ import radar from './radar.js';
                 // Use current responsive config
                 config = getResponsiveConfig();
                 radar.draw("#chart", transform.getSelectedData(checkboxes), config);
+                
+                // Track chart re-render performance
+                performanceMonitor.trackChartRender('interaction-chart', startTime);
             };
             return newCheckbox;
         };
@@ -327,14 +341,19 @@ import radar from './radar.js';
         };
 
         createModelImg = function() {
-            var newImg = document.createElement("img");
-            newImg.setAttribute("src", "images/maturity-model-placeholder.svg");
-            newImg.setAttribute("alt", "Continuous Delivery Maturity Model Diagram");
-            newImg.style.cursor = "pointer";
-            newImg.style.width = 921;
-            newImg.style.height = 466;
-            newImg.style.maxWidth = "100%";
-            newImg.style.height = "auto";
+            // Use image optimizer for better performance
+            var newImg = imageOptimizer.createOptimizedImage(
+                "images/maturity-model-placeholder.svg",
+                "Continuous Delivery Maturity Model Diagram",
+                {
+                    width: 921,
+                    height: 466,
+                    maxWidth: "100%",
+                    lazy: false, // Don't lazy load this critical image
+                    style: { cursor: "pointer" }
+                }
+            );
+            
             memoryManager.addManagedEventListener(newImg, "click", function() {
                 document.getElementById("model").className = "hideModel";
             });
@@ -377,11 +396,21 @@ import radar from './radar.js';
 
         initializePage = async function() {
             try {
+                // Start performance monitoring
+                performanceMonitor.setupPerformanceMonitoring();
+                const initStartTime = performance.now();
+                
+                // Initialize performance optimizations early
+                imageOptimizer.initializeImageOptimization();
+                serviceWorker.initializeServiceWorker();
+                
                 // Check browser compatibility and show warning if needed
                 browserCompat.checkBrowserCompatibility();
                 
                 // Load data with error handling and fallbacks
+                const dataLoadStart = performance.now();
                 const dataRadar = await dataLoader.loadDataWithFallback();
+                performanceMonitor.trackDataLoad('primary', dataLoadStart, true);
                 
                 // Store globally for reference functions
                 window.currentDataRadar = dataRadar;
@@ -391,7 +420,11 @@ import radar from './radar.js';
                 
                 // Initialize the page with loaded data
                 document.getElementById("title").innerHTML = dataRadar.pageTitle;
+                
+                // Track chart rendering performance
+                const chartRenderStart = performance.now();
                 radar.draw("#chart", transform.getCategoryAvgs(), config);
+                performanceMonitor.trackChartRender('main-chart', chartRenderStart);
                 attachDivs(dataRadar);
                 document.getElementById("app100").checked = true;
                 checkboxes.push(dataRadar.idAverageCategories);

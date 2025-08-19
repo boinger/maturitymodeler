@@ -8,10 +8,9 @@
  */
 function supportsESModules() {
     try {
-        // Check for ES module support
+        // Check for core ES6+ features
         if (typeof Symbol === 'undefined') return false;
         if (typeof Promise === 'undefined') return false;
-        if (typeof fetch === 'undefined') return false;
         if (typeof Object.assign === 'undefined') return false;
         
         // Test script type="module" support
