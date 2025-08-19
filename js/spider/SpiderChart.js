@@ -291,7 +291,9 @@ class SpiderChart {
             const originalIndex = series[0]?.originalIndex ?? seriesIndex;
             const polygonPath = this.generatePolygonPath(series);
             
-            // Chart polygon color assignment using originalIndex
+            // Determine if this is the most recently added polygon (last in the array)
+            const isLatest = seriesIndex === data.length - 1;
+            const opacity = data.length > 1 ? (isLatest ? 0.7 : 0.2) : this.config.opacityArea;
             
             const polygon = this.g.append('polygon')
                 .datum(series)
@@ -300,7 +302,7 @@ class SpiderChart {
                 .style('stroke-width', '2px')
                 .style('stroke', this.colorScale(originalIndex))
                 .style('fill', this.colorScale(originalIndex))
-                .style('fill-opacity', this.config.opacityArea);
+                .style('fill-opacity', opacity);
             
             // Add hover effects
             this.addPolygonInteractions(polygon, seriesIndex, originalIndex);

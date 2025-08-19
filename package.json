@@ -18,6 +18,7 @@
     "@babel/core": "^7.28.3",
     "@babel/preset-env": "^7.28.3",
     "@jest/globals": "^29.7.0",
+    "babel-jest": "^30.0.5",
     "babel-loader": "^10.0.0",
     "core-js": "^3.45.0",
     "d3": "^7.9.0",
@@ -35,18 +36,6 @@
     "webpack-cli": "^6.0.1"
   },
   "type": "module",
-  "jest": {
-    "testEnvironment": "jsdom",
-    "testMatch": [
-      "**/tests/**/*.test.js"
-    ],
-    "collectCoverageFrom": [
-      "js/**/*.js",
-      "!js/d3/**",
-      "!js/require_2_3_6/**",
-      "!dist/**"
-    ]
-  },
   "keywords": [
     "d3",
     "visualization",
