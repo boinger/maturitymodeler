@@ -94,8 +94,8 @@ describe('Memory Leak Prevention', () => {
       
       memoryManager.setupPageUnloadCleanup();
       
+      expect(addEventListenerSpy).toHaveBeenCalledWith('pagehide', expect.any(Function), false);
       expect(addEventListenerSpy).toHaveBeenCalledWith('beforeunload', expect.any(Function), false);
-      expect(addEventListenerSpy).toHaveBeenCalledWith('unload', expect.any(Function), false);
       
       addEventListenerSpy.mockRestore();
     });
