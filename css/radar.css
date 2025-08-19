@@ -32,6 +32,99 @@ body {
     height: 100%;
 }
 
+/* Responsive Design for Different Screen Sizes */
+
+/* Mobile devices (portrait) - up to 767px */
+@media screen and (max-width: 767px) {
+    body {
+        overflow: auto; /* Allow scrolling on mobile */
+    }
+    
+    #title {
+        font-size: 14px;
+        padding: 8px;
+        height: auto;
+        text-align: center;
+    }
+    
+    #apps {
+        position: relative;
+        top: 0;
+        width: 100%;
+        max-width: none;
+        padding: 10px;
+        height: auto;
+        order: 2;
+    }
+    
+    #chart {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        order: 3;
+        overflow-x: auto; /* Allow horizontal scroll if needed */
+        padding: 10px 0;
+    }
+    
+    #footer {
+        position: relative;
+        text-align: center;
+        margin: 10px;
+        bottom: auto;
+        right: auto;
+        order: 4;
+    }
+    
+    /* Stack layout vertically */
+    #body {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Tablet devices - 768px to 1023px */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    #chart {
+        left: 260px; /* Slightly less left margin */
+    }
+    
+    #apps {
+        max-width: 240px; /* Slightly narrower sidebar */
+    }
+    
+    #title {
+        font-size: 15px;
+    }
+}
+
+/* Large screens - 1024px to 1439px */
+@media screen and (min-width: 1024px) and (max-width: 1439px) {
+    /* Default layout works well, minor adjustments */
+    #chart {
+        left: 280px;
+    }
+}
+
+/* Extra large screens - 1440px and up */
+@media screen and (min-width: 1440px) {
+    #chart {
+        left: 320px; /* More space for larger screens */
+    }
+    
+    #apps {
+        max-width: 300px; /* Wider sidebar on large screens */
+        padding: 15px 25px 15px 15px;
+    }
+    
+    #title {
+        font-size: 18px;
+        padding: 12px;
+    }
+}
+
 .appDiv {
     color: #222222;
     font-weight: normal;

@@ -76,14 +76,42 @@ import radar from './radar.js';
             }
         }
 
-        //Options for the Radar chart, other than default
-        config = {
-            w: 600,
-            h: 600,
-            maxValue: 100,
-            levels: 5,
-            ExtraWidthX: 650
-        };
+        // Calculate responsive dimensions based on screen size
+        function getResponsiveConfig() {
+            var screenWidth = window.innerWidth || document.documentElement.clientWidth;
+            var screenHeight = window.innerHeight || document.documentElement.clientHeight;
+            var chartSize, extraWidth;
+            
+            if (screenWidth <= 767) {
+                // Mobile: smaller chart that fits in viewport
+                chartSize = Math.min(screenWidth - 40, screenHeight - 200, 400);
+                extraWidth = 50;
+            } else if (screenWidth <= 1023) {
+                // Tablet: medium chart
+                chartSize = Math.min(screenWidth - 300, screenHeight - 100, 500);
+                extraWidth = 100;
+            } else if (screenWidth <= 1439) {
+                // Desktop: standard chart
+                chartSize = 600;
+                extraWidth = 150;
+            } else {
+                // Large desktop: bigger chart
+                chartSize = 700;
+                extraWidth = 200;
+            }
+            
+            return {
+                w: chartSize,
+                h: chartSize,
+                maxValue: 100,
+                levels: 5,
+                ExtraWidthX: extraWidth,
+                ExtraWidthY: extraWidth
+            };
+        }
+
+        //Options for the Radar chart, responsive to screen size
+        config = getResponsiveConfig();
 
 
         createCheckbox = function(app, i) {
@@ -103,6 +131,8 @@ import radar from './radar.js';
                         checkboxes.splice(index, 1);
                     }
                 }
+                // Use current responsive config
+                config = getResponsiveConfig();
                 radar.draw("#chart", transform.getSelectedData(checkboxes), config);
             };
             return newCheckbox;
@@ -230,6 +260,8 @@ import radar from './radar.js';
             newDiv.addEventListener("click", function() {
                 checkboxes = [];
                 checkAll();
+                // Use current responsive config
+                config = getResponsiveConfig();
                 radar.draw("#chart", transform.getSelectedData(checkboxes), config);
             });
             return newDiv;
@@ -242,6 +274,8 @@ import radar from './radar.js';
             newDiv.addEventListener("click", function() {
                 checkboxes = [];
                 checkNone();
+                // Use current responsive config
+                config = getResponsiveConfig();
                 radar.draw("#chart", transform.getSelectedData(checkboxes), config);
             });
             return newDiv;
@@ -313,6 +347,31 @@ import radar from './radar.js';
                 .appendChild(newLink);
         };
 
+        // Handle window resize for responsive chart
+        function handleResize() {
+            // Recalculate responsive configuration
+            config = getResponsiveConfig();
+            
+            // Redraw chart with new dimensions if data is available
+            if (window.currentDataRadar && transform.getCategoryAvgs) {
+                // Clear existing chart
+                var chartElement = document.getElementById("chart");
+                if (chartElement) {
+                    chartElement.innerHTML = "";
+                }
+                
+                // Redraw with new config
+                radar.draw("#chart", transform.getCategoryAvgs(), config);
+            }
+        }
+        
+        // Debounced resize handler to avoid excessive redraws
+        var resizeTimeout;
+        function debouncedResize() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(handleResize, 250);
+        }
+
         initializePage = async function() {
             try {
                 // Load data with error handling and fallbacks
@@ -334,6 +393,9 @@ import radar from './radar.js';
                 createModelPopup();
                 createModelImg();
                 createRefLink();
+                
+                // Add resize listener for responsive behavior
+                window.addEventListener('resize', debouncedResize);
                 
                 // Show warning if using fallback data
                 const loadingState = dataLoader.getLoadingState();
