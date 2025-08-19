@@ -6,8 +6,8 @@
 /* CSS Custom Properties for maintainable theming */
 :root {
     /* Modern color palette */
-    --primary-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --primary-bg-solid: #667eea;
+    --primary-bg: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+    --primary-bg-solid: #4338ca;
     --primary-text: #ffffff;
     --secondary-bg: #fafbfc;
     --secondary-text: #2d3748;
@@ -23,18 +23,28 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     
-    /* Modern typography */
-    --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* Modern typography with enhanced font stack */
+    --font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", system-ui, ui-sans-serif, Roboto, "Helvetica Neue", "Inter", "Arial Nova", Arial, sans-serif;
+    --font-family-mono: "SF Mono", ui-monospace, "Cascadia Code", "Roboto Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+    --font-weight-light: 300;
     --font-weight-normal: 400;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
-    --font-size-xs: 12px;
-    --font-size-sm: 14px;
-    --font-size-base: 16px;
-    --font-size-lg: 18px;
-    --font-size-xl: 20px;
-    --font-size-2xl: 24px;
+    --font-weight-extrabold: 800;
+    --font-size-xs: 11px;
+    --font-size-sm: 13px;
+    --font-size-base: 15px;
+    --font-size-lg: 17px;
+    --font-size-xl: 19px;
+    --font-size-2xl: 22px;
+    --font-size-3xl: 28px;
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-loose: 1.75;
+    --letter-spacing-tight: -0.025em;
+    --letter-spacing-normal: 0;
+    --letter-spacing-wide: 0.025em;
     
     /* Consistent spacing scale */
     --spacing-1: 4px;
@@ -83,8 +93,10 @@ body {
     font-size: var(--font-size-base);
     font-family: var(--font-family);
     font-weight: var(--font-weight-normal);
-    line-height: 1.6;
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-normal);
     color: var(--secondary-text);
+    text-rendering: optimizeLegibility;
     background: 
         radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
@@ -158,17 +170,20 @@ body::before {
 /* Main layout components */
 #title {
     position: relative;
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
     text-align: left;
     background: var(--primary-bg);
     padding: var(--spacing-5);
-    color: var(--primary-text);
+    color: var(--primary-text) !important;
     min-height: 60px;
     display: flex;
     align-items: center;
     box-shadow: var(--shadow-sm);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    letter-spacing: var(--letter-spacing-tight);
+    line-height: var(--line-height-tight);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 #chart {
@@ -482,11 +497,12 @@ body::before {
 
 .appDiv label {
     flex: 1;
-    line-height: 1.4;
+    line-height: var(--line-height-normal);
     margin: 0;
     cursor: pointer;
-    font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-medium);
     font-size: var(--font-size-sm);
+    letter-spacing: var(--letter-spacing-normal);
 }
 
 .appDiv .color-indicator {
@@ -525,10 +541,11 @@ body::before {
 
 .titleDiv {
     color: var(--secondary-text);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: var(--letter-spacing-wide);
+    line-height: var(--line-height-tight);
     padding: var(--spacing-4) var(--spacing-3);
     border-bottom: 2px solid var(--border-light);
     margin-bottom: var(--spacing-4);
@@ -611,13 +628,15 @@ body::before {
     position: fixed;
     right: var(--spacing-6);
     bottom: var(--spacing-6);
-    font-size: 11px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-normal);
     text-align: right;
     color: rgba(0, 0, 0, 0.4);
     padding: var(--spacing-1);
     transition: all var(--transition-fast);
     opacity: 0.6;
-    line-height: 1.4;
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-normal);
     z-index: var(--z-index-tooltip);
 }
 
@@ -969,8 +988,8 @@ html.dark-mode #chart svg text {
 /* Light mode override - forces light mode even when system prefers dark */
 html.light-mode,
 html.light-mode:root {
-    --primary-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    --primary-bg-solid: #667eea !important;
+    --primary-bg: linear-gradient(135deg, #4338ca 0%, #6366f1 100%) !important;
+    --primary-bg-solid: #4338ca !important;
     --primary-text: #ffffff !important;
     --secondary-bg: #fafbfc !important;
     --secondary-text: #2d3748 !important;
@@ -1015,6 +1034,12 @@ html.light-mode #apps {
 html.light-mode #chart {
     background: rgba(255, 255, 255, 0.25) !important;
     border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Ensure title text is white in all light mode scenarios */
+#title,
+html.light-mode #title {
+    color: #ffffff !important;
 }
 
 html.light-mode .appDiv {
