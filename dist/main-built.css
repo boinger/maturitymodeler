@@ -356,11 +356,12 @@ body::before {
     
     /* Touch-friendly links */
     .footerLinks {
-        padding: var(--spacing-3) var(--spacing-4);
-        margin: var(--spacing-1);
-        display: inline-block;
-        min-height: 44px;
-        line-height: 1.5;
+        display: block;
+        margin: 0;
+        padding: var(--spacing-1) 0;
+        min-height: 32px;
+        line-height: 1.4;
+        text-align: center;
     }
 }
 
@@ -690,28 +691,22 @@ body::before {
     transform: translateX(0);
 }
 
-/* Footer styling */
+/* Footer styling - subtle and minimal */
 #footer {
     position: absolute;
     right: var(--spacing-6);
     bottom: var(--spacing-6);
-    font-size: var(--font-size-xs);
+    font-size: 11px;
     text-align: right;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: var(--spacing-2) var(--spacing-3);
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(8px) saturate(150%);
-    animation: slideInUp 0.8s var(--transition-spring) 1s both;
+    color: rgba(0, 0, 0, 0.4);
+    padding: var(--spacing-1);
     transition: all var(--transition-fast);
-    opacity: 0.8;
+    opacity: 0.6;
+    line-height: 1.4;
 }
 
 #footer:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-    opacity: 1;
+    opacity: 0.8;
 }
 
 @keyframes slideInUp {
@@ -766,38 +761,21 @@ body::before {
 }
 
 .footerLinks {
-    color: var(--accent-color);
-    font-weight: var(--font-weight-medium);
+    color: inherit;
+    font-weight: inherit;
     cursor: pointer;
     text-decoration: none;
     transition: all var(--transition-fast);
-    border-radius: var(--border-radius-sm);
-    padding: var(--spacing-2) var(--spacing-3);
-    display: inline-block;
-    position: relative;
-    overflow: hidden;
-}
-
-.footerLinks::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--accent-color);
-    transition: width var(--transition-fast);
+    display: block;
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    text-align: right;
+    line-height: 1.4;
 }
 
 .footerLinks:hover {
-    color: var(--accent-hover);
-    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(139, 92, 246, 0.15));
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
-}
-
-.footerLinks:hover::before {
-    width: 100%;
+    opacity: 1;
 }
 
 .footerLinks:focus {
@@ -986,8 +964,7 @@ body::before {
     }
     
     #footer {
-        background: rgba(15, 23, 42, 0.3);
-        border-color: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.4);
     }
     
     /* Dark mode SVG text enhancement */
@@ -1056,8 +1033,7 @@ html.dark-mode .showModel {
 }
 
 html.dark-mode #footer {
-    background: rgba(15, 23, 42, 0.3) !important;
-    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.4) !important;
 }
 
 /* Dark mode SVG text enhancement */
@@ -1133,8 +1109,7 @@ html.light-mode .showModel {
 }
 
 html.light-mode #footer {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(0, 0, 0, 0.4) !important;
 }
 
 /* Light mode SVG text enhancement */

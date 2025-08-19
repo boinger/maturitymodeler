@@ -418,18 +418,14 @@ import spider from './spider.js';
         };
 
         createModelPopup = function() {
-            var newPara = document.createElement("p");
-            newPara.innerHTML = window.currentDataRadar?.referenceLinkTitle1 || 'Model Info';
-            newPara.className = "footerLinks";
-            memoryManager.addManagedEventListener(newPara, "click", function() {
-                if (document.getElementById("model").className === "showModel") {
-                    document.getElementById("model").className = "hideModel";
-                } else {
-                    document.getElementById("model").className = "showModel";
-                }
-            });
+            var newLink = document.createElement("a");
+            newLink.innerHTML = window.currentDataRadar?.referenceLinkTitle1 || 'Maturity Modeler';
+            newLink.className = "footerLinks";
+            newLink.setAttribute("href", "https://github.com/boinger/maturitymodeler");
+            newLink.setAttribute("target", "_blank");
+            newLink.setAttribute("rel", "noopener noreferrer");
             document.getElementById("footer")
-                .appendChild(newPara);
+                .appendChild(newLink);
         };
 
         createModelImg = function() {
@@ -456,8 +452,10 @@ import spider from './spider.js';
         createRefLink = function() {
             var newLink = document.createElement("a");
             newLink.className = "footerLinks";
-            newLink.setAttribute("href", window.currentDataRadar?.referenceLink2 || '#');
-            newLink.innerHTML = window.currentDataRadar?.referenceLinkTitle2 || 'Reference';
+            newLink.setAttribute("href", "https://github.com/boinger/maturitymodeler");
+            newLink.setAttribute("target", "_blank");
+            newLink.setAttribute("rel", "noopener noreferrer");
+            newLink.innerHTML = window.currentDataRadar?.referenceLinkTitle2 || 'Jeff Vier - 2020-2025';
             document.getElementById("footer")
                 .appendChild(newLink);
         };
