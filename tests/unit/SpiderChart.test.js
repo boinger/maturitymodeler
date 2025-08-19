@@ -13,8 +13,9 @@ describe('SpiderChart', () => {
             expect(chart.containerId).toBe('#test-container');
             expect(chart.config.w).toBe(800);
             expect(chart.config.h).toBe(800);
-            expect(chart.config.levels).toBe(3);
-            expect(chart.config.maxValue).toBe(100);
+            expect(chart.config.levels).toBe(5);
+            expect(chart.config.maxValue).toBe(4);
+            expect(chart.config.minValue).toBe(-1);
         });
         
         test('should accept custom config', () => {

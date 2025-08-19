@@ -6,6 +6,7 @@
 
 import d3 from '../utils/d3-tree-shaken.js';
 import memoryManager from '../utils/memoryManager.js';
+import { debugLog } from '../utils/debug.js';
 
 /**
  * @typedef {Object} ChartConfig
@@ -330,6 +331,10 @@ class SpiderChart {
                     .style('fill-opacity', 0.7);
                 
                 // Cross-highlight corresponding menu item
+                const appName = originalIndex === 100 ? 
+                    (window.currentDataRadar?.averageTitle || 'Category Averages') :
+                    (window.currentDataRadar?.applications?.[originalIndex] || 'Unknown');
+                debugLog('Polygon hover - highlighting menu item with originalIndex:', originalIndex, 'app:', appName);
                 this.highlightMenuItem(originalIndex);
             })
             .on('mouseout', () => {
@@ -398,6 +403,50 @@ class SpiderChart {
         appDivs.forEach(div => {
             div.classList.remove('chart-highlight', 'chart-dimmed');
         });
+    }
+
+    /**
+     * Highlight a specific polygon by original index (called from menu hover)
+     * @param {number} originalIndex - Original data index
+     */
+    highlightPolygon(originalIndex) {
+        debugLog('SpiderChart.highlightPolygon called with originalIndex:', originalIndex);
+        
+        // Dim all polygons
+        this.g.selectAll('polygon')
+            .transition()
+            .duration(200)
+            .style('fill-opacity', 0.1);
+        
+        // Find and highlight the polygon(s) with this original index
+        // Check each polygon's datum for matching originalIndex
+        const matchingPolygons = this.g.selectAll('polygon')
+            .filter(function(d) {
+                // d is the series data bound to this polygon
+                const hasMatch = d && d.length > 0 && d[0].originalIndex === originalIndex;
+                if (d && d.length > 0) {
+                    debugLog('Checking polygon with originalIndex:', d[0].originalIndex, 'against target:', originalIndex, 'match:', hasMatch);
+                }
+                return hasMatch;
+            });
+            
+        debugLog('Found', matchingPolygons.size(), 'matching polygons');
+        
+        matchingPolygons
+            .transition()
+            .duration(200)
+            .style('fill-opacity', 0.7);
+    }
+
+    /**
+     * Clear polygon highlighting (called from menu mouseout)
+     */
+    clearPolygonHighlight() {
+        // Restore all polygons to normal opacity
+        this.g.selectAll('polygon')
+            .transition()
+            .duration(200)
+            .style('fill-opacity', this.config.opacityArea);
     }
 
     /**

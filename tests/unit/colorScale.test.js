@@ -4,7 +4,8 @@
  */
 
 import { describe, test, expect, beforeEach } from '@jest/globals';
-import * as d3 from 'd3';
+import { scaleOrdinal } from 'd3-scale';
+import { schemeCategory10 } from 'd3-scale-chromatic';
 
 describe('Color Scale Tests', () => {
   let colorScale;
@@ -17,7 +18,7 @@ describe('Color Scale Tests', () => {
       "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5",
       "#c49c94", "#f7b6d3", "#c7c7c7", "#dbdb8d", "#9edae5"
     ];
-    colorScale = d3.scaleOrdinal(customColors);
+    colorScale = scaleOrdinal(customColors);
   });
 
   describe('Color Uniqueness', () => {

@@ -14,8 +14,13 @@ global.define = jest.fn((deps, factory) => {
   // Mock dependencies - we'll inject real ones in tests
   const mockDeps = deps.map(dep => {
     if (dep === 'd3') {
-      // Import d3 dynamically for ES modules
-      return import('d3');
+      // Return a mock d3 object
+      return {
+        scaleOrdinal: jest.fn(),
+        schemeCategory10: ['#1f77b4', '#ff7f0e', '#2ca02c'],
+        select: jest.fn(),
+        selectAll: jest.fn()
+      };
     }
     return {}; // Mock other dependencies
   });

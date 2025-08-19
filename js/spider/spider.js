@@ -46,6 +46,8 @@ const draw = (id, data, options = {}) => {
         if (currentChart) {
             currentChart.destroy();
         }
+        currentChart = null;
+        window.spider = null;
         
         // Convert legacy options to new format
         const config = {
@@ -56,6 +58,9 @@ const draw = (id, data, options = {}) => {
         // Create and render new chart
         currentChart = new SpiderChart(id, config);
         currentChart.render(data);
+        
+        // Make chart instance globally available for menu interactions
+        window.spider = currentChart;
         
         return currentChart;
         
@@ -100,6 +105,7 @@ const cleanup = () => {
     if (currentChart) {
         currentChart.destroy();
         currentChart = null;
+        window.spider = null;
     }
 };
 

@@ -241,7 +241,12 @@ class DataTransformer {
             
             // Regular application data lookup
             if (index >= 0 && index < allData.length) {
-                return allData[index];
+                const appData = allData[index];
+                // Ensure originalIndex is set to the actual applications array index
+                return appData.map(point => ({
+                    ...point,
+                    originalIndex: index
+                }));
             }
             
             // Out of bounds - might be another special ID

@@ -4,17 +4,20 @@
  */
 
 // Import only the D3 modules we actually use for webpack bundling
-import { select, selectAll } from 'd3-selection';
+import { select, selectAll, pointer } from 'd3-selection';
 import { scaleOrdinal } from 'd3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 import { max, range } from 'd3-array';
 import { format } from 'd3-format';
 import { line, curveLinearClosed } from 'd3-shape';
+// Import d3-transition for side effects (extends d3-selection prototypes)
+import 'd3-transition';
 
 // Create a minimal d3 object with only the functions we need
 const d3 = {
   select,
   selectAll,
+  pointer,
   scaleOrdinal,
   schemeCategory10,
   max,

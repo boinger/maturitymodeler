@@ -33,6 +33,7 @@ import performanceMonitor from '../utils/performanceMonitor.js';
 import d3 from '../utils/d3-tree-shaken.js';
 import transform from './transform.js';
 import spider from './spider.js';
+import { debugLog } from '../utils/debug.js';
 
 "use strict";
         var colorScale,
@@ -201,6 +202,23 @@ import spider from './spider.js';
             newDiv.appendChild(createLabel(app, i));
             newDiv.style.cursor = "pointer";
             newDiv.className = "appDiv";
+            
+            // Add hover handlers for chart highlighting
+            memoryManager.addManagedEventListener(newDiv, "mouseover", function() {
+                // Only highlight if checkbox is checked
+                debugLog('Menu item hover:', {app: app, index: i, checked: checkbox.checked, hasSpider: !!window.spider});
+                if (checkbox.checked && window.spider) {
+                    window.spider.highlightPolygon(i);
+                }
+            });
+            
+            memoryManager.addManagedEventListener(newDiv, "mouseout", function() {
+                // Clear highlighting
+                if (window.spider) {
+                    window.spider.clearPolygonHighlight();
+                }
+            });
+            
             return newDiv;
         };
 
@@ -315,8 +333,10 @@ import spider from './spider.js';
             document.getElementById("apps")
                 .appendChild(createTitleDiv(dataRadar));
             for (i = 0; i < arrayLength; i++) {
+                // Find the original index of this app name in the unsorted applications array
+                const originalIndex = window.currentDataRadar?.applications?.indexOf(appNames[i]) ?? i;
                 document.getElementById("apps")
-                    .appendChild(createAppDiv(appNames[i], i));
+                    .appendChild(createAppDiv(appNames[i], originalIndex));
             }
             document.getElementById("apps")
                 .appendChild(createCatAvgsDiv(dataRadar));
@@ -455,10 +475,10 @@ import spider from './spider.js';
                 const finalIsDark = htmlElement.classList.contains('dark-mode');
                 
                 // Debug logging
-                console.log('Theme toggled to:', finalIsDark ? 'dark' : 'light');
-                console.log('HTML element classes:', htmlElement.className);
-                console.log('CSS primary-bg:', getComputedStyle(htmlElement).getPropertyValue('--primary-bg'));
-                console.log('Body background:', getComputedStyle(document.body).background);
+                debugLog('Theme toggled to:', finalIsDark ? 'dark' : 'light');
+                debugLog('HTML element classes:', htmlElement.className);
+                debugLog('CSS primary-bg:', getComputedStyle(htmlElement).getPropertyValue('--primary-bg'));
+                debugLog('Body background:', getComputedStyle(document.body).background);
                 
                 // Trigger any chart redraws if needed for better dark mode support
                 if (window.currentChart) {
