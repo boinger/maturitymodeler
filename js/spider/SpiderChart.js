@@ -376,22 +376,17 @@ class SpiderChart {
             const label = div.querySelector('label');
             const menuAppName = label ? label.textContent.trim() : '';
             
-            if (checkbox && checkbox.checked) {
-                // Simple direct name matching
-                const shouldHighlight = (menuAppName === targetAppName);
-                
-                if (shouldHighlight) {
-                    // Highlight this menu item
-                    div.classList.add('chart-highlight');
-                    div.classList.remove('chart-dimmed');
-                } else {
-                    // Dim other checked menu items
-                    div.classList.add('chart-dimmed');
-                    div.classList.remove('chart-highlight');
-                }
+            // Check if this is the target menu item to highlight
+            const shouldHighlight = (menuAppName === targetAppName);
+            
+            if (shouldHighlight) {
+                // Highlight this menu item (regardless of checked state)
+                div.classList.add('chart-highlight');
+                div.classList.remove('chart-dimmed');
             } else {
-                // Don't affect unchecked items
-                div.classList.remove('chart-highlight', 'chart-dimmed');
+                // Dim all other menu items (both checked and unchecked)
+                div.classList.add('chart-dimmed');
+                div.classList.remove('chart-highlight');
             }
         });
     }
