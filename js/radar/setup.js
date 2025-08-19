@@ -161,11 +161,11 @@ import radar from './radar.js';
             
             // Create color indicator
             colorIndicator = document.createElement("span");
+            colorIndicator.className = "color-indicator";
             colorIndicator.style.display = "inline-block";
             colorIndicator.style.width = "12px";
             colorIndicator.style.height = "12px";
             colorIndicator.style.backgroundColor = colorScale(i);
-            colorIndicator.style.marginRight = "5px";
             colorIndicator.style.border = "1px solid #999";
             colorIndicator.style.visibility = "hidden"; // Initially hidden
             colorIndicator.id = "color-" + i;
@@ -203,11 +203,11 @@ import radar from './radar.js';
             
             // Create color indicator for average
             colorIndicator = document.createElement("span");
+            colorIndicator.className = "color-indicator";
             colorIndicator.style.display = "inline-block";
             colorIndicator.style.width = "12px";
             colorIndicator.style.height = "12px";
             colorIndicator.style.backgroundColor = colorScale(dataRadar?.idAverageCategories || 100);
-            colorIndicator.style.marginRight = "5px";
             colorIndicator.style.border = "1px solid #999";
             colorIndicator.style.visibility = "hidden";
             colorIndicator.id = "color-" + (dataRadar?.idAverageCategories || 100);
