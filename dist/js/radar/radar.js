@@ -24,6 +24,7 @@ import dataRadar from '../data/data_radar.js';
 // D3 library needs to be loaded as UMD, import will be resolved by bundler
 import '../d3/d3.js';
 import transform from './transform.js';
+import memoryManager from '../utils/memoryManager.js';
 
 "use strict";
         
@@ -48,6 +49,9 @@ import transform from './transform.js';
         }
         
         var draw = function(id, d, options) {
+            // Clean up any existing chart and event listeners
+            memoryManager.cleanupChart(id);
+            
             var cfg,
                 series,
                 axis,
@@ -79,6 +83,9 @@ import transform from './transform.js';
 
             // Validate container exists
             var container = d3.select(id);
+            
+            // Track main container selection for memory management
+            var containerSelection = memoryManager.trackD3Selection(container, `radar-container-${id}`);
             if (container.empty()) {
                 console.error("D3 Radar Chart: Container element not found:", id);
                 return;

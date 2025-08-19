@@ -24,6 +24,7 @@
 /*global document, d3 */
 /*jslint browser: true, plusplus: true, unparam: true */
 import dataLoader from '../utils/dataLoader.js';
+import memoryManager from '../utils/memoryManager.js';
 // D3 library needs to be loaded as UMD, import will be resolved by bundler
 import '../d3/d3.js';
 import transform from './transform.js';
@@ -257,7 +258,7 @@ import radar from './radar.js';
             newDiv.innerHTML = "Check All";
             newDiv.style.cursor = "pointer";
             newDiv.className = "specialDiv";
-            newDiv.addEventListener("click", function() {
+            memoryManager.addManagedEventListener(newDiv, "click", function() {
                 checkboxes = [];
                 checkAll();
                 // Use current responsive config
@@ -271,7 +272,7 @@ import radar from './radar.js';
             newDiv.innerHTML = "Check None";
             newDiv.style.cursor = "pointer";
             newDiv.className = "specialDiv";
-            newDiv.addEventListener("click", function() {
+            memoryManager.addManagedEventListener(newDiv, "click", function() {
                 checkboxes = [];
                 checkNone();
                 // Use current responsive config
@@ -313,7 +314,7 @@ import radar from './radar.js';
             var newPara = document.createElement("p");
             newPara.innerHTML = window.currentDataRadar?.referenceLinkTitle1 || 'Model Info';
             newPara.className = "footerLinks";
-            newPara.addEventListener("click", function() {
+            memoryManager.addManagedEventListener(newPara, "click", function() {
                 if (document.getElementById("model").className === "showModel") {
                     document.getElementById("model").className = "hideModel";
                 } else {
@@ -331,7 +332,7 @@ import radar from './radar.js';
             newImg.style.cursor = "pointer";
             newImg.style.width = 921;
             newImg.style.height = 466;
-            newImg.addEventListener("click", function() {
+            memoryManager.addManagedEventListener(newImg, "click", function() {
                 document.getElementById("model").className = "hideModel";
             });
             document.getElementById("model").className = "hideModel";
@@ -354,11 +355,8 @@ import radar from './radar.js';
             
             // Redraw chart with new dimensions if data is available
             if (window.currentDataRadar && transform.getCategoryAvgs) {
-                // Clear existing chart
-                var chartElement = document.getElementById("chart");
-                if (chartElement) {
-                    chartElement.innerHTML = "";
-                }
+                // Clean up existing chart first
+                memoryManager.cleanupChart("#chart");
                 
                 // Redraw with new config
                 radar.draw("#chart", transform.getCategoryAvgs(), config);
@@ -368,8 +366,10 @@ import radar from './radar.js';
         // Debounced resize handler to avoid excessive redraws
         var resizeTimeout;
         function debouncedResize() {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(handleResize, 250);
+            if (resizeTimeout) {
+                memoryManager.clearManagedTimer(resizeTimeout);
+            }
+            resizeTimeout = memoryManager.addManagedTimeout(handleResize, 250);
         }
 
         initializePage = async function() {
@@ -395,7 +395,15 @@ import radar from './radar.js';
                 createRefLink();
                 
                 // Add resize listener for responsive behavior
-                window.addEventListener('resize', debouncedResize);
+                memoryManager.addManagedEventListener(window, 'resize', debouncedResize);
+                
+                // Setup memory management and monitoring
+                memoryManager.setupPageUnloadCleanup();
+                memoryManager.startMemoryMonitoring({
+                    checkInterval: 60000, // Check every minute
+                    memoryThreshold: 50 * 1024 * 1024, // 50MB threshold
+                    d3CleanupAge: 300000 // Clean D3 selections older than 5 minutes
+                });
                 
                 // Show warning if using fallback data
                 const loadingState = dataLoader.getLoadingState();
