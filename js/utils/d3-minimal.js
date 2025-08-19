@@ -1,32 +1,30 @@
 /**
- * Minimal D3 imports - only the functions we actually use
- * This reduces bundle size significantly by tree-shaking unused D3 modules
+ * D3.js loader for ES modules
+ * For ES modules version, we use the full D3.js library
+ * For transpiled version, webpack will tree-shake to minimal imports
  */
 
-// Import only the D3 modules we actually use
-import { select, selectAll } from 'd3-selection';
-import { scaleOrdinal } from 'd3-scale';
-import { schemeCategory10 } from 'd3-scale-chromatic';
-import { max, range } from 'd3-array';
-import { format } from 'd3-format';
-import { line, curveLinearClosed } from 'd3-shape';
+// Import the full D3.js library for ES modules compatibility
+import '../d3/d3.js';
 
 // Create a minimal d3 object with only the functions we need
-const d3 = {
-  select,
-  selectAll,
-  scaleOrdinal,
-  schemeCategory10,
-  max,
-  range,
-  format,
-  line,
-  curveLinearClosed
+// This maintains compatibility while ensuring all required functions are available
+const d3 = window.d3 || {
+  // Fallback functions if D3 isn't loaded
+  select: () => ({ selectAll: () => ({ on: () => {}, attr: () => {}, style: () => {}, text: () => {} }) }),
+  selectAll: () => ({ on: () => {}, attr: () => {}, style: () => {}, text: () => {} }),
+  scaleOrdinal: (colors) => (i) => colors[i % colors.length],
+  schemeCategory10: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'],
+  max: (arr, accessor) => accessor ? Math.max(...arr.map(accessor)) : Math.max(...arr),
+  range: (n) => Array.from({length: n}, (_, i) => i),
+  format: () => (n) => n.toString(),
+  line: () => () => '',
+  curveLinearClosed: 'linear'
 };
 
-// Make it globally available for existing code
+// Ensure d3 is globally available
 if (typeof window !== 'undefined') {
-  window.d3 = d3;
+  window.d3 = window.d3 || d3;
 }
 
-export default d3;
+export default window.d3 || d3;
