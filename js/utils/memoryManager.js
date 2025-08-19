@@ -273,17 +273,23 @@ function setupPageUnloadCleanup() {
         cleanupAllResources();
     };
     
-    // Handle page unload
-    addManagedEventListener(window, 'beforeunload', cleanup);
-    addManagedEventListener(window, 'unload', cleanup);
+    // Use pagehide instead of deprecated unload event
+    addManagedEventListener(window, 'pagehide', cleanup);
     
-    // Handle page visibility changes (mobile/tablet)
+    // Handle page visibility changes (mobile/tablet and modern cleanup)
     addManagedEventListener(document, 'visibilitychange', () => {
         if (document.hidden) {
             // Cleanup when page becomes hidden
             cleanupOldD3Selections(60000); // Clean up D3 selections older than 1 minute
             cleanupDOMReferences();
         }
+    });
+    
+    // Optional: Keep beforeunload for critical cleanup (not deprecated)
+    // but only use it for truly critical operations
+    addManagedEventListener(window, 'beforeunload', () => {
+        // Only cleanup the most critical resources
+        cleanupDOMReferences();
     });
 }
 
