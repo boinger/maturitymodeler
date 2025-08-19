@@ -445,7 +445,25 @@ class SpiderChart {
      * @returns {SpiderChart} Returns this for chaining
      */
     render(data) {
-        // Validate data
+        // Initialize chart structure
+        this.initChart();
+        
+        // Check if we have data to render
+        const hasData = Array.isArray(data) && data.length > 0 && Array.isArray(data[0]);
+        
+        if (!hasData) {
+            // Still show skeleton/axes even with no data
+            // Use default categories if available
+            if (window.currentDataRadar && window.currentDataRadar.categories) {
+                const axisNames = window.currentDataRadar.categories;
+                const total = axisNames.length;
+                this.createGridLevels(total);
+                this.createAxes(axisNames);
+            }
+            return this;
+        }
+        
+        // Validate data structure
         if (!this.validateData(data)) {
             return this;
         }
@@ -457,9 +475,6 @@ class SpiderChart {
         // Extract axis names
         const axisNames = data[0].map(d => d.axis);
         const total = axisNames.length;
-        
-        // Initialize chart structure
-        this.initChart();
         
         // Create chart elements
         this.createGridLevels(total);

@@ -227,11 +227,20 @@ class DataTransformer {
         }
 
         const allData = this.getTransformedSortedData();
+        const averageId = this.currentData?.idAverageCategories || 100;
         
         return selectedIndices.map(index => {
+            // Check if this is the special average ID
+            if (index === averageId) {
+                const avgData = this.getCategoryAvgs();
+                return avgData[0] || [];
+            }
+            
+            // Regular application data lookup
             if (index >= 0 && index < allData.length) {
                 return allData[index];
             }
+            
             console.warn(`DataTransformer: Index ${index} out of bounds`);
             return [];
         }).filter(data => data.length > 0);
