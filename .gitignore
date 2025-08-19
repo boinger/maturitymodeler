@@ -61,3 +61,10 @@ CLAUDE.md
 
 # Aider project files
 .aider*
+
+# Build artifacts
+dist/
+
+# Debug and test files
+debug-*.html
+test-*.html

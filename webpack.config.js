@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default {
-  entry: './js/spider/setup-ui-webpack.js',
+  entry: './js/spider/setup-ui.js',
   output: {
     filename: 'main.bundle.js',
     path: path.resolve(__dirname, 'dist'),
