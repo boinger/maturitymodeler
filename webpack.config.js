@@ -36,7 +36,8 @@ export default {
   optimization: {
     splitChunks: false,  // Disable code splitting for simpler deployment
     runtimeChunk: false,  // Include runtime in main bundle
-    minimize: true
+    minimize: true,
+    usedExports: true  // Enable tree shaking
   },
   plugins: [
     ...(process.env.ANALYZE ? [new BundleAnalyzerPlugin()] : [])

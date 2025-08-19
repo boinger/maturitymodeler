@@ -108,8 +108,9 @@ import spider from './spider.js';
             return {
                 w: chartSize,
                 h: chartSize,
-                maxValue: 100,
-                levels: 5,
+                maxValue: 4,
+                minValue: -1,
+                levels: 6,
                 ExtraWidthX: extraWidth,
                 ExtraWidthY: extraWidth
             };
@@ -146,7 +147,7 @@ import spider from './spider.js';
                 }
                 // Use current responsive config
                 config = getResponsiveConfig();
-                spider.draw("#chart", transform.getSelectedData(checkboxes), config);
+                spider.draw("#chart", transform.getRawSelectedData(checkboxes), config);
                 
                 // Track chart re-render performance
                 performanceMonitor.trackChartRender('interaction-chart', startTime);
@@ -278,7 +279,7 @@ import spider from './spider.js';
                 checkAll();
                 // Use current responsive config
                 config = getResponsiveConfig();
-                spider.draw("#chart", transform.getSelectedData(checkboxes), config);
+                spider.draw("#chart", transform.getRawSelectedData(checkboxes), config);
             });
             return newDiv;
         };
@@ -292,7 +293,7 @@ import spider from './spider.js';
                 checkNone();
                 // Use current responsive config
                 config = getResponsiveConfig();
-                spider.draw("#chart", transform.getSelectedData(checkboxes), config);
+                spider.draw("#chart", transform.getRawSelectedData(checkboxes), config);
             });
             return newDiv;
         };
@@ -376,12 +377,12 @@ import spider from './spider.js';
             config = getResponsiveConfig();
             
             // Redraw chart with new dimensions if data is available
-            if (window.currentDataRadar && transform.getCategoryAvgs) {
+            if (window.currentDataRadar && transform.getRawCategoryAvgs) {
                 // Clean up existing chart first
                 memoryManager.cleanupChart("#chart");
                 
                 // Redraw with new config
-                spider.draw("#chart", transform.getCategoryAvgs(), config);
+                spider.draw("#chart", transform.getRawCategoryAvgs(), config);
             }
         }
         
@@ -507,7 +508,7 @@ import spider from './spider.js';
                 
                 // Track chart rendering performance
                 const chartRenderStart = performance.now();
-                spider.draw("#chart", transform.getCategoryAvgs(), config);
+                spider.draw("#chart", transform.getRawCategoryAvgs(), config);
                 performanceMonitor.trackChartRender('main-chart', chartRenderStart);
                 attachDivs(dataRadar);
                 document.getElementById("app100").checked = true;

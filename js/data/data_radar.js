@@ -45,22 +45,22 @@
     ];
 
     MATURITY_LEVELS = [{
-        score: -2,
+        score: -1,
         definition: "Unranked"
     }, {
-        score: -1,
+        score: 0,
         definition: "Base"
     }, {
-        score: 0,
+        score: 1,
         definition: "Minimal"
     }, {
-        score: 1,
+        score: 2,
         definition: "Intermediate"
     }, {
-        score: 2,
+        score: 3,
         definition: "Advanced"
     }, {
-        score: 3,
+        score: 4,
         definition: "Extreme"
     }];
 
@@ -68,35 +68,35 @@
         [{
             app: "",
             axis: CATEGORIES[0],
-            value: -2
+            value: -1
         }, {
             app: "",
             axis: CATEGORIES[1],
-            value: -2
+            value: -1
         }, {
             app: "",
             axis: CATEGORIES[2],
-            value: -2
+            value: -1
         }, {
             app: "",
             axis: CATEGORIES[3],
-            value: -2
+            value: -1
         }, {
             app: "",
             axis: CATEGORIES[4],
-            value: -2
+            value: -1
         }, {
             app: "",
             axis: CATEGORIES[5],
-            value: -2
+            value: -1
         }, {
             app: "",
             axis: CATEGORIES[6],
-            value: -2
+            value: -1
         }, {
             app: "",
             axis: CATEGORIES[7],
-            value: -2
+            value: -1
         }]
     ];
 
@@ -128,332 +128,332 @@
         [{ //UI/UX
             app: applications[0],
             axis: CATEGORIES[0],
-            value: -1
-        }, {
-            app: applications[0],
-            axis: CATEGORIES[1],
-            value: -2
-        }, {
-            app: applications[0],
-            axis: CATEGORIES[2],
-            value: 1
-        }, {
-            app: applications[0],
-            axis: CATEGORIES[3],
-            value: -1
-        }, {
-            app: applications[0],
-            axis: CATEGORIES[4],
             value: 0
         }, {
             app: applications[0],
-            axis: CATEGORIES[5],
-            value: 2
-        }, {
-            app: applications[0],
-            axis: CATEGORIES[6],
+            axis: CATEGORIES[1],
             value: -1
         }, {
             app: applications[0],
-            axis: CATEGORIES[7],
+            axis: CATEGORIES[2],
             value: 2
+        }, {
+            app: applications[0],
+            axis: CATEGORIES[3],
+            value: 0
+        }, {
+            app: applications[0],
+            axis: CATEGORIES[4],
+            value: 1
+        }, {
+            app: applications[0],
+            axis: CATEGORIES[5],
+            value: 3
+        }, {
+            app: applications[0],
+            axis: CATEGORIES[6],
+            value: 0
+        }, {
+            app: applications[0],
+            axis: CATEGORIES[7],
+            value: 3
         }],
         [{ //Some Microservice
             app: applications[1],
             axis: CATEGORIES[0],
-            value: 1
+            value: 2
         }, {
             app: applications[1],
             axis: CATEGORIES[1],
-            value: 0
-        }, {
-            app: applications[1],
-            axis: CATEGORIES[2],
-            value: 2
-        }, {
-            app: applications[1],
-            axis: CATEGORIES[3],
-            value: -1
-        }, {
-            app: applications[1],
-            axis: CATEGORIES[4],
             value: 1
         }, {
             app: applications[1],
-            axis: CATEGORIES[5],
+            axis: CATEGORIES[2],
+            value: 3
+        }, {
+            app: applications[1],
+            axis: CATEGORIES[3],
             value: 0
         }, {
             app: applications[1],
+            axis: CATEGORIES[4],
+            value: 2
+        }, {
+            app: applications[1],
+            axis: CATEGORIES[5],
+            value: 1
+        }, {
+            app: applications[1],
             axis: CATEGORIES[6],
-            value: -2
+            value: -1
         }, {
             app: applications[1],
             axis: CATEGORIES[7],
-            value: 2
+            value: 3
         }],
         [{ //Some Other Microservice
             app: applications[2],
             axis: CATEGORIES[0],
-            value: 0
+            value: 1
         }, {
             app: applications[2],
             axis: CATEGORIES[1],
-            value: -1
+            value: 0
         }, {
             app: applications[2],
             axis: CATEGORIES[2],
-            value: 1
-        }, {
-            app: applications[2],
-            axis: CATEGORIES[3],
-            value: 1
-        }, {
-            app: applications[2],
-            axis: CATEGORIES[4],
-            value: -2
-        }, {
-            app: applications[2],
-            axis: CATEGORIES[5],
-            value: 0
-        }, {
-            app: applications[2],
-            axis: CATEGORIES[6],
             value: 2
         }, {
             app: applications[2],
+            axis: CATEGORIES[3],
+            value: 2
+        }, {
+            app: applications[2],
+            axis: CATEGORIES[4],
+            value: -1
+        }, {
+            app: applications[2],
+            axis: CATEGORIES[5],
+            value: 1
+        }, {
+            app: applications[2],
+            axis: CATEGORIES[6],
+            value: 3
+        }, {
+            app: applications[2],
             axis: CATEGORIES[7],
-            value: 0
+            value: 1
         }],
         [{ //"Database API
             app: applications[3],
             axis: CATEGORIES[0],
-            value: 2
+            value: 3
         }, {
             app: applications[3],
             axis: CATEGORIES[1],
-            value: 0
+            value: 1
         }, {
             app: applications[3],
             axis: CATEGORIES[2],
-            value: 0
+            value: 1
         }, {
             app: applications[3],
             axis: CATEGORIES[3],
-            value: 2
+            value: 3
         }, {
             app: applications[3],
             axis: CATEGORIES[4],
-            value: 1
+            value: 2
         }, {
             app: applications[3],
             axis: CATEGORIES[5],
-            value: -1
+            value: 0
         }, {
             app: applications[3],
             axis: CATEGORIES[6],
-            value: -1
+            value: 0
         }, {
             app: applications[3],
             axis: CATEGORIES[7],
-            value: 1
+            value: 2
         }],
         [{ //Codename: Clown Town
             app: applications[4],
             axis: CATEGORIES[0],
-            value: 1
+            value: 2
         }, {
             app: applications[4],
             axis: CATEGORIES[1],
-            value: -1
+            value: 0
         }, {
             app: applications[4],
             axis: CATEGORIES[2],
-            value: 0
+            value: 1
         }, {
             app: applications[4],
             axis: CATEGORIES[3],
-            value: 2
+            value: 3
         }, {
             app: applications[4],
             axis: CATEGORIES[4],
-            value: 0
+            value: 1
         }, {
             app: applications[4],
             axis: CATEGORIES[5],
-            value: -1
+            value: 0
         }, {
             app: applications[4],
             axis: CATEGORIES[6],
-            value: 2
+            value: 3
         }, {
             app: applications[4],
             axis: CATEGORIES[7],
-            value: 1
+            value: 2
         }],
         [{ //Obfuscation API
             app: applications[5],
             axis: CATEGORIES[0],
-            value: 2
-        }, {
-            app: applications[5],
-            axis: CATEGORIES[1],
-            value: 0
-        }, {
-            app: applications[5],
-            axis: CATEGORIES[2],
-            value: 1
-        }, {
-            app: applications[5],
-            axis: CATEGORIES[3],
             value: 3
         }, {
             app: applications[5],
-            axis: CATEGORIES[4],
+            axis: CATEGORIES[1],
             value: 1
         }, {
             app: applications[5],
-            axis: CATEGORIES[5],
+            axis: CATEGORIES[2],
             value: 2
         }, {
             app: applications[5],
+            axis: CATEGORIES[3],
+            value: 4
+        }, {
+            app: applications[5],
+            axis: CATEGORIES[4],
+            value: 2
+        }, {
+            app: applications[5],
+            axis: CATEGORIES[5],
+            value: 3
+        }, {
+            app: applications[5],
             axis: CATEGORIES[6],
-            value: -2
+            value: -1
         }, {
             app: applications[5],
             axis: CATEGORIES[7],
-            value: 0
+            value: 1
         }],
         [{ //Mobile Platform (iOS)
             app: applications[6],
             axis: CATEGORIES[0],
-            value: 2
+            value: 3
         }, {
             app: applications[6],
             axis: CATEGORIES[1],
-            value: -1
-        }, {
-            app: applications[6],
-            axis: CATEGORIES[2],
-            value: -1
-        }, {
-            app: applications[6],
-            axis: CATEGORIES[3],
-            value: -1
-        }, {
-            app: applications[6],
-            axis: CATEGORIES[4],
-            value: 1
-        }, {
-            app: applications[6],
-            axis: CATEGORIES[5],
             value: 0
         }, {
             app: applications[6],
+            axis: CATEGORIES[2],
+            value: 0
+        }, {
+            app: applications[6],
+            axis: CATEGORIES[3],
+            value: 0
+        }, {
+            app: applications[6],
+            axis: CATEGORIES[4],
+            value: 2
+        }, {
+            app: applications[6],
+            axis: CATEGORIES[5],
+            value: 1
+        }, {
+            app: applications[6],
             axis: CATEGORIES[6],
-            value: -1
+            value: 0
         }, {
             app: applications[6],
             axis: CATEGORIES[7],
-            value: 2
+            value: 3
         }],
         [{ //Mobile Platform (Android)
             app: applications[7],
             axis: CATEGORIES[0],
-            value: 1
-        }, {
-            app: applications[7],
-            axis: CATEGORIES[1],
-            value: 0
-        }, {
-            app: applications[7],
-            axis: CATEGORIES[2],
-            value: 0
-        }, {
-            app: applications[7],
-            axis: CATEGORIES[3],
-            value: -1
-        }, {
-            app: applications[7],
-            axis: CATEGORIES[4],
-            value: 1
-        }, {
-            app: applications[7],
-            axis: CATEGORIES[5],
             value: 2
         }, {
             app: applications[7],
+            axis: CATEGORIES[1],
+            value: 1
+        }, {
+            app: applications[7],
+            axis: CATEGORIES[2],
+            value: 1
+        }, {
+            app: applications[7],
+            axis: CATEGORIES[3],
+            value: 0
+        }, {
+            app: applications[7],
+            axis: CATEGORIES[4],
+            value: 2
+        }, {
+            app: applications[7],
+            axis: CATEGORIES[5],
+            value: 3
+        }, {
+            app: applications[7],
             axis: CATEGORIES[6],
-            value: -2
+            value: -1
         }, {
             app: applications[7],
             axis: CATEGORIES[7],
-            value: 0
+            value: 1
         }],
         [{ //Purchasing and Inventory Control System
             app: applications[8],
             axis: CATEGORIES[0],
-            value: -1
-        }, {
-            app: applications[8],
-            axis: CATEGORIES[1],
-            value: 1
-        }, {
-            app: applications[8],
-            axis: CATEGORIES[2],
-            value: 2
-        }, {
-            app: applications[8],
-            axis: CATEGORIES[3],
-            value: 1
-        }, {
-            app: applications[8],
-            axis: CATEGORIES[4],
             value: 0
         }, {
             app: applications[8],
-            axis: CATEGORIES[5],
+            axis: CATEGORIES[1],
+            value: 2
+        }, {
+            app: applications[8],
+            axis: CATEGORIES[2],
+            value: 3
+        }, {
+            app: applications[8],
+            axis: CATEGORIES[3],
+            value: 2
+        }, {
+            app: applications[8],
+            axis: CATEGORIES[4],
             value: 1
+        }, {
+            app: applications[8],
+            axis: CATEGORIES[5],
+            value: 2
         }, {
             app: applications[8],
             axis: CATEGORIES[6],
-            value: 1
+            value: 2
         }, {
             app: applications[8],
             axis: CATEGORIES[7],
-            value: 1
+            value: 2
         }],
         [{ //Security Administration System
             app: applications[9],
             axis: CATEGORIES[0],
-            value: 1
-        }, {
-            app: applications[9],
-            axis: CATEGORIES[1],
-            value: 0
-        }, {
-            app: applications[9],
-            axis: CATEGORIES[2],
             value: 2
         }, {
             app: applications[9],
-            axis: CATEGORIES[3],
+            axis: CATEGORIES[1],
             value: 1
+        }, {
+            app: applications[9],
+            axis: CATEGORIES[2],
+            value: 3
+        }, {
+            app: applications[9],
+            axis: CATEGORIES[3],
+            value: 2
         }, {
             app: applications[9],
             axis: CATEGORIES[4],
-            value: -1
-        }, {
-            app: applications[9],
-            axis: CATEGORIES[5],
             value: 0
         }, {
             app: applications[9],
-            axis: CATEGORIES[6],
+            axis: CATEGORIES[5],
             value: 1
         }, {
             app: applications[9],
+            axis: CATEGORIES[6],
+            value: 2
+        }, {
+            app: applications[9],
             axis: CATEGORIES[7],
-            value: -2
+            value: -1
         }]
     ];
 

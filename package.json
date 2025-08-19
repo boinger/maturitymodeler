@@ -10,7 +10,8 @@
     "build": "./build.sh",
     "build:legacy": "npx webpack --mode=production",
     "analyze": "ANALYZE=true npx webpack --mode=production",
-    "dev": "./build.sh fast"
+    "dev": "./build.sh fast",
+    "size": "ls -lah dist/ | grep -E '\\.(js|css|html)$' && echo '--- Compressed sizes ---' && ls -lah dist/ | grep -E '\\.(gz|br)$'"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",

@@ -99,15 +99,25 @@ const getTransformedSortedData = () => {
 /**
  * Get selected data by indices (legacy API)
  * @param {Array<number>} selectedIndices - Selected indices
+ * @param {boolean} useRawValues - If true, return raw values instead of transformed
  * @returns {Array} Selected data
  */
-const getSelectedData = (selectedIndices) => {
+const getSelectedData = (selectedIndices, useRawValues = false) => {
     try {
-        return globalTransformer.getSelectedData(selectedIndices);
+        return globalTransformer.getSelectedData(selectedIndices, useRawValues);
     } catch (error) {
         console.error('Transform: Failed to get selected data:', error);
         return [];
     }
+};
+
+/**
+ * Get raw selected data by indices
+ * @param {Array<number>} selectedIndices - Selected indices
+ * @returns {Array} Raw selected data
+ */
+const getRawSelectedData = (selectedIndices) => {
+    return getSelectedData(selectedIndices, true);
 };
 
 /**
@@ -133,6 +143,19 @@ const getCategoryAvgs = () => {
         return globalTransformer.getCategoryAvgs();
     } catch (error) {
         console.error('Transform: Failed to get category averages:', error);
+        return [[]];
+    }
+};
+
+/**
+ * Get raw category averages
+ * @returns {Array} Raw category averages
+ */
+const getRawCategoryAvgs = () => {
+    try {
+        return globalTransformer.getRawCategoryAvgs();
+    } catch (error) {
+        console.error('Transform: Failed to get raw category averages:', error);
         return [[]];
     }
 };
@@ -165,8 +188,10 @@ export {
     getLegendNames,
     getTransformedSortedData,
     getSelectedData,
+    getRawSelectedData,
     getSingleDataSet,
     getCategoryAvgs,
+    getRawCategoryAvgs,
     getAllAppsMaturityRating,
     getTransformer
 };
@@ -180,8 +205,10 @@ export default {
     getLegendNames,
     getTransformedSortedData,
     getSelectedData,
+    getRawSelectedData,
     getSingleDataSet,
     getCategoryAvgs,
+    getRawCategoryAvgs,
     getAllAppsMaturityRating,
     getTransformer
 };

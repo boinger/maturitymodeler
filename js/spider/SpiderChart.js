@@ -43,8 +43,9 @@ const DEFAULT_CONFIG = {
     h: 800,
     factor: 1,
     factorLegend: 0.85,
-    levels: 3,
-    maxValue: 100,
+    levels: 6,
+    maxValue: 4,
+    minValue: -1,
     radians: 2 * Math.PI,
     opacityArea: 0.5,
     ToRight: 5,
@@ -145,7 +146,9 @@ class SpiderChart {
      * @returns {[number, number]} [x, y] coordinates
      */
     calculateCoordinates(value, index, total) {
-        const normalizedValue = Math.max(0, value) / this.config.maxValue;
+        // Normalize value from minValue-maxValue range to 0-1
+        const range = this.config.maxValue - this.config.minValue;
+        const normalizedValue = Math.max(0, Math.min(1, (value - this.config.minValue) / range));
         const angle = index * this.config.radians / total;
         
         return [
@@ -251,17 +254,23 @@ class SpiderChart {
                 .style('stroke-width', '0.5px')
                 .attr('transform', `translate(${this.centerX - levelFactor}, ${this.centerY - levelFactor})`);
 
-            // Add level labels
-            if (level > 0 || this.config.levels === 1) {
-                this.g.append('text')
-                    .attr('class', `level-label level-${level}`)
-                    .attr('x', levelFactor * (1 - this.config.factor * Math.sin(0)))
-                    .attr('y', levelFactor * (1 - this.config.factor * Math.cos(0)))
-                    .style('font-family', 'sans-serif')
-                    .style('font-size', '11px')
-                    .attr('transform', `translate(${this.centerX - levelFactor + this.config.ToRight}, ${this.centerY - levelFactor})`)
-                    .attr('fill', '#999999')
-                    .text(this.format((level + 1) * this.config.maxValue / this.config.levels));
+            // Add level labels (skip center level which is -1)
+            if (level > 0) {
+                const range = this.config.maxValue - this.config.minValue;
+                const levelValue = this.config.minValue + ((level + 1) * range / this.config.levels);
+                
+                // Only show labels for 0 and above (skip -1 at center)
+                if (levelValue >= 0) {
+                    this.g.append('text')
+                        .attr('class', `level-label level-${level}`)
+                        .attr('x', levelFactor * (1 - this.config.factor * Math.sin(0)))
+                        .attr('y', levelFactor * (1 - this.config.factor * Math.cos(0)))
+                        .style('font-family', 'sans-serif')
+                        .style('font-size', '11px')
+                        .attr('transform', `translate(${this.centerX - levelFactor + this.config.ToRight}, ${this.centerY - levelFactor})`)
+                        .attr('fill', '#999999')
+                        .text(levelValue.toFixed(0));
+                }
             }
         }
     }
@@ -534,9 +543,12 @@ class SpiderChart {
             return this;
         }
         
-        // Update max value if needed
-        const dataMax = Math.max(...data.flat().map(d => d.value));
+        // Update max/min values if needed
+        const allValues = data.flat().map(d => d.value);
+        const dataMax = Math.max(...allValues);
+        const dataMin = Math.min(...allValues);
         this.config.maxValue = Math.max(this.config.maxValue, dataMax);
+        this.config.minValue = Math.min(this.config.minValue, dataMin);
         
         // Extract axis names
         const axisNames = data[0].map(d => d.axis);

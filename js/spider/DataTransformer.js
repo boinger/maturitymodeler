@@ -216,9 +216,10 @@ class DataTransformer {
     /**
      * Get data for selected applications by indices
      * @param {Array<number>} selectedIndices - Array of application indices
+     * @param {boolean} useRawValues - If true, return raw values instead of transformed
      * @returns {Array<Array<DataPoint>>} Selected application data
      */
-    getSelectedData(selectedIndices) {
+    getSelectedData(selectedIndices, useRawValues = false) {
         if (!Array.isArray(selectedIndices)) {
             console.warn('DataTransformer: selectedIndices must be an array');
             return [];
@@ -228,13 +229,13 @@ class DataTransformer {
             return [];
         }
 
-        const allData = this.getTransformedSortedData();
+        const allData = useRawValues ? this.getRawSortedData() : this.getTransformedSortedData();
         const averageId = this.currentData?.idAverageCategories ?? 100;
         
         return selectedIndices.map(index => {
             // Check if this is the special average ID (handle both number and string)
             if (index === averageId || index === String(averageId) || String(index) === String(averageId)) {
-                const avgData = this.getCategoryAvgs();
+                const avgData = useRawValues ? this.getRawCategoryAvgs() : this.getCategoryAvgs();
                 return avgData[0] || [];
             }
             
@@ -267,6 +268,33 @@ class DataTransformer {
     }
 
     /**
+     * Get raw (untransformed) sorted data for all applications
+     * @returns {Array<Array<DataPoint>>} Raw sorted data
+     */
+    getRawSortedData() {
+        const cacheKey = 'rawSortedData';
+        if (this.cache.has(cacheKey)) {
+            return this.cache.get(cacheKey);
+        }
+
+        if (!this.currentData) {
+            throw new Error('DataTransformer: No raw data available');
+        }
+
+        // Sort raw data by application names
+        const appNames = this.getAppNames();
+        const sortedData = appNames.map(appName => {
+            const appData = this.currentData.maturityData.find(data => 
+                data.length > 0 && data[0].app === appName
+            );
+            return appData || [];
+        }).filter(data => data.length > 0);
+
+        this.cache.set(cacheKey, sortedData);
+        return sortedData;
+    }
+
+    /**
      * Calculate category averages across all applications
      * @returns {Array<Array<DataPoint>>} Category averages as chart data
      */
@@ -293,6 +321,48 @@ class DataTransformer {
 
             const average = values.length > 0 
                 ? Math.round(values.reduce((sum, val) => sum + val, 0) / values.length)
+                : 0;
+
+            return {
+                app: averageTitle,
+                axis: category,
+                value: average,
+                originalIndex: averageId
+            };
+        });
+
+        const result = [categoryAverages];
+        this.cache.set(cacheKey, result);
+        return result;
+    }
+
+    /**
+     * Calculate raw category averages across all applications
+     * @returns {Array<Array<DataPoint>>} Raw category averages as chart data
+     */
+    getRawCategoryAvgs() {
+        const cacheKey = 'rawCategoryAvgs';
+        if (this.cache.has(cacheKey)) {
+            return this.cache.get(cacheKey);
+        }
+
+        if (!this.currentData) {
+            throw new Error('DataTransformer: No raw data available for averaging');
+        }
+
+        const categories = this.currentData.categories;
+        const averageTitle = this.currentData.averageTitle || 'Category Averages';
+        const averageId = this.currentData.idAverageCategories || 100;
+
+        // Calculate averages for each category using raw values
+        const categoryAverages = categories.map((category, categoryIndex) => {
+            const values = this.currentData.maturityData
+                .filter(appData => appData.length > categoryIndex)
+                .map(appData => appData[categoryIndex]?.value || 0)
+                .filter(value => !isNaN(value));
+
+            const average = values.length > 0 
+                ? values.reduce((sum, val) => sum + val, 0) / values.length
                 : 0;
 
             return {
