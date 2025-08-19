@@ -34,23 +34,7 @@ export default {
   target: ['web', 'es5'],
   mode: 'production',
   optimization: {
-    splitChunks: {
-      chunks: 'all',
-      cacheGroups: {
-        d3: {
-          test: /[\\/]js[\\/]d3[\\/]/,
-          name: 'd3-vendor',
-          chunks: 'all',
-          priority: 10
-        },
-        data: {
-          test: /[\\/]js[\\/]data[\\/]/,
-          name: 'data',
-          chunks: 'all',
-          priority: 5
-        }
-      }
-    }
+    splitChunks: false  // Disable code splitting for simpler deployment
   },
   plugins: [
     ...(process.env.ANALYZE ? [new BundleAnalyzerPlugin()] : [])
