@@ -21,25 +21,14 @@ let globalTransformer = new DataTransformer(dataRadar);
 /**
  * Set new data source (legacy API)
  * @param {Object} newDataRadar - New data source
- * @returns {boolean} Success status
  */
 const setDataSource = (newDataRadar) => {
     try {
-        if (!newDataRadar) {
-            return false;
-        }
         globalTransformer.setDataSource(newDataRadar);
-        return true;
     } catch (error) {
         console.error('Transform: Failed to set data source:', error);
-        try {
-            // Fallback to creating new transformer
-            globalTransformer = new DataTransformer(newDataRadar);
-            return true;
-        } catch (fallbackError) {
-            console.error('Transform: Fallback also failed:', fallbackError);
-            return false;
-        }
+        // Fallback to creating new transformer
+        globalTransformer = new DataTransformer(newDataRadar);
     }
 };
 
