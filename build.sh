@@ -26,6 +26,6 @@ cp -f app.js dist/main-built.js
 terser dist/main-built.js ${TERSER_OPTS} > dist/main-built.min.js && mv dist/main-built.min.js dist/main-built.js
 
 # Copy CSS directly since we're not using RequireJS optimizer
-cp -f css/radar.css dist/main-built.css
+cp -f css/spider.css dist/main-built.css
 
 echo "ES module build complete!"

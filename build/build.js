@@ -5,7 +5,7 @@
  * npm install -g requirejs
  * cd ~/WebstormProjects/maturitymodeler
  * node build/r.js -o build/build.js
- * node build/r.js -o cssIn=css/radar.css out=dist/main-built.css
+ * node build/r.js -o cssIn=css/spider.css out=dist/main-built.css
  */
 
 /*properties
@@ -14,7 +14,7 @@
  */
 
 ({
-    baseUrl               : "./../js/radar",
+    baseUrl               : "./../js/spider",
     "paths"               : {
         "app"    : "./../../app",
         d3       : "./../d3/d3.min",

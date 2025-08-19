@@ -122,7 +122,7 @@ rm -rf dist/* \
   && node build/r_2_3_6/r.js -o build/build.js \
   && terser dist/main-built.js ${TERSER_OPTS} > dist/main-built.min.js \
   && mv dist/main-built.min.js dist/main-built.js \
-  && node build/r_2_3_6/r.js -o cssIn=css/radar.css out=dist/main-built.css \
+  && node build/r_2_3_6/r.js -o cssIn=css/spider.css out=dist/main-built.css \
   && docker rm -f maturitymodeler \
   && docker build -t apache2 . \
   && docker run -d --name maturitymodeler -p 8082:80 apache2
