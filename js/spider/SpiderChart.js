@@ -229,7 +229,11 @@ class SpiderChart {
     createGridLevels(total) {
         const radius = this.config.factor * Math.min(this.centerX, this.centerY);
         
+        // Create center point (level -1, value -1) - no ring, just reference
+        // Then create 5 rings for values 0, 1, 2, 3, 4
+        
         for (let level = 0; level < this.config.levels; level++) {
+            // Ring levels: 0->0, 1->1, 2->2, 3->3, 4->4 (values 0,1,2,3,4)
             const levelFactor = radius * ((level + 1) / this.config.levels);
             
             // Create level lines
@@ -254,25 +258,19 @@ class SpiderChart {
                 .style('stroke-width', '0.5px')
                 .attr('transform', `translate(${this.centerX - levelFactor}, ${this.centerY - levelFactor})`);
 
-            // Add level labels (center is -1, rings are 0,1,2,3,4)
-            if (level >= 0) {
-                // Calculate the actual value for this ring level
-                // Center = -1, Ring 1 = 0, Ring 2 = 1, Ring 3 = 2, Ring 4 = 3, Ring 5 = 4
-                const ringValue = this.config.minValue + level;
-                
-                // Only label rings (not center), and only for values 0 and above
-                if (level > 0 && ringValue >= 0) {
-                    this.g.append('text')
-                        .attr('class', `level-label level-${level}`)
-                        .attr('x', levelFactor * (1 - this.config.factor * Math.sin(0)))
-                        .attr('y', levelFactor * (1 - this.config.factor * Math.cos(0)))
-                        .style('font-family', 'sans-serif')
-                        .style('font-size', '11px')
-                        .attr('transform', `translate(${this.centerX - levelFactor + this.config.ToRight}, ${this.centerY - levelFactor})`)
-                        .attr('fill', '#999999')
-                        .text(ringValue.toFixed(0));
-                }
-            }
+            // Add level labels for rings 0, 1, 2, 3, 4
+            // level 0 = first ring = value 0, level 1 = second ring = value 1, etc.
+            const ringValue = level; // Direct mapping: level 0 -> value 0, level 1 -> value 1, etc.
+            
+            this.g.append('text')
+                .attr('class', `level-label level-${level}`)
+                .attr('x', levelFactor * (1 - this.config.factor * Math.sin(0)))
+                .attr('y', levelFactor * (1 - this.config.factor * Math.cos(0)))
+                .style('font-family', 'sans-serif')
+                .style('font-size', '11px')
+                .attr('transform', `translate(${this.centerX - levelFactor + this.config.ToRight}, ${this.centerY - levelFactor})`)
+                .attr('fill', '#999999')
+                .text(ringValue.toString());
         }
     }
 
