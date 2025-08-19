@@ -43,7 +43,7 @@ const DEFAULT_CONFIG = {
     h: 800,
     factor: 1,
     factorLegend: 0.85,
-    levels: 6,
+    levels: 5,
     maxValue: 4,
     minValue: -1,
     radians: 2 * Math.PI,
@@ -254,13 +254,14 @@ class SpiderChart {
                 .style('stroke-width', '0.5px')
                 .attr('transform', `translate(${this.centerX - levelFactor}, ${this.centerY - levelFactor})`);
 
-            // Add level labels (skip center level which is -1)
-            if (level > 0) {
-                const range = this.config.maxValue - this.config.minValue;
-                const levelValue = this.config.minValue + ((level + 1) * range / this.config.levels);
+            // Add level labels (center is -1, rings are 0,1,2,3,4)
+            if (level >= 0) {
+                // Calculate the actual value for this ring level
+                // Center = -1, Ring 1 = 0, Ring 2 = 1, Ring 3 = 2, Ring 4 = 3, Ring 5 = 4
+                const ringValue = this.config.minValue + level;
                 
-                // Only show labels for 0 and above (skip -1 at center)
-                if (levelValue >= 0) {
+                // Only label rings (not center), and only for values 0 and above
+                if (level > 0 && ringValue >= 0) {
                     this.g.append('text')
                         .attr('class', `level-label level-${level}`)
                         .attr('x', levelFactor * (1 - this.config.factor * Math.sin(0)))
@@ -269,7 +270,7 @@ class SpiderChart {
                         .style('font-size', '11px')
                         .attr('transform', `translate(${this.centerX - levelFactor + this.config.ToRight}, ${this.centerY - levelFactor})`)
                         .attr('fill', '#999999')
-                        .text(levelValue.toFixed(0));
+                        .text(ringValue.toFixed(0));
                 }
             }
         }

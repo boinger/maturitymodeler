@@ -110,7 +110,7 @@ import spider from './spider.js';
                 h: chartSize,
                 maxValue: 4,
                 minValue: -1,
-                levels: 6,
+                levels: 5,
                 ExtraWidthX: extraWidth,
                 ExtraWidthY: extraWidth
             };
