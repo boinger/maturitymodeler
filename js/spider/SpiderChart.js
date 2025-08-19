@@ -308,6 +308,7 @@ class SpiderChart {
     addPolygonInteractions(polygon, seriesIndex, originalIndex) {
         polygon
             .on('mouseover', () => {
+                
                 // Dim other polygons
                 this.g.selectAll('polygon')
                     .transition()
@@ -344,16 +345,35 @@ class SpiderChart {
         // Find all app divs (menu items)
         const appDivs = document.querySelectorAll('.appDiv');
         
+        // First, get the app name that corresponds to this originalIndex
+        let targetAppName = '';
+        
+        if (originalIndex === 100) {
+            // Special case for Average
+            targetAppName = window.currentDataRadar?.averageTitle || 'Category Averages';
+        } else if (window.currentDataRadar?.applications) {
+            // Regular app - originalIndex is the index in the original applications array
+            targetAppName = window.currentDataRadar.applications[originalIndex] || '';
+        }
+        
         appDivs.forEach(div => {
             const checkbox = div.querySelector('input[type="checkbox"]');
-            if (checkbox && parseInt(checkbox.data) === originalIndex && checkbox.checked) {
-                // Highlight this menu item (only if it's checked)
-                div.classList.add('chart-highlight');
-                div.classList.remove('chart-dimmed');
-            } else if (checkbox && checkbox.checked) {
-                // Dim other checked menu items
-                div.classList.add('chart-dimmed');
-                div.classList.remove('chart-highlight');
+            const label = div.querySelector('label');
+            const menuAppName = label ? label.textContent.trim() : '';
+            
+            if (checkbox && checkbox.checked) {
+                // Simple direct name matching
+                const shouldHighlight = (menuAppName === targetAppName);
+                
+                if (shouldHighlight) {
+                    // Highlight this menu item
+                    div.classList.add('chart-highlight');
+                    div.classList.remove('chart-dimmed');
+                } else {
+                    // Dim other checked menu items
+                    div.classList.add('chart-dimmed');
+                    div.classList.remove('chart-highlight');
+                }
             } else {
                 // Don't affect unchecked items
                 div.classList.remove('chart-highlight', 'chart-dimmed');
