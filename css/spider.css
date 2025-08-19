@@ -170,6 +170,8 @@ body::before {
     position: relative;
     top: var(--spacing-6);
     left: 320px;
+    width: calc(100vw - 320px - var(--spacing-8));
+    max-width: 900px;
     padding: var(--spacing-8);
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
@@ -178,7 +180,6 @@ body::before {
     backdrop-filter: var(--glass-blur) var(--glass-saturate);
     transition: all var(--transition-normal) ease;
     animation: slideInRight 0.8s var(--transition-spring) 0.2s both;
-    position: relative;
     overflow: hidden;
 }
 
@@ -367,6 +368,7 @@ body::before {
 @media screen and (min-width: 768px) and (max-width: 1023px) {
     #chart {
         left: 300px;
+        width: calc(100vw - 300px - var(--spacing-6));
     }
     
     #apps {
@@ -383,6 +385,7 @@ body::before {
 @media screen and (min-width: 1024px) and (max-width: 1439px) {
     #chart {
         left: 340px;
+        width: calc(100vw - 340px - var(--spacing-6));
     }
 }
 
@@ -390,6 +393,8 @@ body::before {
 @media screen and (min-width: 1440px) {
     #chart {
         left: 380px;
+        width: calc(100vw - 380px - var(--spacing-6));
+        max-width: 1000px;
     }
     
     #apps {
@@ -417,7 +422,7 @@ body::before {
     border-radius: var(--border-radius-md);
     padding: var(--spacing-3);
     margin-bottom: var(--spacing-1);
-    border: 1px solid transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
@@ -677,19 +682,21 @@ body::before {
     bottom: var(--spacing-6);
     font-size: var(--font-size-xs);
     text-align: right;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    padding: var(--spacing-3) var(--spacing-4);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    backdrop-filter: var(--glass-blur) var(--glass-saturate);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(8px) saturate(150%);
     animation: slideInUp 0.8s var(--transition-spring) 1s both;
     transition: all var(--transition-fast);
+    opacity: 0.8;
 }
 
 #footer:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    opacity: 1;
 }
 
 @keyframes slideInUp {
@@ -829,7 +836,7 @@ body::before {
         
         /* Dark mode glass morphism */
         --glass-bg: rgba(15, 23, 42, 0.4);
-        --glass-border: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.08);
         --glass-blur: blur(20px);
     }
     
@@ -847,7 +854,7 @@ body::before {
     
     .appDiv {
         background: rgba(30, 41, 59, 0.6);
-        border-color: var(--border-color);
+        border-color: rgba(255, 255, 255, 0.05);
     }
     
     .appDiv:hover {
@@ -861,7 +868,16 @@ body::before {
     }
     
     #footer {
-        background: rgba(15, 23, 42, 0.8);
+        background: rgba(15, 23, 42, 0.3);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Dark mode SVG text enhancement */
+    #chart svg text {
+        fill: var(--secondary-text) !important;
+        stroke: rgba(15, 23, 42, 0.8);
+        stroke-width: 0.5px;
+        paint-order: stroke fill;
     }
 }
 
