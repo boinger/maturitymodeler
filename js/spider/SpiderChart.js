@@ -4,7 +4,7 @@
  * @module SpiderChart
  */
 
-import d3 from '../utils/d3-minimal.js';
+import d3 from '../utils/d3-tree-shaken.js';
 import memoryManager from '../utils/memoryManager.js';
 
 /**

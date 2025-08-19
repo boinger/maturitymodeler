@@ -29,8 +29,8 @@ import browserCompat from '../utils/browserCompat.js';
 import imageOptimizer from '../utils/imageOptimizer.js';
 import serviceWorker from '../utils/serviceWorker.js';
 import performanceMonitor from '../utils/performanceMonitor.js';
-// Use minimal D3 for better performance
-import d3 from '../utils/d3-minimal.js';
+// Use tree-shaken D3 for webpack bundle
+import d3 from '../utils/d3-tree-shaken.js';
 import transform from './transform.js';
 import spider from './spider.js';
 

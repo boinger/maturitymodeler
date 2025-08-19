@@ -205,9 +205,9 @@ describe('Performance Optimizations', () => {
     });
   });
 
-  describe('D3 Minimal', () => {
+  describe('D3 Tree-Shaken', () => {
     test('should provide required D3 functions', async () => {
-      const d3 = await import('../../js/utils/d3-minimal.js');
+      const d3 = await import('../../js/utils/d3-tree-shaken.js');
       
       expect(d3.default).toHaveProperty('select');
       expect(d3.default).toHaveProperty('selectAll');
@@ -218,7 +218,7 @@ describe('Performance Optimizations', () => {
     });
     
     test('should make d3 globally available', async () => {
-      await import('../../js/utils/d3-minimal.js');
+      await import('../../js/utils/d3-tree-shaken.js');
       
       expect(global.d3).toBeDefined();
       expect(global.d3.select).toBeDefined();
