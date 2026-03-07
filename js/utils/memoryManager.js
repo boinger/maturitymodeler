@@ -123,7 +123,7 @@ function cleanupOldD3Selections(maxAge = 300000) { // 5 minutes default
 function cleanupDOMReferences() {
     // Clean up orphaned DOM event listeners
     activeResources.eventListeners.forEach(listenerInfo => {
-        if (!document.contains(listenerInfo.element)) {
+        if (!(listenerInfo.element instanceof Node) || !document.contains(listenerInfo.element)) {
             removeManagedEventListener(listenerInfo);
         }
     });

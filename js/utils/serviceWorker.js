@@ -11,8 +11,10 @@ async function registerServiceWorker() {
         try {
             console.log('Registering service worker...');
             
-            const registration = await navigator.serviceWorker.register('/sw.js', {
-                scope: '/'
+            // Register relative to <base> so it works regardless of deploy path.
+            // sw.js lives in dist/ alongside the other built assets.
+            const registration = await navigator.serviceWorker.register('./sw.js', {
+                scope: './'
             });
             
             console.log('Service Worker registered successfully:', registration);
