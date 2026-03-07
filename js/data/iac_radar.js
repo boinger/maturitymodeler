@@ -6,21 +6,10 @@
  * https://github.com/boinger/maturitymodeler
  */
 
-/*properties
- app, applications, averageTitle, axis, categoryCount, categories, definition,
- emptyDataSet, idAverageCategories, legendTitle, maturityData, maturityLevels,
- pageTitle, referenceLink1, referenceLinkTitle1, referenceLink2, referenceLinkTitle2,
- score, value
- */
+"use strict";
 
-/*global define */
-define(function () {
-    "use strict";
-
-    var CATEGORY_COUNT,
-        CATEGORIES,
+    var CATEGORIES,
         MATURITY_LEVELS,
-        EMPTY_DATASET,
         ID_AVERAGE_CATEGORIES,
         applications,
         pageTitle,
@@ -33,7 +22,6 @@ define(function () {
         maturityData;
 
     /* CONSTANTS */
-    CATEGORY_COUNT = 5; // currently unused
 
     CATEGORIES = [
         "Development",
@@ -62,30 +50,6 @@ define(function () {
         score: 3,
         definition: "Optimizing"
     }];
-
-    EMPTY_DATASET = [
-        [{
-            app: "",
-            axis: CATEGORIES[0],
-            value: -2
-        }, {
-            app: "",
-            axis: CATEGORIES[1],
-            value: -2
-        }, {
-            app: "",
-            axis: CATEGORIES[2],
-            value: -2
-        }, {
-            app: "",
-            axis: CATEGORIES[3],
-            value: -2
-        }, {
-            app: "",
-            axis: CATEGORIES[4],
-            value: -2
-        }]
-    ];
 
     ID_AVERAGE_CATEGORIES = 100;
 
@@ -236,20 +200,64 @@ define(function () {
         }]
     ];
 
-    return {
-        pageTitle: pageTitle,
-        legendTitle: legendTitle,
-        averageTitle: averageTitle,
-        idAverageCategories: ID_AVERAGE_CATEGORIES,
-        referenceLink1: referenceLink1,
-        referenceLinkTitle1: referenceLinkTitle1,
-        referenceLink2: referenceLink2,
-        referenceLinkTitle2: referenceLinkTitle2,
-        maturityLevels: MATURITY_LEVELS,
-        categoryCount: CATEGORY_COUNT,
-        categories: CATEGORIES,
-        emptyDataSet: EMPTY_DATASET,
-        applications: applications,
-        maturityData: maturityData
-    };
-});
+// New-schema config export
+export const config = {
+    meta: {
+        pageTitle,
+        legendTitle,
+        averageTitle,
+        references: [
+            { url: referenceLink1, title: referenceLinkTitle1 },
+            { url: referenceLink2, title: referenceLinkTitle2 }
+        ]
+    },
+    scale: {
+        min: -2,
+        max: 3,
+        levels: MATURITY_LEVELS.map(ml => ({ score: ml.score, label: ml.definition }))
+    },
+    categories: CATEGORIES,
+    applications,
+    maturityData,
+    theme: {}
+};
+
+// Build emptyDataSet from categories and scale min
+var EMPTY_DATASET = [
+    CATEGORIES.map(cat => ({ app: "", axis: cat, value: -2 }))
+];
+
+// Legacy named exports (backward compatibility)
+export {
+    pageTitle,
+    legendTitle,
+    averageTitle,
+    ID_AVERAGE_CATEGORIES as idAverageCategories,
+    referenceLink1,
+    referenceLinkTitle1,
+    referenceLink2,
+    referenceLinkTitle2,
+    MATURITY_LEVELS as maturityLevels,
+    CATEGORIES as categories,
+    EMPTY_DATASET as emptyDataSet,
+    applications,
+    maturityData
+};
+
+// Legacy default export (backward compatibility)
+export default {
+    pageTitle,
+    legendTitle,
+    averageTitle,
+    idAverageCategories: ID_AVERAGE_CATEGORIES,
+    referenceLink1,
+    referenceLinkTitle1,
+    referenceLink2,
+    referenceLinkTitle2,
+    maturityLevels: MATURITY_LEVELS,
+    categoryCount: CATEGORIES.length,
+    categories: CATEGORIES,
+    emptyDataSet: EMPTY_DATASET,
+    applications,
+    maturityData
+};

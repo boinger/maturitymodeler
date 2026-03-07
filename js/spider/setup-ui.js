@@ -34,8 +34,13 @@ import d3 from '../utils/d3-tree-shaken.js';
 import transform from './transform.js';
 import spider from './spider.js';
 import { debugLog } from '../utils/debug.js';
+import { fromLegacyFormat } from '../config/configSchema.js';
+import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
 
 "use strict";
+        // Active scale config derived from loaded data
+        var activeScaleConfig = { min: -1, max: 4, levels: [] };
+
         var colorScale,
             checkboxes,
             config,
@@ -106,12 +111,18 @@ import { debugLog } from '../utils/debug.js';
                 extraWidth = 200;
             }
             
+            // Ring count: number of scale levels minus 1 (center level has no ring)
+            var ringCount = activeScaleConfig.levels.length > 1
+                ? activeScaleConfig.levels.length - 1
+                : activeScaleConfig.max - activeScaleConfig.min;
+
             return {
                 w: chartSize,
                 h: chartSize,
-                maxValue: 4,
-                minValue: -1,
-                levels: 5,
+                maxValue: activeScaleConfig.max,
+                minValue: activeScaleConfig.min,
+                levels: ringCount,
+                scaleLevels: activeScaleConfig.levels,
                 ExtraWidthX: extraWidth,
                 ExtraWidthY: extraWidth
             };
@@ -391,6 +402,97 @@ import { debugLog } from '../utils/debug.js';
                 .appendChild(newLink);
         };
 
+        /**
+         * Reinitialize the app with a different data source or settings.
+         * Clears chart, menu, and footer, then rebuilds everything.
+         */
+        async function reinitializeApp(settings) {
+            try {
+                // Determine data source
+                var sourceName = settings?.dataSource;
+                var newData;
+
+                if (sourceName) {
+                    newData = dataLoader.loadDataSource(sourceName);
+                } else {
+                    newData = await dataLoader.loadDataWithFallback();
+                }
+
+                window.currentDataRadar = newData;
+
+                // Derive scale
+                var parsedConfig = fromLegacyFormat(newData);
+                if (parsedConfig.scale) {
+                    activeScaleConfig = parsedConfig.scale;
+                }
+
+                // Update transform
+                transform.setDataSource(newData);
+
+                // Clear existing UI
+                var appsEl = document.getElementById("apps");
+                if (appsEl) appsEl.textContent = '';
+                var footerEl = document.getElementById("footer");
+                if (footerEl) footerEl.textContent = '';
+
+                // Reset checkboxes
+                checkboxes = [];
+
+                // Recalculate config with new scale
+                config = getResponsiveConfig();
+
+                // Apply color preset if specified
+                if (settings?.colorPreset) {
+                    config.colorPreset = settings.colorPreset;
+                }
+
+                // Set page title
+                var pageTitle = settings?.pageTitle || newData.pageTitle;
+                var titleEl = document.getElementById("title");
+                if (titleEl) {
+                    // Preserve child elements (dark mode toggle, gear) by only setting first text node
+                    var textNode = titleEl.firstChild;
+                    if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+                        textNode.nodeValue = pageTitle;
+                    } else {
+                        titleEl.insertBefore(document.createTextNode(pageTitle), titleEl.firstChild);
+                    }
+                }
+
+                // Redraw chart
+                spider.draw("#chart", transform.getRawCategoryAvgs(), config);
+
+                // Override legend title if specified
+                var legendOverride = settings?.legendTitle;
+
+                // Rebuild menu
+                attachDivs(newData);
+
+                // Apply legend title override after attachDivs creates the titleDiv
+                if (legendOverride) {
+                    var legendEl = document.querySelector('.titleDiv');
+                    if (legendEl) legendEl.textContent = legendOverride;
+                }
+
+                // Check category averages by default
+                var avgId = newData.idAverageCategories || 100;
+                var avgCheckbox = document.getElementById("app" + avgId);
+                if (avgCheckbox) {
+                    avgCheckbox.checked = true;
+                    checkboxes.push(avgId);
+                }
+                updateColorIndicators();
+
+                // Rebuild footer
+                createModelPopup();
+                createModelImg();
+                createRefLink();
+
+            } catch (error) {
+                console.error('reinitializeApp failed:', error);
+            }
+        }
+
         // Handle window resize for responsive chart
         function handleResize() {
             // Recalculate responsive configuration
@@ -516,7 +618,13 @@ import { debugLog } from '../utils/debug.js';
                 
                 // Store globally for reference functions
                 window.currentDataRadar = dataRadar;
-                
+
+                // Derive scale config from loaded data
+                var parsedConfig = fromLegacyFormat(dataRadar);
+                if (parsedConfig.scale) {
+                    activeScaleConfig = parsedConfig.scale;
+                }
+
                 // Update transform module with loaded data
                 transform.setDataSource(dataRadar);
                 
@@ -526,6 +634,9 @@ import { debugLog } from '../utils/debug.js';
                 // Add dark mode toggle
                 createDarkModeToggle();
                 
+                // Recalculate config now that scale is loaded
+                config = getResponsiveConfig();
+
                 // Track chart rendering performance
                 const chartRenderStart = performance.now();
                 spider.draw("#chart", transform.getRawCategoryAvgs(), config);
@@ -537,7 +648,34 @@ import { debugLog } from '../utils/debug.js';
                 createModelPopup();
                 createModelImg();
                 createRefLink();
-                
+
+                // Apply any persisted settings from previous session
+                var persisted = getPersistedSettings();
+                if (persisted.colorPreset || persisted.pageTitle || persisted.legendTitle) {
+                    // Apply non-data-source settings without full reinit
+                    if (persisted.pageTitle) {
+                        var titleNode = document.getElementById("title")?.firstChild;
+                        if (titleNode && titleNode.nodeType === Node.TEXT_NODE) {
+                            titleNode.nodeValue = persisted.pageTitle;
+                        }
+                    }
+                    if (persisted.legendTitle) {
+                        var legendEl = document.querySelector('.titleDiv');
+                        if (legendEl) legendEl.textContent = persisted.legendTitle;
+                    }
+                }
+
+                // Create settings panel
+                createSettingsPanel({
+                    onApply: function(settings) {
+                        reinitializeApp(settings);
+                    },
+                    onReset: function() {
+                        // Full reload to clear everything
+                        reinitializeApp({});
+                    }
+                });
+
                 // Add resize listener for responsive behavior
                 memoryManager.addManagedEventListener(window, 'resize', debouncedResize);
                 

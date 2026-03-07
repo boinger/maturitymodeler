@@ -6,19 +6,10 @@
  * https://github.com/boinger/maturitymodeler
  */
 
- /*properties
-  app, applications, averageTitle, axis, categoryCount, categories, definition,
-  emptyDataSet, idAverageCategories, legendTitle, maturityData, maturityLevels,
-  pageTitle, referenceLink1, referenceLinkTitle1, referenceLink2, referenceLinkTitle2,
-  score, value
-  */
-
 "use strict";
 
-    var CATEGORY_COUNT,
-        CATEGORIES,
+    var CATEGORIES,
         MATURITY_LEVELS,
-        EMPTY_DATASET,
         ID_AVERAGE_CATEGORIES,
         applications,
         pageTitle,
@@ -31,7 +22,6 @@
         maturityData;
 
     /* CONSTANTS */
-    CATEGORY_COUNT = 8; // currently unused
 
     CATEGORIES = [
         "Culture & Organization",
@@ -63,42 +53,6 @@
         score: 4,
         definition: "Extreme"
     }];
-
-    EMPTY_DATASET = [
-        [{
-            app: "",
-            axis: CATEGORIES[0],
-            value: -1
-        }, {
-            app: "",
-            axis: CATEGORIES[1],
-            value: -1
-        }, {
-            app: "",
-            axis: CATEGORIES[2],
-            value: -1
-        }, {
-            app: "",
-            axis: CATEGORIES[3],
-            value: -1
-        }, {
-            app: "",
-            axis: CATEGORIES[4],
-            value: -1
-        }, {
-            app: "",
-            axis: CATEGORIES[5],
-            value: -1
-        }, {
-            app: "",
-            axis: CATEGORIES[6],
-            value: -1
-        }, {
-            app: "",
-            axis: CATEGORIES[7],
-            value: -1
-        }]
-    ];
 
     ID_AVERAGE_CATEGORIES = 100;
 
@@ -457,7 +411,34 @@
         }]
     ];
 
-// ES Module exports
+// New-schema config export
+export const config = {
+    meta: {
+        pageTitle,
+        legendTitle,
+        averageTitle,
+        references: [
+            { url: referenceLink1, title: referenceLinkTitle1 },
+            { url: referenceLink2, title: referenceLinkTitle2 }
+        ]
+    },
+    scale: {
+        min: -1,
+        max: 4,
+        levels: MATURITY_LEVELS.map(ml => ({ score: ml.score, label: ml.definition }))
+    },
+    categories: CATEGORIES,
+    applications,
+    maturityData,
+    theme: {}
+};
+
+// Build emptyDataSet from categories and scale min
+var EMPTY_DATASET = [
+    CATEGORIES.map(cat => ({ app: "", axis: cat, value: -1 }))
+];
+
+// Legacy named exports (backward compatibility)
 export {
     pageTitle,
     legendTitle,
@@ -468,14 +449,13 @@ export {
     referenceLink2,
     referenceLinkTitle2,
     MATURITY_LEVELS as maturityLevels,
-    CATEGORY_COUNT as categoryCount,
     CATEGORIES as categories,
     EMPTY_DATASET as emptyDataSet,
     applications,
     maturityData
 };
 
-// Default export for compatibility
+// Legacy default export (backward compatibility)
 export default {
     pageTitle,
     legendTitle,
@@ -486,7 +466,7 @@ export default {
     referenceLink2,
     referenceLinkTitle2,
     maturityLevels: MATURITY_LEVELS,
-    categoryCount: CATEGORY_COUNT,
+    categoryCount: CATEGORIES.length,
     categories: CATEGORIES,
     emptyDataSet: EMPTY_DATASET,
     applications,

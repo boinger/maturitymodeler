@@ -1,11 +1,12 @@
 /**
  * Modern Data Transformation Utility
- * 
- * Handles data transformations for maturity model visualization:
- * - Scale transformations: -2 to 3 → 0 to 100 (formula: 20x + 40)
- * - Data aggregation and filtering
- * - Application data management
- * 
+ *
+ * Handles data transformations for maturity model visualization.
+ * Scale transformation is dynamic, derived from config.scale.min / config.scale.max.
+ *
+ * Default scale: -2 to 3 -> 0 to 100  (legacy formula: 20x + 40)
+ * Generic formula: (value - min) / (max - min) * 100
+ *
  * @module DataTransformer
  */
 
@@ -14,8 +15,8 @@
 /**
  * @typedef {Object} DataPoint
  * @property {string} app - Application name
- * @property {string} axis - Category/axis name  
- * @property {number} value - Raw maturity value (-2 to 3)
+ * @property {string} axis - Category/axis name
+ * @property {number} value - Raw maturity value
  * @property {number} [originalIndex] - Original index for color consistency
  */
 
@@ -32,21 +33,128 @@
  */
 
 /**
+ * @typedef {Object} ScaleConfig
+ * @property {number} min - Minimum scale value
+ * @property {number} max - Maximum scale value
+ * @property {Array<{score: number, label: string}>} [levels] - Scale level definitions
+ */
+
+// Default scale parameters (legacy -2 to 3 range)
+const DEFAULT_SCALE_MIN = -2;
+const DEFAULT_SCALE_MAX = 3;
+
+/**
  * DataTransformer class - Handles all data transformations for maturity visualization
  */
 class DataTransformer {
     /**
      * Create a DataTransformer instance
      * @param {MaturityData} [initialData] - Initial data source
+     * @param {ScaleConfig} [scaleConfig] - Scale configuration
      */
-    constructor(initialData = null) {
+    constructor(initialData = null, scaleConfig = null) {
         this.currentData = null;
         this.transformedData = null;
         this.cache = new Map();
-        
+        this.scaleConfig = null;
+
+        if (scaleConfig) {
+            this.setScale(scaleConfig);
+        }
+
         if (initialData) {
             this.setDataSource(initialData);
         }
+    }
+
+    /**
+     * Set scale configuration
+     * @param {ScaleConfig} scaleConfig - Scale config with min, max, levels
+     */
+    setScale(scaleConfig) {
+        if (!scaleConfig || typeof scaleConfig.min !== 'number' || typeof scaleConfig.max !== 'number') {
+            throw new Error('DataTransformer: Scale config must have numeric min and max');
+        }
+        if (scaleConfig.min >= scaleConfig.max) {
+            throw new Error('DataTransformer: scale.min must be less than scale.max');
+        }
+        this.scaleConfig = { ...scaleConfig };
+
+        // If data is already loaded, re-transform with new scale
+        if (this.currentData) {
+            this.transformedData = this.transformMaturityData(this.currentData.maturityData);
+            this.clearCache();
+        }
+    }
+
+    /**
+     * Get the effective scale min
+     * @returns {number}
+     */
+    getScaleMin() {
+        if (this.scaleConfig) return this.scaleConfig.min;
+        return this._deriveScaleMin();
+    }
+
+    /**
+     * Get the effective scale max
+     * @returns {number}
+     */
+    getScaleMax() {
+        if (this.scaleConfig) return this.scaleConfig.max;
+        return this._deriveScaleMax();
+    }
+
+    /**
+     * Get the scale levels (for ring labels)
+     * @returns {Array<{score: number, label: string}>}
+     */
+    getScaleLevels() {
+        if (this.scaleConfig?.levels) return this.scaleConfig.levels;
+        // Derive from legacy maturityLevels if available
+        if (this.currentData?.maturityLevels) {
+            return this.currentData.maturityLevels.map(ml => ({
+                score: ml.score,
+                label: ml.definition
+            }));
+        }
+        return [];
+    }
+
+    /**
+     * Get the number of chart ring levels (rings between min and max)
+     * @returns {number}
+     */
+    getRingCount() {
+        const levels = this.getScaleLevels();
+        if (levels.length > 1) {
+            // Rings = number of levels minus one (the center/min level has no ring)
+            return levels.length - 1;
+        }
+        // Fallback: scale range
+        return this.getScaleMax() - this.getScaleMin();
+    }
+
+    /**
+     * Derive scale min from legacy maturityLevels
+     * @private
+     */
+    _deriveScaleMin() {
+        if (this.currentData?.maturityLevels?.length > 0) {
+            return Math.min(...this.currentData.maturityLevels.map(l => l.score));
+        }
+        return DEFAULT_SCALE_MIN;
+    }
+
+    /**
+     * Derive scale max from legacy maturityLevels
+     * @private
+     */
+    _deriveScaleMax() {
+        if (this.currentData?.maturityLevels?.length > 0) {
+            return Math.max(...this.currentData.maturityLevels.map(l => l.score));
+        }
+        return DEFAULT_SCALE_MAX;
     }
 
     /**
@@ -60,6 +168,17 @@ class DataTransformer {
 
         this.validateDataSource(dataSource);
         this.currentData = this.deepClone(dataSource);
+
+        // Auto-detect scale from legacy maturityLevels if no explicit scale set
+        if (!this.scaleConfig && dataSource.maturityLevels?.length > 0) {
+            const sorted = [...dataSource.maturityLevels].sort((a, b) => a.score - b.score);
+            this.scaleConfig = {
+                min: sorted[0].score,
+                max: sorted[sorted.length - 1].score,
+                levels: sorted.map(ml => ({ score: ml.score, label: ml.definition }))
+            };
+        }
+
         this.transformedData = this.transformMaturityData(this.currentData.maturityData);
         this.clearCache();
     }
@@ -71,7 +190,7 @@ class DataTransformer {
      */
     validateDataSource(dataSource) {
         const required = ['categories', 'applications', 'maturityData'];
-        
+
         for (const field of required) {
             if (!dataSource[field]) {
                 throw new Error(`DataTransformer: Missing required field: ${field}`);
@@ -102,8 +221,49 @@ class DataTransformer {
     }
 
     /**
-     * Transform maturity scale from -2→3 to 0→100
-     * Formula: 20x + 40
+     * Transform a raw maturity value to the 0-100 internal range.
+     * Uses dynamic formula: (value - min) / (max - min) * 100
+     *
+     * Instance method that uses this transformer's scale config.
+     *
+     * @param {number} value - Raw maturity value
+     * @returns {number} Transformed value (0 to 100)
+     */
+    transformValue(value) {
+        if (typeof value !== 'number') {
+            console.warn('DataTransformer: Invalid scale value, using 0');
+            const min = this.getScaleMin();
+            const max = this.getScaleMax();
+            return Math.round((0 - min) / (max - min) * 100);
+        }
+        const min = this.getScaleMin();
+        const max = this.getScaleMax();
+        return Math.round((value - min) / (max - min) * 100);
+    }
+
+    /**
+     * Reverse transform from 0-100 internal range to raw scale.
+     * Uses dynamic formula: value / 100 * (max - min) + min
+     *
+     * Instance method that uses this transformer's scale config.
+     *
+     * @param {number} value - Transformed value (0 to 100)
+     * @returns {number} Raw maturity value
+     */
+    reverseTransformValue(value) {
+        if (typeof value !== 'number') {
+            console.warn('DataTransformer: Invalid scale value');
+            return this.getScaleMin();
+        }
+        const min = this.getScaleMin();
+        const max = this.getScaleMax();
+        return Math.round(value / 100 * (max - min) + min);
+    }
+
+    /**
+     * Transform maturity scale using legacy static formula: 20x + 40
+     * Kept for backward compatibility. Maps -2→0, 0→40, 3→100.
+     *
      * @param {number} value - Raw maturity value (-2 to 3)
      * @returns {number} Transformed value (0 to 100)
      */
@@ -116,8 +276,9 @@ class DataTransformer {
     }
 
     /**
-     * Reverse transform maturity scale from 0→100 to -2→3
-     * Formula: (x - 40) / 20
+     * Reverse transform using legacy static formula: (x - 40) / 20
+     * Kept for backward compatibility.
+     *
      * @param {number} value - Transformed value (0 to 100)
      * @returns {number} Raw maturity value (-2 to 3)
      */
@@ -136,10 +297,10 @@ class DataTransformer {
      * @returns {Array<Array<DataPoint>>} Transformed data
      */
     transformMaturityData(rawData) {
-        return rawData.map((appData, appIndex) => 
+        return rawData.map((appData, appIndex) =>
             appData.map(point => ({
                 ...point,
-                value: DataTransformer.transformScale(point.value),
+                value: this.transformValue(point.value),
                 originalIndex: point.originalIndex ?? appIndex
             }))
         );
@@ -159,7 +320,7 @@ class DataTransformer {
             throw new Error('DataTransformer: No data source set');
         }
 
-        const appNames = [...this.currentData.applications].sort((a, b) => 
+        const appNames = [...this.currentData.applications].sort((a, b) =>
             a.toLowerCase().localeCompare(b.toLowerCase())
         );
 
@@ -203,7 +364,7 @@ class DataTransformer {
         // Sort data by application names
         const appNames = this.getAppNames();
         const sortedData = appNames.map(appName => {
-            const appData = this.transformedData.find(data => 
+            const appData = this.transformedData.find(data =>
                 data.length > 0 && data[0].app === appName
             );
             return appData || [];
@@ -231,14 +392,14 @@ class DataTransformer {
 
         const allData = useRawValues ? this.getRawSortedData() : this.getTransformedSortedData();
         const averageId = this.currentData?.idAverageCategories ?? 100;
-        
+
         return selectedIndices.map(index => {
             // Check if this is the special average ID (handle both number and string)
             if (index === averageId || index === String(averageId) || String(index) === String(averageId)) {
                 const avgData = useRawValues ? this.getRawCategoryAvgs() : this.getCategoryAvgs();
                 return avgData[0] || [];
             }
-            
+
             // Regular application data lookup
             if (index >= 0 && index < allData.length) {
                 const appData = allData[index];
@@ -248,7 +409,7 @@ class DataTransformer {
                     originalIndex: index
                 }));
             }
-            
+
             // Out of bounds - might be another special ID
             console.warn(`DataTransformer: Index ${index} out of bounds (average ID is ${averageId})`);
             return [];
@@ -267,7 +428,7 @@ class DataTransformer {
         }
 
         const allData = this.getTransformedSortedData();
-        return allData.find(data => 
+        return allData.find(data =>
             data.length > 0 && data[0].app === appName
         );
     }
@@ -289,7 +450,7 @@ class DataTransformer {
         // Sort raw data by application names
         const appNames = this.getAppNames();
         const sortedData = appNames.map(appName => {
-            const appData = this.currentData.maturityData.find(data => 
+            const appData = this.currentData.maturityData.find(data =>
                 data.length > 0 && data[0].app === appName
             );
             return appData || [];
@@ -324,7 +485,7 @@ class DataTransformer {
                 .map(appData => appData[categoryIndex]?.value || 0)
                 .filter(value => !isNaN(value));
 
-            const average = values.length > 0 
+            const average = values.length > 0
                 ? Math.round(values.reduce((sum, val) => sum + val, 0) / values.length)
                 : 0;
 
@@ -366,7 +527,7 @@ class DataTransformer {
                 .map(appData => appData[categoryIndex]?.value || 0)
                 .filter(value => !isNaN(value));
 
-            const average = values.length > 0 
+            const average = values.length > 0
                 ? values.reduce((sum, val) => sum + val, 0) / values.length
                 : 0;
 
@@ -394,21 +555,21 @@ class DataTransformer {
         }
 
         const allData = this.getTransformedSortedData();
-        
+
         const ratings = allData.map(appData => {
             if (!appData || appData.length === 0) {
                 return null;
             }
 
             const values = appData.map(point => point.value).filter(val => !isNaN(val));
-            const average = values.length > 0 
+            const average = values.length > 0
                 ? Math.round(values.reduce((sum, val) => sum + val, 0) / values.length)
                 : 0;
 
             return {
                 app: appData[0].app,
                 averageRating: average,
-                rawAverage: DataTransformer.transformScaleReverse(average),
+                rawAverage: this.reverseTransformValue(average),
                 dataPoints: appData.length
             };
         }).filter(rating => rating !== null);
@@ -442,6 +603,7 @@ class DataTransformer {
     reset() {
         this.currentData = null;
         this.transformedData = null;
+        this.scaleConfig = null;
         this.clearCache();
     }
 

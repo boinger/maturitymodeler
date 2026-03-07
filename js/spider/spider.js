@@ -11,6 +11,7 @@
  */
 
 import SpiderChart from './SpiderChart.js';
+import { DEFAULT_COLOR_PALETTE } from '../config/configSchema.js';
 
 "use strict";
 
@@ -18,19 +19,9 @@ import SpiderChart from './SpiderChart.js';
 let currentChart = null;
 
 /**
- * Legacy color array for backward compatibility
+ * Color scale function - now sourced from configSchema
  */
-const customColors = [
-    "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
-    "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
-    "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5",
-    "#c49c94", "#f7b6d3", "#c7c7c7", "#dbdb8d", "#9edae5"
-];
-
-/**
- * Legacy color scale function for backward compatibility
- */
-const sharedColorScale = (index) => customColors[index % customColors.length];
+const sharedColorScale = (index) => DEFAULT_COLOR_PALETTE[index % DEFAULT_COLOR_PALETTE.length];
 
 /**
  * Legacy draw function - now delegates to SpiderChart

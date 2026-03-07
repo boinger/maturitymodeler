@@ -7,6 +7,7 @@
 import d3 from '../utils/d3-tree-shaken.js';
 import memoryManager from '../utils/memoryManager.js';
 import { debugLog } from '../utils/debug.js';
+import { DEFAULT_COLOR_PALETTE, resolveColorPalette } from '../config/configSchema.js';
 
 /**
  * @typedef {Object} ChartConfig
@@ -56,15 +57,8 @@ const DEFAULT_CONFIG = {
     ExtraWidthY: 100
 };
 
-/**
- * Custom color palette for better distinction
- */
-const COLOR_PALETTE = [
-    "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
-    "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
-    "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5",
-    "#c49c94", "#f7b6d3", "#c7c7c7", "#dbdb8d", "#9edae5"
-];
+// Re-export default palette for backward compatibility
+const COLOR_PALETTE = DEFAULT_COLOR_PALETTE;
 
 /**
  * SpiderChart class - Modern implementation of spider/spiderweb chart
@@ -100,13 +94,19 @@ class SpiderChart {
         if (this.config.color) {
             return this.config.color;
         }
-        
+
+        // Resolve palette: config.colorPalette > default
+        const palette = resolveColorPalette(
+            { theme: { colorPalette: this.config.colorPalette } },
+            this.config.colorPreset
+        );
+
         if (typeof d3 !== 'undefined' && d3.scaleOrdinal) {
-            return d3.scaleOrdinal(COLOR_PALETTE);
+            return d3.scaleOrdinal(palette);
         }
-        
+
         // Fallback for testing
-        return (index) => COLOR_PALETTE[index % COLOR_PALETTE.length];
+        return (index) => palette[index % palette.length];
     }
 
     /**
@@ -229,14 +229,15 @@ class SpiderChart {
      */
     createGridLevels(total) {
         const radius = this.config.factor * Math.min(this.centerX, this.centerY);
-        
-        // Create center point (level -1, value -1) - no ring, just reference
-        // Then create 5 rings for values 0, 1, 2, 3, 4
-        
+        const scaleLevels = this.config.scaleLevels || [];
+
+        // scaleLevels[0] is the center/min (no ring drawn for it).
+        // Rings are drawn for scaleLevels[1] through scaleLevels[N].
+        // If no scaleLevels, fall back to numeric ring labels 0..levels-1.
+
         for (let level = 0; level < this.config.levels; level++) {
-            // Ring levels: 0->0, 1->1, 2->2, 3->3, 4->4 (values 0,1,2,3,4)
             const levelFactor = radius * ((level + 1) / this.config.levels);
-            
+
             // Create level lines
             const levelData = Array.from({ length: total }, (_, i) => ({
                 x1: levelFactor * (1 - this.config.factor * Math.sin(i * this.config.radians / total)),
@@ -259,10 +260,11 @@ class SpiderChart {
                 .style('stroke-width', '0.5px')
                 .attr('transform', `translate(${this.centerX - levelFactor}, ${this.centerY - levelFactor})`);
 
-            // Add level labels for rings 0, 1, 2, 3, 4
-            // level 0 = first ring = value 0, level 1 = second ring = value 1, etc.
-            const ringValue = level; // Direct mapping: level 0 -> value 0, level 1 -> value 1, etc.
-            
+            // Ring label: use scale level score if available, else numeric index
+            const ringLabel = scaleLevels.length > level + 1
+                ? scaleLevels[level + 1].score.toString()
+                : level.toString();
+
             this.g.append('text')
                 .attr('class', `level-label level-${level}`)
                 .attr('x', levelFactor * (1 - this.config.factor * Math.sin(0)))
@@ -271,7 +273,7 @@ class SpiderChart {
                 .style('font-size', '11px')
                 .attr('transform', `translate(${this.centerX - levelFactor + this.config.ToRight}, ${this.centerY - levelFactor})`)
                 .attr('fill', '#999999')
-                .text(ringValue.toString());
+                .text(ringLabel);
         }
     }
 

@@ -55,3 +55,33 @@ export const expectedTransformedData = [
     { app: "Test App 1", axis: "Configuration Management", value: 40 } // 0 * 20 + 40
   ]
 ];
+
+/**
+ * Sample new-schema config for testing configSchema module
+ */
+export const sampleNewSchemaConfig = {
+  meta: {
+    pageTitle: "Test Maturity Model",
+    legendTitle: "Test Applications",
+    averageTitle: "Test Average",
+    references: [
+      { url: "https://example.com", title: "Example Ref" }
+    ]
+  },
+  scale: {
+    min: -1,
+    max: 4,
+    levels: [
+      { score: -1, label: "Unranked" },
+      { score: 0, label: "Base" },
+      { score: 1, label: "Minimal" },
+      { score: 2, label: "Intermediate" },
+      { score: 3, label: "Advanced" },
+      { score: 4, label: "Extreme" }
+    ]
+  },
+  categories: sampleCategories,
+  applications: ["Test App 1", "Test App 2"],
+  maturityData: sampleMaturityData,
+  theme: {}
+};
