@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Maturity Modeler - Admin</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        :root {
+            --primary-bg: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+            --primary-bg-solid: #4338ca;
+            --primary-text: #ffffff;
+            --secondary-bg: #fafbfc;
+            --secondary-text: #2d3748;
+            --accent-color: #4f46e5;
+            --accent-hover: #4338ca;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+            --font-family-mono: "SF Mono", ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+            --radius: 8px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--secondary-bg);
+            color: var(--secondary-text);
+            line-height: 1.5;
+        }
+
+        .header {
+            background: var(--primary-bg);
+            color: var(--primary-text);
+            padding: 20px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 22px; font-weight: 600; }
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 24px; }
+
+        /* Login */
+        .login-card {
+            max-width: 400px;
+            margin: 80px auto;
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 32px;
+        }
+        .login-card h2 { margin-bottom: 20px; font-size: 20px; }
+
+        /* Forms */
+        label { display: block; font-weight: 500; margin-bottom: 4px; font-size: 14px; }
+        input[type="text"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%; padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-family: inherit; font-size: 14px;
+            transition: border-color 0.15s;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+        textarea { font-family: var(--font-family-mono); font-size: 13px; resize: vertical; }
+
+        .field { margin-bottom: 16px; }
+
+        .btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 8px 16px;
+            border: none; border-radius: var(--radius);
+            font-family: inherit; font-size: 14px; font-weight: 500;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .btn-primary { background: var(--accent-color); color: #fff; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-danger { background: var(--error-color); color: #fff; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-secondary { background: #e2e8f0; color: var(--secondary-text); }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .btn-success { background: var(--success-color); color: #fff; }
+        .btn-success:hover { background: #059669; }
+        .btn-sm { padding: 4px 10px; font-size: 13px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Cards & sections */
+        .card {
+            background: #fff; border-radius: var(--radius);
+            box-shadow: var(--shadow-md); padding: 24px;
+            margin-bottom: 24px;
+        }
+        .card h3 { font-size: 16px; margin-bottom: 16px; color: var(--accent-color); }
+
+        /* Config table */
+        .config-table {
+            width: 100%; border-collapse: collapse; font-size: 14px;
+        }
+        .config-table th {
+            text-align: left; padding: 10px 12px;
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 600; font-size: 13px;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            color: #64748b;
+        }
+        .config-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        .config-table tr:last-child td { border-bottom: none; }
+        .config-table .actions { white-space: nowrap; }
+        .config-table .actions .btn { margin-left: 4px; }
+
+        .badge {
+            display: inline-block; padding: 2px 8px;
+            border-radius: 12px; font-size: 12px; font-weight: 600;
+        }
+        .badge-active { background: #d1fae5; color: #065f46; }
+        .badge-inactive { background: #f1f5f9; color: #64748b; }
+
+        .empty-state {
+            text-align: center; padding: 40px; color: #94a3b8;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 12px 16px; border-radius: var(--radius);
+            margin-bottom: 16px; font-size: 14px;
+        }
+        .alert-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .alert-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .alert-info { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+
+        /* Validation preview */
+        .preview { margin-top: 12px; }
+        .preview-item { font-size: 13px; padding: 4px 0; }
+        .preview-item strong { color: var(--accent-color); }
+
+        /* File input */
+        .file-input-wrap {
+            display: flex; gap: 12px; align-items: center; margin-top: 8px;
+        }
+        .file-input-wrap input[type="file"] { font-size: 13px; }
+
+        .hidden { display: none !important; }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .header { padding: 16px; flex-direction: column; gap: 8px; }
+            .container { padding: 16px; }
+            .card { padding: 16px; }
+            .config-table { font-size: 13px; }
+            .config-table th, .config-table td { padding: 8px 6px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header" id="header">
+    <h1>Maturity Modeler Admin</h1>
+    <div class="header-actions" id="header-actions"></div>
+</div>
+
+<!-- Login view -->
+<div id="login-view">
+    <div class="login-card">
+        <h2>Admin Login</h2>
+        <div id="login-error" class="alert alert-error hidden"></div>
+        <form id="login-form">
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary" id="login-btn">Log In</button>
+        </form>
+    </div>
+</div>
+
+<!-- Dashboard view (hidden until authenticated) -->
+<div id="dashboard-view" class="hidden">
+    <div class="container">
+        <div id="dashboard-alerts"></div>
+
+        <!-- Config Library -->
+        <div class="card">
+            <h3>Config Library</h3>
+            <div id="config-list">
+                <div class="empty-state">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Upload / Create -->
+        <div class="card">
+            <h3>Upload Config</h3>
+            <div class="field">
+                <label for="config-name">Display Name</label>
+                <input type="text" id="config-name" placeholder="e.g. My CD Maturity Model">
+                <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
+                    Slug: <span id="slug-preview">-</span>
+                </div>
+            </div>
+            <div class="field">
+                <label>Config JSON</label>
+                <div class="file-input-wrap">
+                    <button type="button" class="btn btn-secondary btn-sm" id="paste-toggle">Paste JSON</button>
+                    <span style="color: #94a3b8; font-size: 13px;">or</span>
+                    <input type="file" id="config-file" accept=".json,application/json">
+                </div>
+                <textarea id="config-json" rows="12" class="hidden" placeholder="Paste your config JSON here..."></textarea>
+            </div>
+            <div id="validation-result" class="hidden"></div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <button class="btn btn-secondary" id="validate-btn" disabled>Validate</button>
+                <button class="btn btn-primary" id="save-btn" disabled>Save Config</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { validateConfig } from './js/config/configSchema.js';
+
+const API = './api/config.php';
+
+// ── State ──────────────────────────────────────────────────────────
+let authenticated = false;
+let parsedConfig = null;
+
+// ── DOM refs ───────────────────────────────────────────────────────
+const loginView = document.getElementById('login-view');
+const dashboardView = document.getElementById('dashboard-view');
+const loginForm = document.getElementById('login-form');
+const loginError = document.getElementById('login-error');
+const headerActions = document.getElementById('header-actions');
+const configList = document.getElementById('config-list');
+const configNameInput = document.getElementById('config-name');
+const slugPreview = document.getElementById('slug-preview');
+const configFile = document.getElementById('config-file');
+const configJson = document.getElementById('config-json');
+const pasteToggle = document.getElementById('paste-toggle');
+const validateBtn = document.getElementById('validate-btn');
+const saveBtn = document.getElementById('save-btn');
+const validationResult = document.getElementById('validation-result');
+const dashboardAlerts = document.getElementById('dashboard-alerts');
+
+// ── Helpers ────────────────────────────────────────────────────────
+
+async function apiCall(action, method = 'GET', body = null) {
+    const url = `${API}?action=${action}`;
+    const opts = { method, credentials: 'same-origin' };
+    if (body) {
+        opts.headers = { 'Content-Type': 'application/json' };
+        opts.body = JSON.stringify(body);
+    }
+    const res = await fetch(url, opts);
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Unknown error');
+    return data.data;
+}
+
+function slugify(name) {
+    return name.toLowerCase().trim()
+        .replace(/[^a-z0-9_-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+        .substring(0, 50);
+}
+
+function showAlert(container, message, type = 'error') {
+    const div = document.createElement('div');
+    div.className = `alert alert-${type}`;
+    div.textContent = message;
+    container.prepend(div);
+    setTimeout(() => div.remove(), 5000);
+}
+
+function formatDate(isoStr) {
+    if (!isoStr) return '-';
+    try {
+        return new Date(isoStr).toLocaleDateString(undefined, {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+    } catch { return isoStr; }
+}
+
+function el(tag, attrs, children) {
+    const node = document.createElement(tag);
+    if (attrs) {
+        for (const [k, v] of Object.entries(attrs)) {
+            if (k === 'className') node.className = v;
+            else if (k === 'textContent') node.textContent = v;
+            else if (k === 'style' && typeof v === 'object') Object.assign(node.style, v);
+            else if (k.startsWith('on')) node.addEventListener(k.slice(2).toLowerCase(), v);
+            else node.setAttribute(k, v);
+        }
+    }
+    if (children) {
+        for (const child of (Array.isArray(children) ? children : [children])) {
+            if (typeof child === 'string') node.appendChild(document.createTextNode(child));
+            else if (child) node.appendChild(child);
+        }
+    }
+    return node;
+}
+
+// ── Auth ───────────────────────────────────────────────────────────
+
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginError.classList.add('hidden');
+    const pw = document.getElementById('password').value;
+    try {
+        await apiCall('login', 'POST', { password: pw });
+        authenticated = true;
+        showDashboard();
+    } catch (err) {
+        loginError.textContent = err.message;
+        loginError.classList.remove('hidden');
+    }
+});
+
+function showDashboard() {
+    loginView.classList.add('hidden');
+    dashboardView.classList.remove('hidden');
+
+    // Add logout + back-to-site buttons
+    headerActions.textContent = '';
+
+    const backBtn = el('a', {
+        href: './',
+        className: 'btn btn-secondary btn-sm',
+        textContent: 'Back to Site',
+        style: { textDecoration: 'none' }
+    });
+    headerActions.appendChild(backBtn);
+
+    const logoutBtn = el('button', {
+        className: 'btn btn-secondary btn-sm',
+        textContent: 'Logout',
+        onClick: async () => {
+            try { await apiCall('logout', 'POST'); } catch {}
+            authenticated = false;
+            loginView.classList.remove('hidden');
+            dashboardView.classList.add('hidden');
+            headerActions.textContent = '';
+        }
+    });
+    headerActions.appendChild(logoutBtn);
+
+    loadConfigList();
+}
+
+// ── Config Library ─────────────────────────────────────────────────
+
+async function loadConfigList() {
+    try {
+        const configs = await apiCall('list');
+        renderConfigTable(configs);
+    } catch (err) {
+        configList.textContent = '';
+        const errDiv = el('div', { className: 'alert alert-error' }, [`Failed to load configs: ${err.message}`]);
+        configList.appendChild(errDiv);
+    }
+}
+
+function renderConfigTable(configs) {
+    configList.textContent = '';
+
+    if (!configs || configs.length === 0) {
+        configList.appendChild(
+            el('div', { className: 'empty-state', textContent: 'No configs uploaded yet. Use the form below to add one.' })
+        );
+        return;
+    }
+
+    const headers = ['Name', 'Updated', 'Status', 'Actions'];
+    const thead = el('thead', null, [
+        el('tr', null, headers.map(h => el('th', { textContent: h })))
+    ]);
+
+    const tbody = el('tbody');
+    configs.forEach(cfg => {
+        const badge = el('span', {
+            className: cfg.active ? 'badge badge-active' : 'badge badge-inactive',
+            textContent: cfg.active ? 'Active' : 'Inactive'
+        });
+
+        const actionBtns = [];
+        if (cfg.active) {
+            actionBtns.push(el('button', {
+                className: 'btn btn-secondary btn-sm',
+                textContent: 'Clear Active',
+                onClick: () => setActive(null)
+            }));
+        } else {
+            actionBtns.push(el('button', {
+                className: 'btn btn-success btn-sm',
+                textContent: 'Set Active',
+                onClick: () => setActive(cfg.slug)
+            }));
+        }
+        actionBtns.push(el('button', {
+            className: 'btn btn-danger btn-sm',
+            textContent: 'Delete',
+            onClick: () => deleteConfig(cfg.slug, cfg.name)
+        }));
+
+        const tr = el('tr', null, [
+            el('td', { textContent: cfg.name }),
+            el('td', { textContent: formatDate(cfg.updated) }),
+            el('td', null, [badge]),
+            el('td', { className: 'actions' }, actionBtns)
+        ]);
+        tbody.appendChild(tr);
+    });
+
+    const table = el('table', { className: 'config-table' }, [thead, tbody]);
+    configList.appendChild(table);
+}
+
+async function setActive(slug) {
+    try {
+        await apiCall('setactive', 'POST', { slug });
+        showAlert(dashboardAlerts, slug ? `"${slug}" is now active.` : 'Active config cleared.', 'success');
+        loadConfigList();
+    } catch (err) {
+        showAlert(dashboardAlerts, err.message);
+    }
+}
+
+async function deleteConfig(slug, name) {
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    try {
+        await apiCall('delete', 'POST', { slug });
+        showAlert(dashboardAlerts, `"${name}" deleted.`, 'success');
+        loadConfigList();
+    } catch (err) {
+        showAlert(dashboardAlerts, err.message);
+    }
+}
+
+// ── Upload / Validate ──────────────────────────────────────────────
+
+configNameInput.addEventListener('input', () => {
+    const name = configNameInput.value;
+    slugPreview.textContent = name ? slugify(name) : '-';
+    checkCanValidate();
+});
+
+pasteToggle.addEventListener('click', () => {
+    configJson.classList.toggle('hidden');
+    pasteToggle.textContent = configJson.classList.contains('hidden') ? 'Paste JSON' : 'Hide Editor';
+    checkCanValidate();
+});
+
+configFile.addEventListener('change', () => {
+    const file = configFile.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        configJson.value = e.target.result;
+        configJson.classList.remove('hidden');
+        pasteToggle.textContent = 'Hide Editor';
+        checkCanValidate();
+    };
+    reader.readAsText(file);
+});
+
+configJson.addEventListener('input', checkCanValidate);
+
+function checkCanValidate() {
+    const hasJson = configJson.value.trim().length > 0;
+    validateBtn.disabled = !hasJson;
+    saveBtn.disabled = true;
+    parsedConfig = null;
+    validationResult.classList.add('hidden');
+}
+
+validateBtn.addEventListener('click', () => {
+    validationResult.classList.remove('hidden');
+    validationResult.textContent = '';
+    try {
+        const raw = configJson.value.trim();
+        const obj = JSON.parse(raw);
+
+        // Client-side validation using configSchema.js
+        validateConfig(obj);
+
+        parsedConfig = obj;
+        validationResult.className = 'alert alert-success';
+
+        const title = document.createElement('strong');
+        title.textContent = 'Valid config';
+        validationResult.appendChild(title);
+
+        const preview = document.createElement('div');
+        preview.className = 'preview';
+
+        const stats = [
+            `Categories: ${obj.categories.length}`,
+            `Applications: ${obj.applications.length}`,
+            `Data points: ${obj.maturityData.flat().length}`,
+        ];
+        if (obj.scale) {
+            stats.push(`Scale: ${obj.scale.min} to ${obj.scale.max}`);
+        }
+        if (obj.meta?.pageTitle) {
+            stats.push(`Title: "${obj.meta.pageTitle}"`);
+        }
+
+        stats.forEach(s => {
+            const item = document.createElement('div');
+            item.className = 'preview-item';
+            item.textContent = s;
+            preview.appendChild(item);
+        });
+
+        validationResult.appendChild(preview);
+        saveBtn.disabled = !configNameInput.value.trim();
+    } catch (err) {
+        parsedConfig = null;
+        validationResult.className = 'alert alert-error';
+        validationResult.textContent = `Invalid: ${err.message}`;
+        saveBtn.disabled = true;
+    }
+});
+
+saveBtn.addEventListener('click', async () => {
+    if (!parsedConfig || !configNameInput.value.trim()) return;
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+
+    try {
+        const result = await apiCall('save', 'POST', {
+            name: configNameInput.value.trim(),
+            slug: slugify(configNameInput.value.trim()),
+            config: parsedConfig,
+        });
+        showAlert(dashboardAlerts, `Config "${result.name}" saved.`, 'success');
+
+        // Reset form
+        configNameInput.value = '';
+        slugPreview.textContent = '-';
+        configJson.value = '';
+        configFile.value = '';
+        parsedConfig = null;
+        validationResult.classList.add('hidden');
+        validateBtn.disabled = true;
+
+        loadConfigList();
+    } catch (err) {
+        showAlert(dashboardAlerts, `Save failed: ${err.message}`);
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Config';
+    }
+});
+
+// ── Init: check if already authenticated ───────────────────────────
+(async function init() {
+    try {
+        await apiCall('list');
+        authenticated = true;
+        showDashboard();
+    } catch {
+        // Not authenticated, show login
+    }
+})();
+</script>
+</body>
+</html>

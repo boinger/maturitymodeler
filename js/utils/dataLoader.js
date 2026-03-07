@@ -9,6 +9,7 @@
 // Import data modules statically to avoid webpack chunking
 import dataRadarModule from '../data/data_radar.js';
 import iacRadarModule from '../data/iac_radar.js';
+import { validateConfig, toLegacyFormat, mergeWithDefaults } from '../config/configSchema.js';
 
 /**
  * Registry of available data sources.
@@ -18,6 +19,15 @@ const DATA_SOURCES = {
     data_radar: { module: dataRadarModule, label: "CI/CD Maturity Model" },
     iac_radar: { module: iacRadarModule, label: "IaC Maturity Model" }
 };
+
+/**
+ * Base URL for the config API.
+ * Resolves relative to the document's base URI so it works regardless of
+ * how the page is served (subdirectory, proxy, etc.).
+ */
+const API_BASE = (typeof document !== 'undefined' && document.baseURI)
+    ? new URL('../api/config.php', document.baseURI).href
+    : './api/config.php';
 
 // Fallback data for when all sources fail
 const FALLBACK_DATA = {
@@ -246,6 +256,33 @@ async function loadDataWithFallback() {
     try {
         // Check URL param for data source selection
         const requestedSource = getDataSourceFromURL();
+
+        // If URL specifies a remote: source, load it directly
+        if (requestedSource && requestedSource.startsWith('remote:')) {
+            const slug = requestedSource.slice(7);
+            const data = await loadRemoteDataSource(slug);
+            console.log(`Successfully loaded remote data source: ${slug}`);
+            loadingState.isLoading = false;
+            return data;
+        }
+
+        // Check for an active remote config from the API
+        const activeRemote = await fetchActiveConfig();
+        if (activeRemote && activeRemote.config) {
+            try {
+                const merged = mergeWithDefaults(activeRemote.config);
+                validateConfig(merged);
+                const legacyData = toLegacyFormat(merged);
+                validateDataStructure(legacyData);
+                loadingState.currentSource = 'remote:' + activeRemote.slug;
+                console.log(`Successfully loaded active remote config: ${activeRemote.slug}`);
+                loadingState.isLoading = false;
+                return legacyData;
+            } catch (remoteErr) {
+                console.warn('Active remote config invalid, falling back to built-in:', remoteErr);
+            }
+        }
+
         const sourceName = requestedSource && DATA_SOURCES[requestedSource]
             ? requestedSource
             : 'data_radar';
@@ -310,14 +347,96 @@ function loadDataSource(sourceName) {
 
 /**
  * Get list of available data sources for the settings panel.
- * @returns {Array<{key: string, label: string, active: boolean}>}
+ * Now async — merges built-in sources with any remote configs from the API.
+ * @returns {Promise<Array<{key: string, label: string, active: boolean, group: string}>>}
  */
-function getAvailableDataSources() {
-    return Object.entries(DATA_SOURCES).map(([key, entry]) => ({
+async function getAvailableDataSources() {
+    const builtIn = Object.entries(DATA_SOURCES).map(([key, entry]) => ({
         key,
         label: entry.label,
-        active: key === loadingState.currentSource
+        active: key === loadingState.currentSource,
+        group: 'built-in'
     }));
+
+    let remote = [];
+    try {
+        const remoteConfigs = await fetchRemoteConfigList();
+        remote = remoteConfigs.map(cfg => ({
+            key: 'remote:' + cfg.slug,
+            label: cfg.name,
+            active: ('remote:' + cfg.slug) === loadingState.currentSource,
+            group: 'uploaded'
+        }));
+    } catch (e) {
+        // API unreachable — that's fine, just return built-in only
+    }
+
+    return builtIn.concat(remote);
+}
+
+// ── Remote config API helpers ──────────────────────────────────────
+
+/**
+ * Fetch list of uploaded configs from the API.
+ * @returns {Promise<Array<{slug, name, created, updated, active}>>}
+ */
+async function fetchRemoteConfigList() {
+    const res = await fetch(`${API_BASE}?action=list`, { credentials: 'same-origin' });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Failed to fetch config list');
+    return json.data || [];
+}
+
+/**
+ * Fetch a specific remote config by slug.
+ * @param {string} slug
+ * @returns {Promise<Object>} Config in new-schema format
+ */
+async function fetchRemoteConfig(slug) {
+    const res = await fetch(`${API_BASE}?action=get&name=${encodeURIComponent(slug)}`, {
+        credentials: 'same-origin'
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Config not found');
+    return json.data;
+}
+
+/**
+ * Fetch the currently active remote config (if any).
+ * @returns {Promise<{slug: string, name: string, config: Object}|null>}
+ */
+async function fetchActiveConfig() {
+    try {
+        const res = await fetch(`${API_BASE}?action=active`, { credentials: 'same-origin' });
+        const json = await res.json();
+        if (!json.success || !json.data) return null;
+        return json.data;
+    } catch (e) {
+        // API unreachable
+        return null;
+    }
+}
+
+/**
+ * Load a remote config by slug, validate it, convert to legacy format.
+ * @param {string} slug - Config slug (without "remote:" prefix)
+ * @returns {Promise<Object>} Legacy-format data object ready for the chart
+ */
+async function loadRemoteDataSource(slug) {
+    const config = await fetchRemoteConfig(slug);
+
+    // Validate using the canonical schema validator
+    const merged = mergeWithDefaults(config);
+    validateConfig(merged);
+
+    // Convert to legacy format for downstream consumption
+    const legacyData = toLegacyFormat(merged);
+
+    // Validate the legacy structure too
+    validateDataStructure(legacyData);
+
+    loadingState.currentSource = 'remote:' + slug;
+    return legacyData;
 }
 
 /**
@@ -344,19 +463,29 @@ function resetLoadingState() {
 export {
     loadDataWithFallback,
     loadDataSource,
+    loadRemoteDataSource,
     getAvailableDataSources,
+    fetchRemoteConfigList,
+    fetchRemoteConfig,
+    fetchActiveConfig,
     getLoadingState,
     resetLoadingState,
     validateDataStructure,
-    FALLBACK_DATA
+    FALLBACK_DATA,
+    API_BASE
 };
 
 export default {
     loadDataWithFallback,
     loadDataSource,
+    loadRemoteDataSource,
     getAvailableDataSources,
+    fetchRemoteConfigList,
+    fetchRemoteConfig,
+    fetchActiveConfig,
     getLoadingState,
     resetLoadingState,
     validateDataStructure,
-    FALLBACK_DATA
+    FALLBACK_DATA,
+    API_BASE
 };

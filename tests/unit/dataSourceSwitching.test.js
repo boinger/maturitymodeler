@@ -18,31 +18,38 @@ describe('Data Source Switching', () => {
     });
 
     describe('getAvailableDataSources', () => {
-        test('should return at least 2 data sources', () => {
-            const sources = getAvailableDataSources();
+        test('should return at least 2 data sources', async () => {
+            const sources = await getAvailableDataSources();
             expect(sources.length).toBeGreaterThanOrEqual(2);
         });
 
-        test('should include data_radar and iac_radar', () => {
-            const sources = getAvailableDataSources();
+        test('should include data_radar and iac_radar', async () => {
+            const sources = await getAvailableDataSources();
             const keys = sources.map(s => s.key);
             expect(keys).toContain('data_radar');
             expect(keys).toContain('iac_radar');
         });
 
-        test('should have label and active status for each source', () => {
-            const sources = getAvailableDataSources();
+        test('should have label, active, and group for each source', async () => {
+            const sources = await getAvailableDataSources();
             for (const source of sources) {
                 expect(typeof source.key).toBe('string');
                 expect(typeof source.label).toBe('string');
                 expect(typeof source.active).toBe('boolean');
+                expect(typeof source.group).toBe('string');
             }
         });
 
-        test('should mark data_radar as active by default', () => {
-            const sources = getAvailableDataSources();
+        test('should mark data_radar as active by default', async () => {
+            const sources = await getAvailableDataSources();
             const cdSource = sources.find(s => s.key === 'data_radar');
             expect(cdSource.active).toBe(true);
+        });
+
+        test('built-in sources should have group "built-in"', async () => {
+            const sources = await getAvailableDataSources();
+            const builtIn = sources.filter(s => s.group === 'built-in');
+            expect(builtIn.length).toBeGreaterThanOrEqual(2);
         });
     });
 
@@ -71,9 +78,9 @@ describe('Data Source Switching', () => {
             expect(state.currentSource).toBe('iac_radar');
         });
 
-        test('should update active status after switching', () => {
+        test('should update active status after switching', async () => {
             loadDataSource('iac_radar');
-            const sources = getAvailableDataSources();
+            const sources = await getAvailableDataSources();
             const iac = sources.find(s => s.key === 'iac_radar');
             const cd = sources.find(s => s.key === 'data_radar');
             expect(iac.active).toBe(true);

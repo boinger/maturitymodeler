@@ -130,6 +130,39 @@ function createTextInput(id, labelText, value) {
 }
 
 /**
+ * Populate the data source <select> with optgroup separators.
+ * Fetches remote configs asynchronously and appends them under "Uploaded".
+ * @param {HTMLSelectElement} select
+ * @param {string|null} savedSource - Previously selected source key
+ */
+async function populateDataSourceDropdown(select, savedSource) {
+    const sources = await dataLoader.getAvailableDataSources();
+
+    // Clear existing options
+    select.textContent = '';
+
+    const groups = {};
+    sources.forEach(ds => {
+        const groupName = ds.group === 'uploaded' ? 'Uploaded' : 'Built-in';
+        if (!groups[groupName]) {
+            groups[groupName] = document.createElement('optgroup');
+            groups[groupName].label = groupName;
+        }
+        const option = document.createElement('option');
+        option.value = ds.key;
+        option.textContent = ds.label;
+        if (savedSource ? ds.key === savedSource : ds.active) {
+            option.selected = true;
+        }
+        groups[groupName].appendChild(option);
+    });
+
+    // Built-in first, then Uploaded
+    if (groups['Built-in']) select.appendChild(groups['Built-in']);
+    if (groups['Uploaded']) select.appendChild(groups['Uploaded']);
+}
+
+/**
  * Build and attach the settings panel to the DOM.
  * @param {Object} options
  * @param {Function} options.onApply - Called with settings object when user applies changes
@@ -183,14 +216,21 @@ function createSettingsPanel({ onApply, onReset }) {
     }));
     body.appendChild(createSelect('settings-palette', 'Color Palette', paletteOptions));
 
-    // -- Data source selector
-    const dataSources = dataLoader.getAvailableDataSources();
-    const dsOptions = dataSources.map(ds => ({
-        value: ds.key,
-        text: ds.label,
-        selected: saved.dataSource ? ds.key === saved.dataSource : ds.active
-    }));
-    body.appendChild(createSelect('settings-datasource', 'Data Source', dsOptions));
+    // -- Data source selector (async — populated with optgroups)
+    const dsField = document.createElement('div');
+    dsField.className = 'settings-field';
+    const dsLabel = document.createElement('label');
+    dsLabel.setAttribute('for', 'settings-datasource');
+    dsLabel.textContent = 'Data Source';
+    dsField.appendChild(dsLabel);
+    const dsSelect = document.createElement('select');
+    dsSelect.id = 'settings-datasource';
+    dsSelect.name = 'settings-datasource';
+    dsField.appendChild(dsSelect);
+    body.appendChild(dsField);
+
+    // Populate asynchronously
+    populateDataSourceDropdown(dsSelect, saved.dataSource);
 
     // -- Page title
     const currentTitle = document.getElementById('title');

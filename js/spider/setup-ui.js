@@ -412,7 +412,11 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
                 var sourceName = settings?.dataSource;
                 var newData;
 
-                if (sourceName) {
+                if (sourceName && sourceName.startsWith('remote:')) {
+                    // Load remote config by slug
+                    var slug = sourceName.slice(7);
+                    newData = await dataLoader.loadRemoteDataSource(slug);
+                } else if (sourceName) {
                     newData = dataLoader.loadDataSource(sourceName);
                 } else {
                     newData = await dataLoader.loadDataWithFallback();
