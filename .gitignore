@@ -62,6 +62,9 @@ CLAUDE.md
 # Aider project files
 .aider*
 
+# API secrets (password hash)
+api/secrets.php
+
 # Build artifacts
 dist/
 

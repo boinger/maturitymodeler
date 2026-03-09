@@ -4,7 +4,7 @@
 </FilesMatch>
 
 # Deny access to auth.php and validate.php directly (only included by config.php)
-<FilesMatch "^(auth|validate)\.php$">
+<FilesMatch "^(auth|validate|secrets)\.php$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>

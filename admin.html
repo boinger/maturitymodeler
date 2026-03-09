@@ -182,13 +182,13 @@
     <div class="login-card">
         <h2>Admin Login</h2>
         <div id="login-error" class="alert alert-error hidden"></div>
-        <form id="login-form">
+        <div id="login-form">
             <div class="field">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required autocomplete="current-password">
+                <input type="password" id="password" autocomplete="current-password">
             </div>
-            <button type="submit" class="btn btn-primary" id="login-btn">Log In</button>
-        </form>
+            <button type="button" class="btn btn-primary" id="login-btn">Log In</button>
+        </div>
     </div>
 </div>
 
@@ -322,10 +322,10 @@ function el(tag, attrs, children) {
 
 // ── Auth ───────────────────────────────────────────────────────────
 
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+async function handleLogin() {
     loginError.classList.add('hidden');
     const pw = document.getElementById('password').value;
+    if (!pw) return;
     try {
         await apiCall('login', 'POST', { password: pw });
         authenticated = true;
@@ -334,6 +334,11 @@ loginForm.addEventListener('submit', async (e) => {
         loginError.textContent = err.message;
         loginError.classList.remove('hidden');
     }
+}
+
+document.getElementById('login-btn').addEventListener('click', handleLogin);
+document.getElementById('password').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleLogin();
 });
 
 function showDashboard() {

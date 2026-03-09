@@ -7,9 +7,7 @@
  */
 
 // ── Configuration ──────────────────────────────────────────────────
-// Replace this hash with the output of:
-//   php -r "echo password_hash('YOUR_PASSWORD', PASSWORD_BCRYPT);"
-define('ADMIN_PASSWORD_HASH', '$2y$10$CHANGE_ME_BEFORE_DEPLOY');
+require_once __DIR__ . '/secrets.php'; // defines ADMIN_PASSWORD_HASH
 
 define('SESSION_LIFETIME', 7200); // 2 hours
 define('RATE_LIMIT_WINDOW', 900); // 15 minutes
