@@ -221,6 +221,8 @@
                     <button type="button" class="btn btn-secondary btn-sm" id="paste-toggle">Paste JSON</button>
                     <span style="color: #94a3b8; font-size: 13px;">or</span>
                     <input type="file" id="config-file" accept=".json,application/json">
+                    <span style="color: #94a3b8; font-size: 13px;">or</span>
+                    <button type="button" class="btn btn-secondary btn-sm" id="load-template">Load Template</button>
                 </div>
                 <textarea id="config-json" rows="12" class="hidden" placeholder="Paste your config JSON here..."></textarea>
             </div>
@@ -489,6 +491,59 @@ configFile.addEventListener('change', () => {
 });
 
 configJson.addEventListener('input', checkCanValidate);
+
+const TEMPLATE_CONFIG = {
+    meta: {
+        pageTitle: "My Maturity Gap Analysis",
+        legendTitle: "Teams",
+        averageTitle: "Average Maturity - All Teams",
+        references: [
+            { url: "https://example.com/docs", title: "Model Documentation" }
+        ]
+    },
+    scale: {
+        min: 0,
+        max: 4,
+        levels: [
+            { score: 0, label: "None" },
+            { score: 1, label: "Initial" },
+            { score: 2, label: "Developing" },
+            { score: 3, label: "Mature" },
+            { score: 4, label: "Optimizing" }
+        ]
+    },
+    categories: [
+        "Category A",
+        "Category B",
+        "Category C"
+    ],
+    applications: [
+        "Team Alpha",
+        "Team Beta"
+    ],
+    maturityData: [
+        [
+            { app: "Team Alpha", axis: "Category A", value: 3 },
+            { app: "Team Alpha", axis: "Category B", value: 2 },
+            { app: "Team Alpha", axis: "Category C", value: 1 }
+        ],
+        [
+            { app: "Team Beta", axis: "Category A", value: 1 },
+            { app: "Team Beta", axis: "Category B", value: 3 },
+            { app: "Team Beta", axis: "Category C", value: 2 }
+        ]
+    ],
+    theme: {
+        colorPalette: null
+    }
+};
+
+document.getElementById('load-template').addEventListener('click', () => {
+    configJson.value = JSON.stringify(TEMPLATE_CONFIG, null, 2);
+    configJson.classList.remove('hidden');
+    pasteToggle.textContent = 'Hide Editor';
+    checkCanValidate();
+});
 
 function checkCanValidate() {
     const hasJson = configJson.value.trim().length > 0;
