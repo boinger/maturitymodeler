@@ -231,6 +231,10 @@ class SpiderChart {
         const radius = this.config.factor * Math.min(this.centerX, this.centerY);
         const scaleLevels = this.config.scaleLevels || [];
 
+        // Remove existing grid lines and level labels to prevent accumulation
+        this.g.selectAll('.grid-line').remove();
+        this.g.selectAll('.level-label').remove();
+
         // scaleLevels[0] is the center/min (no ring drawn for it).
         // Rings are drawn for scaleLevels[1] through scaleLevels[N].
         // If no scaleLevels, fall back to numeric ring labels 0..levels-1.
@@ -552,12 +556,15 @@ class SpiderChart {
         this.g = this.svg.select('g').merge(gEnter)
             .attr('transform', `translate(${this.config.TranslateX}, ${this.config.TranslateY})`);
         
-        // Create tooltip
-        this.tooltip = this.g.append('text')
-            .attr('class', 'spider-tooltip')
-            .style('opacity', 0)
-            .style('font-family', 'sans-serif')
-            .style('font-size', '13px');
+        // Create tooltip (select-or-create to avoid accumulation on re-render)
+        this.tooltip = this.g.select('.spider-tooltip');
+        if (this.tooltip.empty()) {
+            this.tooltip = this.g.append('text')
+                .attr('class', 'spider-tooltip')
+                .style('opacity', 0)
+                .style('font-family', 'sans-serif')
+                .style('font-size', '13px');
+        }
     }
 
     /**

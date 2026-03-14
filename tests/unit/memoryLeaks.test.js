@@ -231,21 +231,18 @@ describe('Memory Leak Prevention', () => {
   describe('Chart Cleanup', () => {
     test('should cleanup chart container', () => {
       const chartContainer = document.getElementById('chart');
-      chartContainer.innerHTML = '<svg><g><circle></circle></g></svg>';
-      
-      // Mock d3.select to return a selection-like object
-      global.d3 = {
-        select: jest.fn(() => ({
-          selectAll: jest.fn(() => ({
-            on: jest.fn()
-          }))
-        }))
-      };
-      
+      // Set up some child content to verify cleanup
+      const svg = document.createElement('svg');
+      const g = document.createElement('g');
+      const circle = document.createElement('circle');
+      g.appendChild(circle);
+      svg.appendChild(g);
+      chartContainer.appendChild(svg);
+
       memoryManager.cleanupChart('#chart');
-      
-      expect(chartContainer.innerHTML).toBe('');
-      expect(global.d3.select).toHaveBeenCalledWith(chartContainer);
+
+      // Container should be emptied via vanilla DOM (no d3 dependency)
+      expect(chartContainer.childNodes.length).toBe(0);
     });
     
     test('should handle cleanup of non-existent container', () => {

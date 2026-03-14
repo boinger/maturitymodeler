@@ -39,9 +39,9 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
 
 "use strict";
         // Active scale config derived from loaded data
-        var activeScaleConfig = { min: -1, max: 4, levels: [] };
+        let activeScaleConfig = { min: -1, max: 4, levels: [] };
 
-        var colorScale,
+        let colorScale,
             checkboxes,
             config,
             drawLegend,
@@ -71,10 +71,10 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
         
         // Update color indicators based on selected checkboxes
         function updateColorIndicators() {
-            var allCheckboxes = document.getElementsByClassName("appCheckbox");
-            for (var i = 0; i < allCheckboxes.length; i++) {
-                var checkbox = allCheckboxes[i];
-                var colorIndicator = document.getElementById("color-" + checkbox.data);
+            const allCheckboxes = document.getElementsByClassName("appCheckbox");
+            for (let i = 0; i < allCheckboxes.length; i++) {
+                const checkbox = allCheckboxes[i];
+                const colorIndicator = document.getElementById("color-" + checkbox.data);
                 if (colorIndicator) {
                     if (checkbox.checked) {
                         // Use the item's original index for consistent color assignment
@@ -89,9 +89,9 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
 
         // Calculate responsive dimensions based on screen size
         function getResponsiveConfig() {
-            var screenWidth = window.innerWidth || document.documentElement.clientWidth;
-            var screenHeight = window.innerHeight || document.documentElement.clientHeight;
-            var chartSize, extraWidth;
+            const screenWidth = window.innerWidth || document.documentElement.clientWidth;
+            const screenHeight = window.innerHeight || document.documentElement.clientHeight;
+            let chartSize, extraWidth;
             
             if (screenWidth <= 767) {
                 // Mobile: smaller chart that fits in viewport
@@ -112,7 +112,7 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
             }
             
             // Ring count: number of scale levels minus 1 (center level has no ring)
-            var ringCount = activeScaleConfig.levels.length > 1
+            const ringCount = activeScaleConfig.levels.length > 1
                 ? activeScaleConfig.levels.length - 1
                 : activeScaleConfig.max - activeScaleConfig.min;
 
@@ -133,7 +133,7 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
 
 
         createCheckbox = function(app, i) {
-            var newCheckbox = document.createElement("input");
+            const newCheckbox = document.createElement("input");
             newCheckbox.type = "checkbox";
             newCheckbox.name = "app";
             newCheckbox.value = app;
@@ -152,7 +152,7 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
                 if (event.currentTarget.checked) {
                     checkboxes.push(event.currentTarget.data);
                 } else {
-                    var index = checkboxes.indexOf(event.currentTarget.data);
+                    const index = checkboxes.indexOf(event.currentTarget.data);
                     if (index > -1) {
                         checkboxes.splice(index, 1);
                     }
@@ -168,7 +168,7 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
         };
 
         createLabel = function(app, i) {
-            var newLabel = document.createElement("label");
+            const newLabel = document.createElement("label");
             newLabel.htmlFor = "app" + i;
             newLabel.style.display = "inline-block";
             newLabel.style.marginLeft = "5px";
@@ -177,19 +177,14 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
         };
 
         createAppDiv = function(app, i) {
-            var newDiv,
-                tempDataSet,
-                colorIndicator,
-                checkbox;
-
-            newDiv = document.createElement("div");
-            tempDataSet = transform.getSingleDataSet(app);
+            const newDiv = document.createElement("div");
+            const tempDataSet = transform.getSingleDataSet(app);
             if (tempDataSet === undefined) { // No data available
                 return newDiv;
             }
             
             // Create color indicator
-            colorIndicator = document.createElement("span");
+            const colorIndicator = document.createElement("span");
             colorIndicator.className = "color-indicator";
             colorIndicator.style.display = "inline-block";
             colorIndicator.style.width = "12px";
@@ -199,10 +194,10 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
             colorIndicator.style.visibility = "hidden"; // Initially hidden
             colorIndicator.id = "color-" + i;
             
-            checkbox = createCheckbox(app, i);
+            const checkbox = createCheckbox(app, i);
             
             // Update checkbox onclick to show/hide color
-            var originalOnclick = checkbox.onclick;
+            const originalOnclick = checkbox.onclick;
             checkbox.onclick = function(event) {
                 originalOnclick(event);
                 updateColorIndicators();
@@ -234,21 +229,15 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
         };
 
         createCatAvgsDiv = function(dataRadar) {
-            var newDiv,
-                tempDataSet,
-                app,
-                colorIndicator,
-                checkbox;
-
-            newDiv = document.createElement("div");
-            tempDataSet = transform.getCategoryAvgs();
+            const newDiv = document.createElement("div");
+            const tempDataSet = transform.getCategoryAvgs();
             if (tempDataSet[0] === undefined) { // No data available
                 return newDiv;
             }
-            app = tempDataSet[0][0].app;
+            const app = tempDataSet[0][0].app;
             
             // Create color indicator for average
-            colorIndicator = document.createElement("span");
+            const colorIndicator = document.createElement("span");
             colorIndicator.className = "color-indicator";
             colorIndicator.style.display = "inline-block";
             colorIndicator.style.width = "12px";
@@ -258,10 +247,10 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
             colorIndicator.style.visibility = "hidden";
             colorIndicator.id = "color-" + (dataRadar?.idAverageCategories || 100);
             
-            checkbox = createCheckbox(app, dataRadar?.idAverageCategories || 100);
+            const checkbox = createCheckbox(app, dataRadar?.idAverageCategories || 100);
             
             // Update checkbox onclick to show/hide color
-            var originalOnclick = checkbox.onclick;
+            const originalOnclick = checkbox.onclick;
             checkbox.onclick = function(event) {
                 originalOnclick(event);
                 updateColorIndicators();
@@ -276,11 +265,8 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
         };
 
         function checkAll() {
-            var cbs,
-                i;
-
-            cbs = document.getElementsByClassName("appCheckbox");
-            for (i = 0; i < cbs.length; i++) {
+            const cbs = document.getElementsByClassName("appCheckbox");
+            for (let i = 0; i < cbs.length; i++) {
                 cbs[i].checked = true;
                 checkboxes.push(cbs[i].data);
             }
@@ -288,19 +274,17 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
         }
 
         function checkNone() {
-            var cbs,
-                i;
-
-            cbs = document.getElementsByClassName("appCheckbox");
-            for (i = 0; i < cbs.length; i++) {
+            checkboxes.length = 0;
+            const cbs = document.getElementsByClassName("appCheckbox");
+            for (let i = 0; i < cbs.length; i++) {
                 cbs[i].checked = false;
             }
             updateColorIndicators();
         }
 
         createAllAppsDiv = function() {
-            var newDiv = document.createElement("div");
-            newDiv.innerHTML = "Check All";
+            const newDiv = document.createElement("div");
+            newDiv.textContent = "Check All";
             newDiv.style.cursor = "pointer";
             newDiv.className = "specialDiv";
             memoryManager.addManagedEventListener(newDiv, "click", function() {
@@ -313,8 +297,8 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
             return newDiv;
         };
         createNoAppsDiv = function() {
-            var newDiv = document.createElement("div");
-            newDiv.innerHTML = "Check None";
+            const newDiv = document.createElement("div");
+            newDiv.textContent = "Check None";
             newDiv.style.cursor = "pointer";
             newDiv.className = "specialDiv";
             memoryManager.addManagedEventListener(newDiv, "click", function() {
@@ -328,22 +312,18 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
         };
 
         createTitleDiv = function(dataRadar) {
-            var newDiv = document.createElement("div");
-            newDiv.innerHTML = dataRadar?.legendTitle || 'Application Platforms';
+            const newDiv = document.createElement("div");
+            newDiv.textContent = dataRadar?.legendTitle || 'Application Platforms';
             newDiv.className = "titleDiv";
             return newDiv;
         };
 
         attachDivs = function(dataRadar) {
-            var appNames,
-                arrayLength,
-                i;
-
-            appNames = transform.getAppNames();
-            arrayLength = appNames.length;
+            const appNames = transform.getAppNames();
+            const arrayLength = appNames.length;
             document.getElementById("apps")
                 .appendChild(createTitleDiv(dataRadar));
-            for (i = 0; i < arrayLength; i++) {
+            for (let i = 0; i < arrayLength; i++) {
                 // Find the original index of this app name in the unsorted applications array
                 const originalIndex = window.currentDataRadar?.applications?.indexOf(appNames[i]) ?? i;
                 document.getElementById("apps")
@@ -358,8 +338,8 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
         };
 
         createModelPopup = function() {
-            var newPara = document.createElement("p");
-            newPara.innerHTML = window.currentDataRadar?.referenceLinkTitle1 || 'Model Info';
+            const newPara = document.createElement("p");
+            newPara.textContent = window.currentDataRadar?.referenceLinkTitle1 || 'Model Info';
             newPara.className = "footerLinks";
             memoryManager.addManagedEventListener(newPara, "click", function() {
                 if (document.getElementById("model").className === "showModel") {
@@ -374,7 +354,7 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
 
         createModelImg = function() {
             // Use image optimizer for better performance
-            var newImg = imageOptimizer.createOptimizedImage(
+            const newImg = imageOptimizer.createOptimizedImage(
                 "images/maturity-model-placeholder.svg",
                 "Continuous Delivery Maturity Model Diagram",
                 {
@@ -394,10 +374,16 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
         };
 
         createRefLink = function() {
-            var newLink = document.createElement("a");
+            const newLink = document.createElement("a");
             newLink.className = "footerLinks";
-            newLink.setAttribute("href", window.currentDataRadar?.referenceLink2 || '#');
-            newLink.innerHTML = window.currentDataRadar?.referenceLinkTitle2 || 'Reference';
+            const rawHref = window.currentDataRadar?.referenceLink2 || '#';
+            try {
+                const parsedUrl = new URL(rawHref, window.location.origin);
+                newLink.setAttribute("href", (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:') ? rawHref : '#');
+            } catch (e) {
+                newLink.setAttribute("href", '#');
+            }
+            newLink.textContent = window.currentDataRadar?.referenceLinkTitle2 || 'Reference';
             document.getElementById("footer")
                 .appendChild(newLink);
         };
@@ -409,12 +395,12 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
         async function reinitializeApp(settings) {
             try {
                 // Determine data source
-                var sourceName = settings?.dataSource;
-                var newData;
+                const sourceName = settings?.dataSource;
+                let newData;
 
                 if (sourceName && sourceName.startsWith('remote:')) {
                     // Load remote config by slug
-                    var slug = sourceName.slice(7);
+                    const slug = sourceName.slice(7);
                     newData = await dataLoader.loadRemoteDataSource(slug);
                 } else if (sourceName) {
                     newData = dataLoader.loadDataSource(sourceName);
@@ -425,7 +411,7 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
                 window.currentDataRadar = newData;
 
                 // Derive scale
-                var parsedConfig = fromLegacyFormat(newData);
+                const parsedConfig = fromLegacyFormat(newData);
                 if (parsedConfig.scale) {
                     activeScaleConfig = parsedConfig.scale;
                 }
@@ -434,9 +420,9 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
                 transform.setDataSource(newData);
 
                 // Clear existing UI
-                var appsEl = document.getElementById("apps");
+                const appsEl = document.getElementById("apps");
                 if (appsEl) appsEl.textContent = '';
-                var footerEl = document.getElementById("footer");
+                const footerEl = document.getElementById("footer");
                 if (footerEl) footerEl.textContent = '';
 
                 // Reset checkboxes
@@ -451,11 +437,11 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
                 }
 
                 // Set page title
-                var pageTitle = settings?.pageTitle || newData.pageTitle;
-                var titleEl = document.getElementById("title");
+                const pageTitle = settings?.pageTitle || newData.pageTitle;
+                const titleEl = document.getElementById("title");
                 if (titleEl) {
                     // Preserve child elements (dark mode toggle, gear) by only setting first text node
-                    var textNode = titleEl.firstChild;
+                    const textNode = titleEl.firstChild;
                     if (textNode && textNode.nodeType === Node.TEXT_NODE) {
                         textNode.nodeValue = pageTitle;
                     } else {
@@ -467,25 +453,32 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
                 spider.draw("#chart", transform.getRawCategoryAvgs(), config);
 
                 // Override legend title if specified
-                var legendOverride = settings?.legendTitle;
+                const legendOverride = settings?.legendTitle;
 
                 // Rebuild menu
                 attachDivs(newData);
 
                 // Apply legend title override after attachDivs creates the titleDiv
                 if (legendOverride) {
-                    var legendEl = document.querySelector('.titleDiv');
+                    const legendEl = document.querySelector('.titleDiv');
                     if (legendEl) legendEl.textContent = legendOverride;
                 }
 
                 // Check category averages by default
-                var avgId = newData.idAverageCategories || 100;
-                var avgCheckbox = document.getElementById("app" + avgId);
+                const avgId = newData.idAverageCategories || 100;
+                const avgCheckbox = document.getElementById("app" + avgId);
                 if (avgCheckbox) {
                     avgCheckbox.checked = true;
                     checkboxes.push(avgId);
                 }
                 updateColorIndicators();
+
+                // Re-derive color scale from the freshly drawn chart
+                try {
+                    colorScale = spider.getColorScale();
+                } catch (e) {
+                    // keep existing colorScale
+                }
 
                 // Rebuild footer
                 createModelPopup();
@@ -503,17 +496,20 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
             config = getResponsiveConfig();
             
             // Redraw chart with new dimensions if data is available
-            if (window.currentDataRadar && transform.getRawCategoryAvgs) {
+            if (window.currentDataRadar) {
                 // Clean up existing chart first
                 memoryManager.cleanupChart("#chart");
-                
-                // Redraw with new config
-                spider.draw("#chart", transform.getRawCategoryAvgs(), config);
+
+                // Redraw with current selection (not just category averages)
+                const data = checkboxes.length > 0
+                    ? transform.getRawSelectedData(checkboxes)
+                    : transform.getRawCategoryAvgs();
+                spider.draw("#chart", data, config);
             }
         }
         
         // Debounced resize handler to avoid excessive redraws
-        var resizeTimeout;
+        let resizeTimeout;
         function debouncedResize() {
             if (resizeTimeout) {
                 memoryManager.clearManagedTimer(resizeTimeout);
@@ -523,75 +519,53 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
 
         // Dark mode toggle functionality
         function createDarkModeToggle() {
-            // Check for saved preference or default to system preference
+            // Resolve theme: saved > system preference > light
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             const isDark = savedTheme ? savedTheme === 'dark' : prefersDark;
-            
+
+            // Apply theme via data-theme attribute (single source of truth for CSS)
+            function applyTheme(dark) {
+                document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+            }
+            applyTheme(isDark);
+
             // Create toggle container
             const toggleContainer = document.createElement('div');
             toggleContainer.id = 'dark-mode-toggle';
             toggleContainer.setAttribute('role', 'button');
             toggleContainer.setAttribute('aria-label', 'Toggle dark mode');
             toggleContainer.setAttribute('tabindex', '0');
-            toggleContainer.innerHTML = `
-                <span class="toggle-icon sun-icon">☀️</span>
-                <span class="toggle-icon moon-icon">🌙</span>
-                <div class="toggle-slider"></div>
-            `;
-            
+
+            const sunSpan = document.createElement('span');
+            sunSpan.className = 'toggle-icon sun-icon';
+            sunSpan.textContent = '\u2600\uFE0F';
+            const moonSpan = document.createElement('span');
+            moonSpan.className = 'toggle-icon moon-icon';
+            moonSpan.textContent = '\uD83C\uDF19';
+            const slider = document.createElement('div');
+            slider.className = 'toggle-slider';
+            toggleContainer.appendChild(sunSpan);
+            toggleContainer.appendChild(moonSpan);
+            toggleContainer.appendChild(slider);
+
+            if (isDark) toggleContainer.classList.add('dark');
+
             // Add to title bar
             const titleElement = document.getElementById('title');
             titleElement.style.position = 'relative';
             titleElement.appendChild(toggleContainer);
-            
-            // Apply initial theme
-            if (isDark) {
-                document.documentElement.classList.add('dark-mode');
-                document.documentElement.classList.remove('light-mode');
-                toggleContainer.classList.add('dark');
-            } else {
-                // If user has no preference but system is dark, we need to override with light-mode
-                if (prefersDark && !savedTheme) {
-                    document.documentElement.classList.add('light-mode');
-                } else {
-                    document.documentElement.classList.remove('dark-mode');
-                }
-            }
-            
+
             // Toggle handler
             function toggleDarkMode() {
-                const htmlElement = document.documentElement;
-                const isDarkMode = htmlElement.classList.contains('dark-mode');
-                
-                if (isDarkMode) {
-                    // Switching to light mode
-                    htmlElement.classList.remove('dark-mode');
-                    htmlElement.classList.add('light-mode');
-                    toggleContainer.classList.remove('dark');
-                    localStorage.setItem('theme', 'light');
-                } else {
-                    // Switching to dark mode
-                    htmlElement.classList.remove('light-mode');
-                    htmlElement.classList.add('dark-mode');
-                    toggleContainer.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
-                }
-                
-                const finalIsDark = htmlElement.classList.contains('dark-mode');
-                
-                // Debug logging
-                debugLog('Theme toggled to:', finalIsDark ? 'dark' : 'light');
-                debugLog('HTML element classes:', htmlElement.className);
-                debugLog('CSS primary-bg:', getComputedStyle(htmlElement).getPropertyValue('--primary-bg'));
-                debugLog('Body background:', getComputedStyle(document.body).background);
-                
-                // Trigger any chart redraws if needed for better dark mode support
-                if (window.currentChart) {
-                    // Chart will automatically use CSS variables for colors
-                }
+                const currentlyDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const newDark = !currentlyDark;
+                applyTheme(newDark);
+                toggleContainer.classList.toggle('dark', newDark);
+                localStorage.setItem('theme', newDark ? 'dark' : 'light');
+                debugLog('Theme toggled to:', newDark ? 'dark' : 'light');
             }
-            
+
             // Event listeners
             toggleContainer.addEventListener('click', toggleDarkMode);
             toggleContainer.addEventListener('keydown', (e) => {
@@ -624,7 +598,7 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
                 window.currentDataRadar = dataRadar;
 
                 // Derive scale config from loaded data
-                var parsedConfig = fromLegacyFormat(dataRadar);
+                const parsedConfig = fromLegacyFormat(dataRadar);
                 if (parsedConfig.scale) {
                     activeScaleConfig = parsedConfig.scale;
                 }
@@ -633,7 +607,7 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
                 transform.setDataSource(dataRadar);
                 
                 // Initialize the page with loaded data
-                document.getElementById("title").innerHTML = dataRadar.pageTitle;
+                document.getElementById("title").textContent = dataRadar.pageTitle;
                 
                 // Add dark mode toggle
                 createDarkModeToggle();
@@ -654,17 +628,17 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
                 createRefLink();
 
                 // Apply any persisted settings from previous session
-                var persisted = getPersistedSettings();
+                const persisted = getPersistedSettings();
                 if (persisted.colorPreset || persisted.pageTitle || persisted.legendTitle) {
                     // Apply non-data-source settings without full reinit
                     if (persisted.pageTitle) {
-                        var titleNode = document.getElementById("title")?.firstChild;
+                        const titleNode = document.getElementById("title")?.firstChild;
                         if (titleNode && titleNode.nodeType === Node.TEXT_NODE) {
                             titleNode.nodeValue = persisted.pageTitle;
                         }
                     }
                     if (persisted.legendTitle) {
-                        var legendEl = document.querySelector('.titleDiv');
+                        const legendEl = document.querySelector('.titleDiv');
                         if (legendEl) legendEl.textContent = persisted.legendTitle;
                     }
                 }

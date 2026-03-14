@@ -61,16 +61,24 @@ const draw = (id, data, options = {}) => {
         // Fallback to basic error display
         const container = document.querySelector(id);
         if (container) {
-            container.innerHTML = `
-                <div style="padding: 20px; text-align: center; color: #d62728;">
-                    <h3>Chart Rendering Error</h3>
-                    <p>Unable to render the spider chart. Please check the data format.</p>
-                    <details>
-                        <summary>Error Details</summary>
-                        <pre>${error.message}</pre>
-                    </details>
-                </div>
-            `;
+            container.textContent = '';
+            const wrapper = document.createElement('div');
+            wrapper.style.cssText = 'padding: 20px; text-align: center; color: #d62728;';
+            const heading = document.createElement('h3');
+            heading.textContent = 'Chart Rendering Error';
+            const msg = document.createElement('p');
+            msg.textContent = 'Unable to render the spider chart. Please check the data format.';
+            const details = document.createElement('details');
+            const summary = document.createElement('summary');
+            summary.textContent = 'Error Details';
+            const pre = document.createElement('pre');
+            pre.textContent = error.message;
+            details.appendChild(summary);
+            details.appendChild(pre);
+            wrapper.appendChild(heading);
+            wrapper.appendChild(msg);
+            wrapper.appendChild(details);
+            container.appendChild(wrapper);
         }
         
         return null;

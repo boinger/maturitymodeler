@@ -110,22 +110,13 @@ function validateConfigData(array $config): array {
 }
 
 /**
- * Sanitize string values recursively using htmlspecialchars.
+ * Recursively return config data as-is (identity function).
+ *
+ * Output encoding is handled client-side via textContent at render time.
+ * Server-side htmlspecialchars was removed because it double-encoded stored
+ * data (e.g. & → &amp;) without preventing XSS (innerHTML bypassed it).
  */
 function sanitizeConfigStrings($data) {
-    if (is_string($data)) {
-        return htmlspecialchars($data, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    }
-    if (is_array($data)) {
-        $result = [];
-        foreach ($data as $key => $value) {
-            $sanitizedKey = is_string($key)
-                ? htmlspecialchars($key, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
-                : $key;
-            $result[$sanitizedKey] = sanitizeConfigStrings($value);
-        }
-        return $result;
-    }
     return $data;
 }
 

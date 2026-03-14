@@ -229,9 +229,6 @@ function createSettingsPanel({ onApply, onReset }) {
     dsField.appendChild(dsSelect);
     body.appendChild(dsField);
 
-    // Populate asynchronously
-    populateDataSourceDropdown(dsSelect, saved.dataSource);
-
     // -- Page title
     const currentTitle = document.getElementById('title');
     // Get just the text, not child elements
@@ -262,6 +259,15 @@ function createSettingsPanel({ onApply, onReset }) {
 
     overlay.appendChild(panel);
     document.body.appendChild(overlay);
+
+    // Populate data source dropdown asynchronously — disable Apply until complete
+    applyBtn.disabled = true;
+    populateDataSourceDropdown(dsSelect, saved.dataSource).then(() => {
+        applyBtn.disabled = false;
+    }).catch((err) => {
+        console.warn('settingsPanel: Failed to populate data sources:', err);
+        applyBtn.disabled = false;
+    });
 
     // -- Event handlers --
     function open() {

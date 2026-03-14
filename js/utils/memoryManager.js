@@ -224,18 +224,13 @@ function startMemoryMonitoring(options = {}) {
 function cleanupChart(containerId) {
     const container = document.getElementById(containerId.replace('#', ''));
     if (!container) return;
-    
-    // Remove all D3 event listeners from the container
-    const d3Container = d3.select(container);
-    d3Container.selectAll('*').on('.tooltip', null);
-    d3Container.selectAll('*').on('.mouseover', null);
-    d3Container.selectAll('*').on('.mouseout', null);
-    d3Container.selectAll('*').on('.click', null);
-    
-    // Clear the container content
-    container.innerHTML = '';
-    
-    // Clean up related D3 selections
+
+    // Remove all child elements (and their event listeners) via DOM API.
+    // D3 bindigns are on the SVG elements themselves — removing them from the
+    // DOM is sufficient; no d3 import needed in this utility module.
+    container.textContent = '';
+
+    // Clean up related D3 selections tracked by memoryManager
     activeResources.d3Selections.forEach(selectionInfo => {
         if (selectionInfo.identifier && selectionInfo.identifier.includes(containerId)) {
             cleanupD3Selection(selectionInfo);

@@ -156,10 +156,10 @@ body::before {
     left: 6px;
     background: var(--primary-bg);
     color: var(--primary-text);
-    padding: var(--spacing-sm);
+    padding: var(--spacing-2);
     text-decoration: none;
-    transition: top var(--transition-duration);
-    border-radius: var(--border-radius);
+    transition: top var(--transition-fast);
+    border-radius: var(--border-radius-sm);
     z-index: calc(var(--z-index-modal) + 1);
 }
 
@@ -637,7 +637,7 @@ body::before {
     opacity: 0.6;
     line-height: var(--line-height-normal);
     letter-spacing: var(--letter-spacing-normal);
-    z-index: var(--z-index-tooltip);
+    z-index: var(--z-index-dropdown);
 }
 
 #footer:hover {
@@ -848,225 +848,79 @@ body::before {
     }
 }
 
-/* System preference dark mode - MOVED BEFORE manual toggle styles */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --primary-bg: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        --primary-bg-solid: #1e293b;
-        --primary-text: #f8fafc;
-        --secondary-bg: #0f172a;
-        --secondary-text: #e2e8f0;
-        --accent-color: #6366f1;
-        --accent-hover: #7c3aed;
-        --border-color: #334155;
-        --border-light: #475569;
-        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-        
-        /* Dark mode glass morphism */
-        --glass-bg: rgba(15, 23, 42, 0.4);
-        --glass-border: rgba(255, 255, 255, 0.08);
-        --glass-blur: blur(20px);
-    }
-    
-    body {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }
-    
-    #apps {
-        background-color: rgba(15, 23, 42, 0.8);
-    }
-    
-    #chart {
-        background: rgba(15, 23, 42, 0.6);
-    }
-    
-    .appDiv {
-        background: rgba(30, 41, 59, 0.6);
-        border-color: rgba(255, 255, 255, 0.05);
-    }
-    
-    .appDiv:hover {
-        background: rgba(30, 41, 59, 0.8);
-    }
-    
-    .showModel {
-        background: rgba(15, 23, 42, 0.95);
-        color: var(--secondary-text);
-        border-color: var(--border-color);
-    }
-    
-    #footer {
-        color: rgba(255, 255, 255, 0.4);
-    }
-    
-    /* Dark mode SVG text enhancement */
-    #chart svg text {
-        fill: var(--secondary-text) !important;
-        stroke: rgba(15, 23, 42, 0.8);
-        stroke-width: 0.5px;
-        paint-order: stroke fill;
-    }
+/* Dark theme — single source of truth for dark mode variables.
+   Applied via data-theme="dark" attribute on <html>.
+   System preference sets the attribute; manual toggle overrides it. */
+html[data-theme="dark"] {
+    --primary-bg: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    --primary-bg-solid: #1e293b;
+    --primary-text: #f8fafc;
+    --secondary-bg: #0f172a;
+    --secondary-text: #e2e8f0;
+    --accent-color: #6366f1;
+    --accent-hover: #7c3aed;
+    --border-color: #334155;
+    --border-light: #475569;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+
+    --glass-bg: rgba(15, 23, 42, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-blur: blur(20px);
 }
 
-/* Manual dark mode toggle - OVERRIDES system preference when class is present */
-html.dark-mode,
-html.dark-mode:root {
-    --primary-bg: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
-    --primary-bg-solid: #1e293b !important;
-    --primary-text: #f8fafc !important;
-    --secondary-bg: #0f172a !important;
-    --secondary-text: #e2e8f0 !important;
-    --accent-color: #6366f1 !important;
-    --accent-hover: #7c3aed !important;
-    --border-color: #334155 !important;
-    --border-light: #475569 !important;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2) !important;
-    
-    /* Dark mode glass morphism */
-    --glass-bg: rgba(15, 23, 42, 0.4) !important;
-    --glass-border: rgba(255, 255, 255, 0.08) !important;
-    --glass-blur: blur(20px) !important;
+html[data-theme="dark"] body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
-html.dark-mode body {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
-    background-size: 100% 100% !important;
-    background-repeat: no-repeat !important;
-    background-attachment: fixed !important;
-}
-
-html.dark-mode body::before {
-    background-image: 
+html[data-theme="dark"] body::before {
+    background-image:
         radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%) !important;
+        radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
 }
 
-html.dark-mode #apps {
-    background-color: rgba(15, 23, 42, 0.8) !important;
+html[data-theme="dark"] #apps {
+    background-color: rgba(15, 23, 42, 0.8);
 }
 
-html.dark-mode #chart {
-    background: rgba(15, 23, 42, 0.6) !important;
+html[data-theme="dark"] #chart {
+    background: rgba(15, 23, 42, 0.6);
 }
 
-html.dark-mode .appDiv {
-    background: rgba(30, 41, 59, 0.6) !important;
-    border-color: rgba(255, 255, 255, 0.05) !important;
+html[data-theme="dark"] .appDiv {
+    background: rgba(30, 41, 59, 0.6);
+    border-color: rgba(255, 255, 255, 0.05);
 }
 
-html.dark-mode .appDiv:hover {
-    background: rgba(30, 41, 59, 0.8) !important;
+html[data-theme="dark"] .appDiv:hover {
+    background: rgba(30, 41, 59, 0.8);
 }
 
-html.dark-mode .showModel {
-    background: rgba(15, 23, 42, 0.95) !important;
-    color: var(--secondary-text) !important;
-    border-color: var(--border-color) !important;
+html[data-theme="dark"] .showModel {
+    background: rgba(15, 23, 42, 0.95);
+    color: var(--secondary-text);
+    border-color: var(--border-color);
 }
 
-html.dark-mode #footer {
-    color: rgba(255, 255, 255, 0.4) !important;
+html[data-theme="dark"] #footer {
+    color: rgba(255, 255, 255, 0.4);
 }
 
-/* Dark mode SVG text enhancement */
-html.dark-mode #chart svg text {
-    fill: var(--secondary-text) !important;
-    stroke: rgba(15, 23, 42, 0.8) !important;
-    stroke-width: 0.5px !important;
-    paint-order: stroke fill !important;
+html[data-theme="dark"] #chart svg text {
+    fill: var(--secondary-text);
+    stroke: rgba(15, 23, 42, 0.8);
+    stroke-width: 0.5px;
+    paint-order: stroke fill;
 }
 
-/* Light mode override - forces light mode even when system prefers dark */
-html.light-mode,
-html.light-mode:root {
-    --primary-bg: linear-gradient(135deg, #4338ca 0%, #6366f1 100%) !important;
-    --primary-bg-solid: #4338ca !important;
-    --primary-text: #ffffff !important;
-    --secondary-bg: #fafbfc !important;
-    --secondary-text: #2d3748 !important;
-    --accent-color: #4f46e5 !important;
-    --accent-hover: #4338ca !important;
-    --border-color: #e2e8f0 !important;
-    --border-light: #f1f5f9 !important;
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
-    
-    /* Light mode glass morphism */
-    --glass-bg: rgba(255, 255, 255, 0.25) !important;
-    --glass-border: rgba(255, 255, 255, 0.18) !important;
-    --glass-blur: blur(16px) !important;
-    --glass-saturate: saturate(180%) !important;
-}
-
-html.light-mode body {
-    background: 
-        radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(120, 198, 121, 0.3) 0%, transparent 50%),
-        linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
-    background-size: 100% 100% !important;
-    background-repeat: no-repeat !important;
-    background-attachment: fixed !important;
-}
-
-html.light-mode body::before {
-    background-image: 
-        radial-gradient(circle at 25% 25%, rgba(79, 70, 229, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%) !important;
-}
-
-html.light-mode #apps {
-    background: rgba(255, 255, 255, 0.25) !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
-}
-
-html.light-mode #chart {
-    background: rgba(255, 255, 255, 0.25) !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
-}
-
-/* Ensure title text is white in all light mode scenarios */
-#title,
-html.light-mode #title {
-    color: #ffffff !important;
-}
-
-html.light-mode .appDiv {
-    background: rgba(255, 255, 255, 0.25) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-html.light-mode .appDiv:hover {
-    background: rgba(255, 255, 255, 0.8) !important;
-    border-color: var(--accent-color) !important;
-}
-
-html.light-mode .showModel {
-    background: rgba(255, 255, 255, 0.95) !important;
-    color: var(--secondary-text) !important;
-    border-color: var(--border-color) !important;
-}
-
-html.light-mode #footer {
-    color: rgba(0, 0, 0, 0.4) !important;
-}
-
-/* Light mode SVG text enhancement */
-html.light-mode #chart svg text {
-    fill: var(--secondary-text) !important;
-    stroke: none !important;
-    paint-order: fill !important;
+/* Ensure title text is always white (gradient background) */
+#title {
+    color: #ffffff;
 }
 
 
@@ -1201,7 +1055,7 @@ html.light-mode #chart svg text {
         background: transparent;
         border: none;
         padding: 0;
-        margin-bottom: var(--spacing-md);
+        margin-bottom: var(--spacing-4);
     }
     
     #chart {
@@ -1213,7 +1067,7 @@ html.light-mode #chart svg text {
     #footer {
         position: static;
         text-align: left;
-        margin: var(--spacing-md) 0;
+        margin: var(--spacing-4) 0;
     }
     
     .showModel,
@@ -1404,50 +1258,50 @@ html.light-mode #chart svg text {
 }
 
 /* Dark mode overrides for settings */
-.dark-mode .settings-panel {
+[data-theme="dark"] .settings-panel {
     background: #1e293b;
     color: #e2e8f0;
 }
 
-.dark-mode .settings-header {
+[data-theme="dark"] .settings-header {
     border-bottom-color: #334155;
 }
 
-.dark-mode .settings-close {
+[data-theme="dark"] .settings-close {
     color: #e2e8f0;
 }
 
-.dark-mode .settings-close:hover {
+[data-theme="dark"] .settings-close:hover {
     background: #334155;
 }
 
-.dark-mode .settings-field label {
+[data-theme="dark"] .settings-field label {
     color: #cbd5e1;
 }
 
-.dark-mode .settings-field select,
-.dark-mode .settings-field input[type="text"] {
+[data-theme="dark"] .settings-field select,
+[data-theme="dark"] .settings-field input[type="text"] {
     background: #0f172a;
     color: #e2e8f0;
     border-color: #334155;
 }
 
-.dark-mode .settings-field select:focus,
-.dark-mode .settings-field input[type="text"]:focus {
+[data-theme="dark"] .settings-field select:focus,
+[data-theme="dark"] .settings-field input[type="text"]:focus {
     border-color: #818cf8;
     box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2);
 }
 
-.dark-mode .settings-footer {
+[data-theme="dark"] .settings-footer {
     border-top-color: #334155;
 }
 
-.dark-mode .settings-btn-secondary {
+[data-theme="dark"] .settings-btn-secondary {
     background: #1e293b;
     color: #e2e8f0;
     border-color: #334155;
 }
 
-.dark-mode .settings-btn-secondary:hover {
+[data-theme="dark"] .settings-btn-secondary:hover {
     background: #334155;
 }

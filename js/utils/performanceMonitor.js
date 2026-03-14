@@ -6,6 +6,7 @@
 /**
  * Performance metrics storage
  */
+let memoryMonitorInterval = null;
 let performanceMetrics = {
     pageLoad: {},
     chartRender: {},
@@ -254,8 +255,9 @@ function setupPerformanceMonitoring() {
         trackPageLoad();
     }
     
-    // Monitor memory usage periodically
-    setInterval(monitorMemoryUsage, 60000); // Every minute
+    // Monitor memory usage periodically (store ID for cleanup)
+    if (memoryMonitorInterval) clearInterval(memoryMonitorInterval);
+    memoryMonitorInterval = setInterval(monitorMemoryUsage, 60000);
     
     // Track unhandled errors
     window.addEventListener('error', (event) => {
@@ -290,6 +292,16 @@ function showPerformanceMetrics() {
     console.groupEnd();
 }
 
+/**
+ * Clean up the memory monitor interval
+ */
+function cleanup() {
+    if (memoryMonitorInterval) {
+        clearInterval(memoryMonitorInterval);
+        memoryMonitorInterval = null;
+    }
+}
+
 // Add to window for debugging access
 if (typeof window !== 'undefined') {
     window.performanceMetrics = performanceMetrics;
@@ -310,6 +322,7 @@ export {
     generatePerformanceReport,
     setupPerformanceMonitoring,
     showPerformanceMetrics,
+    cleanup,
     performanceMetrics
 };
 
@@ -326,5 +339,6 @@ export default {
     generatePerformanceReport,
     setupPerformanceMonitoring,
     showPerformanceMetrics,
+    cleanup,
     performanceMetrics
 };
