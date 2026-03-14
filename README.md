@@ -1,169 +1,193 @@
-[![Build Status](https://travis-ci.org/boinger/maturitymodeler.svg?branch=requirejs)](https://travis-ci.org/boinger/maturitymodeler)
+# Maturity Modeler
 
-# Maturity Modeler - Gap Analysis Visualization Tool
+Interactive spider chart visualization tool for maturity model gap analysis.
 
-A gap analysis visualization tool for the '[Continuous Delivery Maturity Model](https://secure.surveymonkey.com/_resources/28183/23008183/bf361750-7418-458f-85a6-6c07333e4986.png)'. Based on model from the book, '**Continuous Delivery:** _Reliable Software Releases through Build, Test, and Deployment Automation_', by Jez Humble and David Farley, available on [Amazon](http://www.amazon.com/dp/0321601912).
+JavaScript-based tool that creates radar/spider chart visualizations using D3.js
+to compare maturity levels across applications, business units, or functional
+divisions. Ships with Continuous Delivery and Infrastructure as Code models;
+bring your own via the admin panel or data files.
 
-This JavaScript-based application displays a visual comparison, based on a radar graph, also known as a spider graph, of the six areas of practice of a Maturity Model, across multiple applications platforms, business units, or functional divisions within your SDLC.
+Purely client-side — no backend required for core functionality. An optional PHP
+backend (`api/config.php`) enables remote configuration management via the admin
+panel; see [Admin API](#admin-api-optional) below.
 
-The Maturity Model Gap Analysis Tool is applicable to many discipline, not only Continuous Delivery (the initial maturity model this tool was developed around). The application is built to be fully configurable and easily adaptable, by modifying the data file (`js/data/data_radar.js`). The default data file contains a sample data set, based on a fictions financial institution's gap analysis.
+![CD Gap Analysis](images/CD_example_thumbnail.png)
+![IaC Gap Analysis](images/IaC_example_thumbnail.png)
 
-[![Maturity Modeler - Gap Analysis Visualization Tool](https://github.com/boinger/maturitymodeler/blob/requirejs/images/CD_Maturity_Model_Video.jpg)](http://www.youtube.com/watch?v=YWGNw6VvKBc "Maturity Modeler - Gap Analysis Visualization Tool")
+---
 
-<!-- [![CD Gap Analysis](https://github.com/boinger/maturitymodeler/blob/requirejs/images/CD_example_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/CD_example.png?raw=true) -->
-
- ## Quick Start
-
-To install this project locally, `git clone` the `requirejs` branch from [GitHub](https://github.com/boinger/maturitymodeler/tree/requirejs):
+## Quick Start
 
 ```bash
-git clone --branch requirejs --single-branch --depth 1 \
-  https://github.com/boinger/maturitymodeler.git
+git clone https://github.com/boinger/maturitymodeler.git
 cd maturitymodeler
+npm install
+npm run build:legacy
 ```
 
-## D3.js Data-Driven Documents
+Open `index.html` in a browser, or serve with any static file server.
 
-The application is a browser-based tool, which uses the [D3.js](http://d3js.org/) JavaScript library. Visualizations are rendered using JavaScript and [SVG](http://en.wikipedia.org/wiki/Scalable_Vector_Graphics).
+### Docker
 
-Update to the latest D3 by extracting the latest ZIP file (found at https://github.com/d3/d3/releases/latest) into the `js/d3` directory
+The Docker image serves the static app only. For admin panel functionality,
+you'll need a PHP-capable server (see [Admin API](#admin-api-optional)).
 
-## RequireJS Unification
-
-Module-based project uses [RequireJS](http://requirejs.org/). After making any javascript or css changes, unify the project using [RequireJS Optimizer](http://requirejs.org/docs/optimization.html). Optimizer combines related scripts together into build layers. This project requires [Node.js](http://nodejs.org).
-
-## Terser Optimization
-
-Module-based project uses [Terser](https://github.com/terser/terser). After making any javascript changes, minify the project using Terser. Terser defaults to quick minification (which, for a project of this size, is probably fine) but you can be more aggressive/fancy by adjusting the `TERSER_OPTS` variable at the top of the build.sh script. This project requires [Node.js](http://nodejs.org).
-
-## Build Script
-
-Running `./build.sh` will confirm/install RequireJS and Terser (via npm), create a dist directory if needed, copy appropriate files into place, unify the javascript and css using RequireJS, then minify it using Terser.  If you're *sure* you already have RequireJS and Terser installed and the dist directory created (as in, you've successfully run `./build.sh` before), you can run `build.sh fast` to skip those steps.
-
-[![Optimizing Project](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/optimizing.png?raw=true)
-
-## Data-Driven Visualization
-
-Currently, the Maturity Modeler data is stored in the `js/data/data_radar.js` file, as an array of JavaScript object literals. It would be very easy to convert the project to use a data source, such as a static JSON or YAML file, or MongoDB database.
-
-```javascript
-CATEGORIES = [
-    "Build Management and Continuous Integration",
-    "Environments and Deployment",
-    "Release Management and Compliance",
-    "Testing",
-    "Data Management",
-    "Configuration Management"
-];
-
-applications = [
-    "Core Banking Application",
-    "Internet Banking Application",
-    "Human Resources Application",
-    "ATM Management Application"
-];
-
-maturityData: [
-    [{ //Core Banking Application
-        "app"  : applications[0],
-        "axis" : CATEGORIES[0],
-        "value": -1
-    }, {
-        "app"  : applications[0],
-        "axis" : CATEGORIES[1],
-        "value": -1
-    }, {
-        "app"  : applications[0],
-        "axis" : CATEGORIES[2],
-        "value": 1
-    }, {
-        "app"  : applications[0],
-        "axis" : CATEGORIES[3],
-        "value": -1
-    }, {
-        "app"  : applications[0],
-        "axis" : CATEGORIES[4],
-        "value": 0
-    }, {
-        "app"  : applications[0],
-        "axis" : CATEGORIES[5],
-        "value": 2
-    }]
-];
+```bash
+docker build -t maturitymodeler .
+docker run -d --name maturitymodeler -p 8082:80 maturitymodeler
+# → http://localhost:8082/
 ```
 
-## Hosting Project
+### Static Hosting
 
-To host this project, after optimizing, you only need the following items:
+After building, deploy to any static file server:
 
-- `index.html` file
+- `index.html`
 - `dist/` directory
 
-## Hosting Project on Apache with Docker
+---
 
-This project includes a `Dockerfile` for local development and hosting of the app, on Apache web server, in a Docker container. After running the 'RequireJS Optimization' commands above:
+## Features
 
-```bash
-docker build -t apache2 .
-docker run -d --name maturitymodeler -p 8082:80 apache2
+### Spider Chart Visualization
+- D3.js v7 SVG rendering with interactive tooltips
+- Toggle individual applications on/off via checkboxes
+- Category averages across all visible applications
+- Dynamic scale supporting any min/max range (e.g. -2→3, -1→4, 0→5)
+
+### Runtime Settings Panel
+Gear icon in the title bar opens a settings modal:
+- **Color palette** — Default, Tableau 10, Colorblind Safe, Pastel, Vivid
+- **Data source** — switch between built-in or uploaded maturity models
+- **Page title / Legend title** — editable text
+- **Persistence** — settings saved to `localStorage`, restored on reload
+- **Reset to Defaults** — clears all overrides
+
+### Multiple Data Sources
+- **URL query parameter**: `?data=iac_radar` loads the IaC model
+- **Settings panel dropdown**: switch at runtime with full re-render
+- **Admin panel** (`admin.html`): upload custom JSON configurations via API
+- **Fallback chain**: URL param → active remote config → default → demo data
+
+### Responsive Design
+- Mobile (portrait), tablet, desktop, and large desktop breakpoints
+- 44px minimum touch targets on mobile
+- Dark mode via system preference or manual toggle
+- High contrast and reduced motion media query support
+- Accessible: skip links, ARIA labels, keyboard navigation
+
+### Browser Compatibility
+- **Modern**: ES modules, served via `index.html`
+- **Legacy**: Webpack + Babel transpiled bundle via `index-legacy.html`
+- Automatic detection with a warning banner linking to the legacy version
+- Target: last 3 browser versions, >1% usage, not IE ≤ 11
+
+---
+
+## Built-in Maturity Models
+
+### Continuous Delivery (default)
+8 categories, 10 sample applications, scale -1 → 4.
+Categories: Culture & Organization, Continuous Integration, Build Automation,
+Deployment Automation, Test Automation, Reporting, Provisioning Automation,
+Design & Architecture.
+
+### Infrastructure as Code
+5 categories, 6 sample applications, scale -2 → 3.
+Categories: Development, Continuous Integration, Provisioning, Management,
+Observability.
+
+---
+
+## Creating a Custom Model
+
+Data files live in `js/data/` and export a `config` object:
+
+```javascript
+export const config = {
+  meta: {
+    pageTitle: "My Maturity Model",
+    legendTitle: "Applications",
+    averageTitle: "Category Averages",
+    references: []
+  },
+  scale: {
+    min: 0,
+    max: 5,
+    levels: [
+      { score: 0, label: "None" },
+      { score: 1, label: "Initial" },
+      { score: 2, label: "Managed" },
+      { score: 3, label: "Defined" },
+      { score: 4, label: "Measured" },
+      { score: 5, label: "Optimizing" }
+    ]
+  },
+  categories: ["Category A", "Category B", "Category C"],
+  applications: ["App 1", "App 2"],
+  maturityData: [
+    [
+      { app: "App 1", axis: "Category A", value: 3 },
+      { app: "App 1", axis: "Category B", value: 2 },
+      { app: "App 1", axis: "Category C", value: 4 }
+    ],
+    [
+      { app: "App 2", axis: "Category A", value: 1 },
+      { app: "App 2", axis: "Category B", value: 4 },
+      { app: "App 2", axis: "Category C", value: 2 }
+    ]
+  ],
+  theme: {
+    colorPalette: null  // null = use default; or a preset name or array of hex colors
+  }
+};
 ```
 
-Point your browser to `http://localhost:8082/`
+To register the new model, import it in `js/utils/dataLoader.js` and add an
+entry to `DATA_SOURCES`. Alternatively, upload it as JSON via the admin panel.
 
-## Rapid Development
+---
 
-To quickly rebuild and re-containerize the application, during development, run the following:
+## Development
 
-```bash
-rm -rf dist/* \
-  && cp -f js/require_2_3_6/require.min.js dist/ \
-  && cp -f favicon.png dist/ \
-  && node build/r_2_3_6/r.js -o build/build.js \
-  && node build/r_2_3_6/r.js -o build/build.js \
-  && terser dist/main-built.js ${TERSER_OPTS} > dist/main-built.min.js \
-  && mv dist/main-built.min.js dist/main-built.js \
-  && node build/r_2_3_6/r.js -o cssIn=css/spider.css out=dist/main-built.css \
-  && docker rm -f maturitymodeler \
-  && docker build -t apache2 . \
-  && docker run -d --name maturitymodeler -p 8082:80 apache2
-```
+### Build Commands
 
-## Infrastructure as Code Maturity Model
+| Command | Description |
+|---------|-------------|
+| `npm run build:legacy` | Production bundle (Webpack + Babel → `dist/main.bundle.js`) |
+| `npm test` | Run full test suite (Jest 30 + jsdom) |
+| `npm run test:watch` | Jest in watch mode |
+| `npm run test:coverage` | Generate coverage report |
+| `npm run analyze` | Bundle size analysis (webpack-bundle-analyzer) |
 
-This project now includes a second data file (`js/data/iac_radar.js`), based on the IaC Maturity Model. To use IaC sample data, rename the file to `data_radar.js`; it will be automatically included in the build. Alternately, change the name of data file that gets included, by modifying the `build/build.js` and configuration files. The data file contains a sample data set, based on a fictions financial institution's gap analysis.
+### Stack
 
-[![IaC Gap Analysis](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_example_thumbnail.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_example.png?raw=true)
+- **Visualization**: D3.js v7 (tree-shaken imports)
+- **Build**: Webpack 5 + Babel 7 (targets last 3 versions, >1%, not IE ≤ 11)
+- **Tests**: Jest 30 with jsdom (ES module support via `--experimental-vm-modules`)
+- **Minification**: Terser
+- **Containerization**: Apache 2.4 (httpd) Docker image
 
-The Maturity Modeler can be easily adapted to the evolving [Infrastructure as Code (IaC) Maturity Model](https://programmaticponderings.com/2016/11/25/infrastructure-as-code-maturity-model/).
+### Admin API (optional)
 
-[![IaC Maturity Model](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_Maturity_Model%20v2_1.png?raw=true)](https://github.com/boinger/maturitymodeler/blob/requirejs/images/IaC_Maturity_Model%20v2_1.pdf)
+The `api/config.php` backend enables remote configuration management.
+Requires PHP. Not needed for static-only deployments.
 
-## Helpful Links
+| Endpoint | Auth | Description |
+|----------|------|-------------|
+| `GET ?action=list` | No | List uploaded configurations |
+| `GET ?action=get&name=<slug>` | No | Fetch a specific configuration |
+| `GET ?action=active` | No | Get the active configuration |
+| `POST ?action=save` | Yes | Upload/update a configuration |
+| `POST ?action=delete` | Yes | Delete a configuration |
+| `POST ?action=setactive` | Yes | Set the default configuration |
 
-- d3 and Spider Charts
+---
 
-  - <http://www.visualcinnamon.com/2013/09/making-d3-radar-chart-look-bit-better.html>
-  - <https://gist.github.com/nbremer>
-  - <https://gist.github.com/nbremer/6506614>
-  - <http://bl.ocks.org/nbremer/6506614>
-  - <https://github.com/alangrafu/radar-chart-d3>
-  - <http://graves.cl/radar-chart-d3/>
+## License
 
-- SVG Tips
+[Apache 2.0](LICENSE)
 
-  - <http://www.petercollingridge.co.uk/data-visualisation/svg-mouseover-tricks>
-  - <http://bl.ocks.org/aaizemberg/78bd3dade9593896a59d>
+## Acknowledgments
 
-- RequireJS
-
-  - <https://github.com/requirejs>
-  - <http://requirejs.org/docs/api.html>
-  - <http://tech.pro/blog/1639/using-rjs-to-optimize-your-requirejs-project>
-  - <http://www.sitepoint.com/understanding-requirejs-for-effective-javascript-module-loading/>
-  - <https://github.com/volojs/create-template>
-  - <http://www.ringabell.org/en/un-simple-guide-pour-debuter-avec-requirejs/>
-
-- Javascript Tips and Patterns (Module pattern)
-
-  - <http://addyosmani.com/resources/essentialjsdesignpatterns/book/#modulepatternjavascript>
-  - <http://www.xenoveritas.org/blog/xeno/the-correct-way-to-clone-javascript-arrays>
+Originally derived from [cd-maturity-model](https://github.com/garystafford/cd-maturity-model) by Gary Stafford.
