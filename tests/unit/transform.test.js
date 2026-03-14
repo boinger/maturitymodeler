@@ -14,8 +14,7 @@ const mockDataRadar = {
   averageTitle: "Average Test Data"
 };
 
-// Load the transform module by requiring the actual file
-// We'll need to adapt this for RequireJS testing
+// Populated via the AMD define() mock in tests/setup.js
 let transform;
 
 describe('Transform Functions', () => {

@@ -5,7 +5,7 @@
 
 import { jest, beforeEach } from '@jest/globals';
 
-// Mock RequireJS for testing
+// Mock AMD define() for legacy transform.test.js
 global.define = jest.fn((deps, factory) => {
   if (typeof deps === 'function') {
     // No dependencies case

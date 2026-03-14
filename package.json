@@ -7,10 +7,8 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
-    "build": "./build.sh",
     "build:legacy": "npx webpack --mode=production",
     "analyze": "ANALYZE=true npx webpack --mode=production",
-    "dev": "./build.sh fast",
     "size": "ls -lah dist/ | grep -E '\\.(js|css|html)$' && echo '--- Compressed sizes ---' && ls -lah dist/ | grep -E '\\.(gz|br)$'"
   },
   "devDependencies": {
@@ -43,5 +41,5 @@
     "radar-chart"
   ],
   "author": "Jeff Vier",
-  "license": "MIT"
+  "license": "Apache-2.0"
 }
