@@ -5,10 +5,7 @@
 
 import { describe, test, expect } from '@jest/globals';
 
-// Skip these tests due to Jest experimental VM modules limitations
-// The ES modules work correctly in browser, but Jest's "module is already linked" 
-// errors prevent proper testing of module integration
-describe.skip('ES Module Integration', () => {
+describe('ES Module Integration', () => {
   let dataModule, transformModule, radarModule;
   
   // Import all modules once to avoid Jest VM "module is already linked" errors

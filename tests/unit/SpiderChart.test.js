@@ -2,13 +2,10 @@
  * Simple tests for SpiderChart class functionality
  */
 
-import { describe, test, expect } from '@jest/globals';
-// DISABLED: import SpiderChart, { createSpiderChart } from '../../js/spider/SpiderChart.js';
+import { describe, test, expect, beforeEach } from '@jest/globals';
+import SpiderChart, { createSpiderChart } from '../../js/spider/SpiderChart.js';
 
-// Skip SpiderChart tests due to Jest experimental VM modules limitations
-// SpiderChart works correctly in browser, but Jest's module linking errors prevent testing
-// Import commented out to prevent Jest VM module issues
-describe.skip('SpiderChart', () => {
+describe('SpiderChart', () => {
     describe('Constructor and Configuration', () => {
         test('should initialize with default config', () => {
             const chart = new SpiderChart('#test-container');
@@ -77,32 +74,41 @@ describe.skip('SpiderChart', () => {
     
     describe('Coordinate Calculations', () => {
         let chart;
-        
+
         beforeEach(() => {
             chart = new SpiderChart('#test');
         });
-        
-        test('should calculate coordinates correctly', () => {
-            const [x, y] = chart.calculateCoordinates(50, 0, 4);
-            
-            // At index 0 (top), with value 50 (half of max 100)
-            expect(x).toBeCloseTo(400); // Center X
-            expect(y).toBeCloseTo(200); // Half way up from center
+
+        test('should place maxValue at the edge', () => {
+            // Default maxValue is 4, minValue is -1
+            // At index 0 (top), maxValue should be at the top edge: x=center, y=0
+            const [x, y] = chart.calculateCoordinates(4, 0, 4);
+            expect(x).toBeCloseTo(400);
+            expect(y).toBeCloseTo(0);
         });
-        
-        test('should handle zero values', () => {
-            const [x, y] = chart.calculateCoordinates(0, 0, 4);
-            
-            expect(x).toBe(400); // Center X
-            expect(y).toBe(400); // Center Y
+
+        test('should place minValue at the center', () => {
+            // minValue (-1) normalizes to 0, so coordinates should be at center
+            const [x, y] = chart.calculateCoordinates(-1, 0, 4);
+            expect(x).toBeCloseTo(400);
+            expect(y).toBeCloseTo(400);
         });
-        
-        test('should handle negative values as zero', () => {
+
+        test('should clamp values below minValue to center', () => {
             const [x1, y1] = chart.calculateCoordinates(-10, 0, 4);
-            const [x2, y2] = chart.calculateCoordinates(0, 0, 4);
-            
-            expect(x1).toBe(x2);
-            expect(y1).toBe(y2);
+            const [x2, y2] = chart.calculateCoordinates(-1, 0, 4);
+
+            // Both should map to center since -10 clamps to 0 normalized
+            expect(x1).toBeCloseTo(x2);
+            expect(y1).toBeCloseTo(y2);
+        });
+
+        test('should return different coords for different axis indices', () => {
+            const [x0, y0] = chart.calculateCoordinates(2, 0, 4);
+            const [x1, y1] = chart.calculateCoordinates(2, 1, 4);
+
+            // Same value on different axes should give different positions
+            expect(x0).not.toBeCloseTo(x1);
         });
     });
     

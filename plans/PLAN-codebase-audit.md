@@ -25,9 +25,16 @@
 - [x] 3D. Dark mode CSS deduplicated — single [data-theme="dark"] block, removed all !important, JS sets data-theme attribute
 - [x] 3G. var → const/let throughout setup-ui.js
 
-## Phase 4 — Test Suite Overhaul (P4)
+## Phase 4 — Test Suite Overhaul (P4) ✓
 
-- [ ] 4A-4E. Separate branch effort
+- [x] 4A. Deleted 9 fake test files (basic, textWrapping, responsive, imageReplacement.disabled, radar, tooltip, checkbox, SpiderChart-mocked, performanceOptimizations)
+- [x] 4A. Rewrote dataValidation.test.js to import real validateConfig/fromLegacyFormat/deepMerge/resolveColorPalette
+- [x] 4A. Rewrote colorScale.test.js to import real DEFAULT_COLOR_PALETTE/COLOR_PRESETS/resolveColorPalette
+- [x] 4B. Un-skipped SpiderChart.test.js (17 tests) — created D3 mock, fixed coordinate assertions
+- [x] 4B. Un-skipped esModules.test.js (7 tests) — D3 mock resolved module linking
+- [x] 4C. Fixed async assertion anti-pattern in errorScenarios.test.js
+- [x] 4D. Coverage gaps partially addressed (configSchema now well-tested; SpiderChart class now tested)
+- [x] 4E. Fixed global console mock — now spies with forwarding instead of silencing
 
 ## Phase 5 — Architecture Refactoring (P3 remainder)
 

@@ -29,12 +29,14 @@ global.define = jest.fn((deps, factory) => {
 
 global.define.amd = true;
 
-// Mock console methods to reduce test noise
+// Spy on console methods so tests can assert on them,
+// but still forward to real console for debugging.
+const realConsole = { ...console };
 global.console = {
   ...console,
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn()
+  log: jest.fn((...args) => realConsole.log(...args)),
+  warn: jest.fn((...args) => realConsole.warn(...args)),
+  error: jest.fn((...args) => realConsole.error(...args))
 };
 
 // Add common DOM elements that the app expects

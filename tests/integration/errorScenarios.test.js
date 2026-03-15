@@ -140,9 +140,7 @@ describe('Error Handling Scenarios', () => {
       const { loadDataWithFallback } = await import('../../js/utils/dataLoader.js');
       
       // Should not crash even with missing DOM elements
-      expect(async () => {
-        await loadDataWithFallback();
-      }).not.toThrow();
+      await expect(loadDataWithFallback()).resolves.toBeDefined();
       
       // Verify elements are missing
       expect(document.getElementById('title')).toBeNull();
