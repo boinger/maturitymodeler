@@ -677,10 +677,6 @@ import { createSettingsPanel, getPersistedSettings } from './settingsPanel.js';
             }
         };
 
-        // Initialize asynchronously
-        initializePage().catch(error => {
-            console.error('Failed to initialize application:', error);
-        });
-
-// ES Module exports (setup module initializes on import)
+// ES Module exports — no side effects on import.
+// Call initializePage() from app.js or another entry point.
 export default { initializePage };

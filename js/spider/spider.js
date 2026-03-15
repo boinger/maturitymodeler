@@ -40,10 +40,16 @@ const draw = (id, data, options = {}) => {
         currentChart = null;
         window.spider = null;
         
-        // Convert legacy options to new format
+        // Convert legacy options to new format, injecting app metadata
+        // so SpiderChart doesn't need window.currentDataRadar
+        const dataRadar = window.currentDataRadar || {};
         const config = {
             ...options,
-            color: options.color || sharedColorScale
+            color: options.color || sharedColorScale,
+            applications: options.applications || dataRadar.applications || [],
+            categories: options.categories || dataRadar.categories || [],
+            averageTitle: options.averageTitle || dataRadar.averageTitle || 'Category Averages',
+            averageId: options.averageId ?? dataRadar.idAverageCategories ?? 100
         };
         
         // Create and render new chart

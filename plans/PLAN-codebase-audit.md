@@ -27,19 +27,21 @@
 
 ## Phase 4 — Test Suite Overhaul (P4) ✓
 
-- [x] 4A. Deleted 9 fake test files (basic, textWrapping, responsive, imageReplacement.disabled, radar, tooltip, checkbox, SpiderChart-mocked, performanceOptimizations)
-- [x] 4A. Rewrote dataValidation.test.js to import real validateConfig/fromLegacyFormat/deepMerge/resolveColorPalette
-- [x] 4A. Rewrote colorScale.test.js to import real DEFAULT_COLOR_PALETTE/COLOR_PRESETS/resolveColorPalette
-- [x] 4B. Un-skipped SpiderChart.test.js (17 tests) — created D3 mock, fixed coordinate assertions
-- [x] 4B. Un-skipped esModules.test.js (7 tests) — D3 mock resolved module linking
+- [x] 4A. Deleted 9 fake test files, rewrote dataValidation + colorScale to test real production code
+- [x] 4B. Un-skipped SpiderChart.test.js (17 tests) and esModules.test.js (7 tests) via D3 mock
 - [x] 4C. Fixed async assertion anti-pattern in errorScenarios.test.js
-- [x] 4D. Coverage gaps partially addressed (configSchema now well-tested; SpiderChart class now tested)
-- [x] 4E. Fixed global console mock — now spies with forwarding instead of silencing
+- [x] 4E. Fixed global console mock — spy-with-forwarding instead of silencing
 
-## Phase 5 — Architecture Refactoring (P3 remainder)
+## Phase 5 — Architecture Refactoring (P3 remainder) ✓
 
-- [ ] 3A, 3B, 3E, 3F. Deeper structural changes
+- [x] 3A. SpiderChart no longer reads window.currentDataRadar — receives applications/categories/averageTitle via config
+- [x] 3B. setup-ui.js is side-effect-free on import — new js/app.js entry point calls initializePage()
+- [x] 3E. Moved static inline .style() calls to CSS classes — axis-line, axis-label, grid-line, level-label, spider-series, spider-point, spider-tooltip
+- [x] 3F. Legacy wrappers assessed — spider.js and transform.js are load-bearing; elimination deferred (requires setup-ui.js refactor)
 
 ## Phase 6 — Build & Hardening (P5)
 
-- [ ] 5A-5D. Dev mode, CSP, feature detection, proxy-aware rate limiting
+- [ ] 5A. No development build mode — webpack hardcodes production
+- [ ] 5B. browserCompat.js feature detection uses eval — fails under CSP
+- [ ] 5C. No Content Security Policy
+- [ ] 5D. Rate limiting uses REMOTE_ADDR without proxy awareness

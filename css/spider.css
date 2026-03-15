@@ -911,12 +911,7 @@ html[data-theme="dark"] #footer {
     color: rgba(255, 255, 255, 0.4);
 }
 
-html[data-theme="dark"] #chart svg text {
-    fill: var(--secondary-text);
-    stroke: rgba(15, 23, 42, 0.8);
-    stroke-width: 0.5px;
-    paint-order: stroke fill;
-}
+/* SVG text fill handled by .axis-label and .level-label rules above */
 
 /* Ensure title text is always white (gradient background) */
 #title {
@@ -1304,4 +1299,62 @@ html[data-theme="dark"] #chart svg text {
 
 [data-theme="dark"] .settings-btn-secondary:hover {
     background: #334155;
+}
+
+/* =============================================
+   Spider Chart SVG Elements
+   Static visual properties moved from inline .style() calls
+   in SpiderChart.js so dark mode CSS can override without !important.
+   ============================================= */
+
+.axis-line {
+    stroke: #999999;
+    stroke-width: 0.75px;
+}
+
+.axis-label {
+    font-family: var(--font-family);
+    font-size: var(--font-size-xs);
+}
+
+.grid-line {
+    stroke: #999999;
+    stroke-opacity: 0.75;
+    stroke-width: 0.5px;
+}
+
+.level-label {
+    font-family: var(--font-family);
+    font-size: var(--font-size-xs);
+    fill: #999999;
+}
+
+.spider-series {
+    stroke-width: 2px;
+}
+
+.spider-point {
+    fill-opacity: 0.9;
+}
+
+.spider-tooltip {
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+}
+
+/* Dark mode overrides for SVG chart elements */
+[data-theme="dark"] .axis-line {
+    stroke: #64748b;
+}
+
+[data-theme="dark"] .grid-line {
+    stroke: #475569;
+}
+
+[data-theme="dark"] .level-label {
+    fill: #94a3b8;
+}
+
+[data-theme="dark"] .axis-label {
+    fill: var(--secondary-text);
 }

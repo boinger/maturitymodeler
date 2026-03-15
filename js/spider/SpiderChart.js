@@ -74,11 +74,18 @@ class SpiderChart {
         this.config = { ...DEFAULT_CONFIG, ...config };
         this.colorScale = this.initColorScale();
         this.format = d3.format("d");
-        
+
+        // Application metadata for cross-highlighting and empty-state rendering.
+        // Eliminates hidden coupling to window.currentDataRadar.
+        this.applications = config.applications || [];
+        this.categories = config.categories || [];
+        this.averageTitle = config.averageTitle || 'Category Averages';
+        this.averageId = config.averageId ?? 100;
+
         // Cache frequently used values
         this.centerX = this.config.w / 2;
         this.centerY = this.config.h / 2;
-        
+
         // D3 selections
         this.container = null;
         this.svg = null;
@@ -197,16 +204,12 @@ class SpiderChart {
             .attr('y1', this.centerY)
             .attr('x2', (d, i) => this.centerX * (1 - this.config.factor * Math.sin(i * this.config.radians / total)))
             .attr('y2', (d, i) => this.centerY * (1 - this.config.factor * Math.cos(i * this.config.radians / total)))
-            .attr('class', 'axis-line')
-            .style('stroke', '#999999')
-            .style('stroke-width', '0.75px');
+            .attr('class', 'axis-line');
 
         // Add axis labels
         axes.append('text')
             .attr('class', 'axis-label')
             .text(d => d)
-            .style('font-family', 'sans-serif')
-            .style('font-size', '11px')
             .attr('text-anchor', 'middle')
             .attr('dy', '1.5em')
             .attr('transform', 'translate(0, -10)')
@@ -259,9 +262,6 @@ class SpiderChart {
                 .attr('y1', d => d.y1)
                 .attr('x2', d => d.x2)
                 .attr('y2', d => d.y2)
-                .style('stroke', '#999999')
-                .style('stroke-opacity', '0.75')
-                .style('stroke-width', '0.5px')
                 .attr('transform', `translate(${this.centerX - levelFactor}, ${this.centerY - levelFactor})`);
 
             // Ring label: use scale level score if available, else numeric index
@@ -273,10 +273,7 @@ class SpiderChart {
                 .attr('class', `level-label level-${level}`)
                 .attr('x', levelFactor * (1 - this.config.factor * Math.sin(0)))
                 .attr('y', levelFactor * (1 - this.config.factor * Math.cos(0)))
-                .style('font-family', 'sans-serif')
-                .style('font-size', '11px')
                 .attr('transform', `translate(${this.centerX - levelFactor + this.config.ToRight}, ${this.centerY - levelFactor})`)
-                .attr('fill', '#999999')
                 .text(ringLabel);
         }
     }
@@ -305,7 +302,6 @@ class SpiderChart {
                 .datum(series)
                 .attr('class', `spider-series spider-series-${seriesIndex}`)
                 .attr('points', polygonPath)
-                .style('stroke-width', '2px')
                 .style('stroke', this.colorScale(originalIndex))
                 .style('fill', this.colorScale(originalIndex))
                 .style('fill-opacity', opacity);
@@ -339,9 +335,9 @@ class SpiderChart {
                     .style('fill-opacity', 0.7);
                 
                 // Cross-highlight corresponding menu item
-                const appName = originalIndex === 100 ? 
-                    (window.currentDataRadar?.averageTitle || 'Category Averages') :
-                    (window.currentDataRadar?.applications?.[originalIndex] || 'Unknown');
+                const appName = originalIndex === this.averageId
+                    ? this.averageTitle
+                    : (this.applications[originalIndex] || 'Unknown');
                 debugLog('Polygon hover - highlighting menu item with originalIndex:', originalIndex, 'app:', appName);
                 this.highlightMenuItem(originalIndex);
             })
@@ -369,12 +365,10 @@ class SpiderChart {
         // First, get the app name that corresponds to this originalIndex
         let targetAppName = '';
         
-        if (originalIndex === 100) {
-            // Special case for Average
-            targetAppName = window.currentDataRadar?.averageTitle || 'Category Averages';
-        } else if (window.currentDataRadar?.applications) {
-            // Regular app - originalIndex is the index in the original applications array
-            targetAppName = window.currentDataRadar.applications[originalIndex] || '';
+        if (originalIndex === this.averageId) {
+            targetAppName = this.averageTitle;
+        } else {
+            targetAppName = this.applications[originalIndex] || '';
         }
         
         appDivs.forEach(div => {
@@ -475,7 +469,6 @@ class SpiderChart {
                 .attr('cx', (d, i) => this.calculateCoordinates(d.value, i, total)[0])
                 .attr('cy', (d, i) => this.calculateCoordinates(d.value, i, total)[1])
                 .style('fill', this.colorScale(originalIndex))
-                .style('fill-opacity', 0.9)
                 .on('mouseover', (event, d) => this.showTooltip(event, d, seriesIndex))
                 .on('mouseout', () => this.hideTooltip());
         });
@@ -561,9 +554,7 @@ class SpiderChart {
         if (this.tooltip.empty()) {
             this.tooltip = this.g.append('text')
                 .attr('class', 'spider-tooltip')
-                .style('opacity', 0)
-                .style('font-family', 'sans-serif')
-                .style('font-size', '13px');
+                .style('opacity', 0);
         }
     }
 
@@ -582,12 +573,9 @@ class SpiderChart {
         
         if (!hasData) {
             // Still show skeleton/axes even with no data
-            // Use default categories if available
-            if (window.currentDataRadar && window.currentDataRadar.categories) {
-                const axisNames = window.currentDataRadar.categories;
-                const total = axisNames.length;
-                this.createGridLevels(total);
-                this.createAxes(axisNames);
+            if (this.categories.length > 0) {
+                this.createGridLevels(this.categories.length);
+                this.createAxes(this.categories);
             }
             return this;
         }
