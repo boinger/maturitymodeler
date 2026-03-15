@@ -1,5 +1,7 @@
 # Plan: Codebase Audit — Findings and Remediation
 
+All six phases complete.
+
 ## Phase 1 — Security (P1) ✓
 
 - [x] 1A. XSS via innerHTML in setup-ui.js — replaced with textContent (4 locations)
@@ -36,12 +38,12 @@
 
 - [x] 3A. SpiderChart no longer reads window.currentDataRadar — receives applications/categories/averageTitle via config
 - [x] 3B. setup-ui.js is side-effect-free on import — new js/app.js entry point calls initializePage()
-- [x] 3E. Moved static inline .style() calls to CSS classes — axis-line, axis-label, grid-line, level-label, spider-series, spider-point, spider-tooltip
-- [x] 3F. Legacy wrappers assessed — spider.js and transform.js are load-bearing; elimination deferred (requires setup-ui.js refactor)
+- [x] 3E. Moved static inline .style() calls to CSS classes
+- [x] 3F. Legacy wrappers assessed — spider.js and transform.js are load-bearing; elimination deferred
 
-## Phase 6 — Build & Hardening (P5)
+## Phase 6 — Build & Hardening (P5) ✓
 
-- [ ] 5A. No development build mode — webpack hardcodes production
-- [ ] 5B. browserCompat.js feature detection uses eval — fails under CSP
-- [ ] 5C. No Content Security Policy
-- [ ] 5D. Rate limiting uses REMOTE_ADDR without proxy awareness
+- [x] 5A. Webpack supports development mode — NODE_ENV=development enables source maps and skips minification
+- [x] 5B. browserCompat.js rewritten to use structural feature detection — CSP-safe, no code evaluation
+- [x] 5C. Content Security Policy added to index.html, index-legacy.html, and admin.html
+- [x] 5D. Rate limiting now proxy-aware — getClientIp() checks X-Forwarded-For from TRUSTED_PROXIES

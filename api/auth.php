@@ -14,6 +14,41 @@ define('RATE_LIMIT_WINDOW', 900); // 15 minutes
 define('RATE_LIMIT_MAX', 5);      // max attempts per window
 define('RATE_LIMIT_DIR', __DIR__ . '/../configs/.ratelimit');
 
+// Trusted proxy IPs. When behind a reverse proxy (nginx, Apache, load
+// balancer), REMOTE_ADDR will be the proxy IP, and the real client IP
+// is in X-Forwarded-For.  Only trust this header from known proxies.
+// Set to ['*'] to trust any proxy (not recommended for production).
+define('TRUSTED_PROXIES', [
+    '127.0.0.1',
+    '::1',
+    // Add your reverse proxy IP(s) here, e.g. '10.0.0.1'
+]);
+
+// ── Client IP resolution ──────────────────────────────────────────
+
+/**
+ * Resolve the real client IP, respecting X-Forwarded-For when the
+ * immediate connection comes from a trusted proxy.
+ */
+function getClientIp(): string {
+    $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+
+    $isTrusted = in_array('*', TRUSTED_PROXIES, true)
+              || in_array($remoteAddr, TRUSTED_PROXIES, true);
+
+    if ($isTrusted && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        // Take the left-most IP (original client)
+        $parts = array_map('trim', explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']));
+        $candidate = $parts[0];
+        // Basic validation: must look like an IP
+        if (filter_var($candidate, FILTER_VALIDATE_IP)) {
+            return $candidate;
+        }
+    }
+
+    return $remoteAddr;
+}
+
 // ── Session helpers ────────────────────────────────────────────────
 
 function startAuthSession(): void {
@@ -58,7 +93,7 @@ function verifyPassword(string $password): bool {
 function login(string $password): bool {
     startAuthSession();
 
-    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $ip = getClientIp();
     if (!checkRateLimit($ip)) {
         http_response_code(429);
         echo json_encode(['success' => false, 'error' => 'Too many attempts. Try again later.']);

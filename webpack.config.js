@@ -5,6 +5,8 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const isProd = (process.env.NODE_ENV || 'production') === 'production';
+
 export default {
   entry: './js/app.js',
   output: {
@@ -32,11 +34,12 @@ export default {
     extensions: ['.js']
   },
   target: ['web', 'es5'],
-  mode: 'production',
+  mode: isProd ? 'production' : 'development',
+  devtool: isProd ? false : 'source-map',
   optimization: {
     splitChunks: false,  // Disable code splitting for simpler deployment
     runtimeChunk: false,  // Include runtime in main bundle
-    minimize: true,
+    minimize: isProd,
     usedExports: true  // Enable tree shaking
   },
   plugins: [
